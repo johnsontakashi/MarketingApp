@@ -98,7 +98,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Let is start Out business app</Text>
+      <Text> TLB CASH DIAMOND TEST</Text>
       
       {homeButtonDisabled && (
         <View style={styles.statusIndicator}>
@@ -169,9 +169,7 @@ export default function App() {
             <Text style={styles.lockIcon}>🔒</Text>
             <Text style={styles.lockTitle}>Your Device is Locked</Text>
             <Text style={styles.lockExplanation}>
-              This device is in kiosk mode for security purposes. 
-              All navigation and system functions have been disabled 
-              to prevent unauthorized access.
+               TLB CASH DIAMOND TEST
             </Text>
             <Text style={styles.lockInstructions}>
               Please use the payment system or contact an administrator 
