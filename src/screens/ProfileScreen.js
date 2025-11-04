@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation }) {
@@ -7,11 +7,28 @@ export default function ProfileScreen({ navigation }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
+  const [selectedPaymentType, setSelectedPaymentType] = useState('');
+  const [paymentFormData, setPaymentFormData] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardholderName: '',
+    bankName: '',
+    accountNumber: '',
+    routingNumber: '',
+    paypalEmail: '',
+    giftCardNumber: '',
+    giftCardPin: ''
+  });
   const [profileData, setProfileData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
-    address: '123 Main Street, City, State 12345'
+    address: '123 Main Street, City, State 12345',
+    avatar: null
   });
   const [editData, setEditData] = useState({ ...profileData });
 
@@ -42,160 +59,112 @@ export default function ProfileScreen({ navigation }) {
     setShowEditModal(false);
   };
 
-  const handleMyOrders = () => {
-    const orderHistory = [
-      {
-        id: 'ORD-001',
-        date: '2024-02-20',
-        status: 'Delivered',
-        total: 200.00,
-        items: [
-          { name: 'Premium Wireless Headphones', price: 200.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-002',
-        date: '2024-02-15',
-        status: 'Processing',
-        total: 150.00,
-        items: [
-          { name: 'Smart Fitness Watch', price: 150.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-003',
-        date: '2024-02-10',
-        status: 'Shipped',
-        total: 160.00,
-        items: [
-          { name: 'Gaming Mouse Pro', price: 75.00, qty: 1 },
-          { name: 'Bluetooth Speaker', price: 85.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-004',
-        date: '2024-02-05',
-        status: 'Delivered',
-        total: 45.00,
-        items: [
-          { name: 'Wireless Charging Pad', price: 45.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-005',
-        date: '2024-01-28',
-        status: 'Cancelled',
-        total: 25.00,
-        items: [
-          { name: 'Smart LED Bulb', price: 25.00, qty: 1 }
-        ]
-      }
+  const handleAvatarUpload = () => {
+    // Demo placeholder avatars for development
+    const avatarOptions = [
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80'
     ];
 
-    const orderSummary = orderHistory.map(order => {
-      const itemsList = order.items.map(item => `  • ${item.name} (×${item.qty}) - 💎 ${item.price}`).join('\n');
-      const statusEmoji = order.status === 'Delivered' ? '✅' : 
-                         order.status === 'Shipped' ? '🚚' : 
-                         order.status === 'Processing' ? '⏳' : 
-                         order.status === 'Cancelled' ? '❌' : '📦';
-      
-      return `${statusEmoji} ${order.id} (${order.date})\nStatus: ${order.status}\nTotal: 💎 ${order.total} TLB\nItems:\n${itemsList}`;
-    }).join('\n\n─────────────────────\n\n');
-
-    const totalOrders = orderHistory.length;
-    const totalSpent = orderHistory
-      .filter(order => order.status !== 'Cancelled')
-      .reduce((sum, order) => sum + order.total, 0);
-    const deliveredOrders = orderHistory.filter(order => order.status === 'Delivered').length;
-
     Alert.alert(
-      '📦 My Order History',
-      `Your complete order history:\n\n${orderSummary}\n\n📊 Summary:\n• Total Orders: ${totalOrders}\n• Delivered: ${deliveredOrders}\n• Total Spent: 💎 ${totalSpent} TLB\n• Active Orders: ${orderHistory.filter(o => o.status === 'Processing' || o.status === 'Shipped').length}`,
+      "🖼️ Select Avatar (Demo)",
+      "Choose a demo profile picture or remove current avatar",
       [
-        { text: 'Track Order', onPress: () => Alert.alert('Track Order', 'Order tracking feature coming soon!') },
-        { text: 'Reorder', onPress: () => Alert.alert('Reorder', 'Quick reorder feature coming soon!') },
-        { text: 'Close', style: 'cancel' }
+        { text: "Avatar 1", onPress: () => selectDemoAvatar(avatarOptions[0]) },
+        { text: "Avatar 2", onPress: () => selectDemoAvatar(avatarOptions[1]) },
+        { text: "Avatar 3", onPress: () => selectDemoAvatar(avatarOptions[2]) },
+        { text: "Avatar 4", onPress: () => selectDemoAvatar(avatarOptions[3]) },
+        { text: "Remove Avatar", onPress: () => removeAvatar() },
+        { text: "Cancel", style: "cancel" }
       ]
     );
   };
 
+  const selectDemoAvatar = (avatarUri) => {
+    setProfileData({ ...profileData, avatar: avatarUri });
+    setEditData({ ...editData, avatar: avatarUri });
+    Alert.alert("✅ Success", "Profile picture updated successfully!");
+  };
+
+  const removeAvatar = () => {
+    setProfileData({ ...profileData, avatar: null });
+    setEditData({ ...editData, avatar: null });
+    Alert.alert("✅ Success", "Profile picture removed successfully!");
+  };
+
+  const handleMyOrders = () => {
+    setShowOrdersModal(true);
+  };
+
   const handlePaymentMethods = () => {
-    const paymentMethods = [
-      {
-        id: 'pm_001',
-        type: 'TLB Wallet',
-        details: 'Primary Payment Method',
-        balance: '💎 1,250.00 TLB',
-        status: 'Active',
-        default: true,
-        icon: '💎'
-      },
-      {
-        id: 'pm_002',
-        type: 'Credit Card',
-        details: '**** **** **** 4532',
-        brand: 'Visa',
-        expiry: '12/27',
-        status: 'Active',
-        default: false,
-        icon: '💳'
-      },
-      {
-        id: 'pm_003',
-        type: 'Bank Account',
-        details: 'Chase Bank ****1234',
-        routing: 'ACH Transfer',
-        status: 'Verified',
-        default: false,
-        icon: '🏦'
-      },
-      {
-        id: 'pm_004',
-        type: 'PayPal',
-        details: 'john.doe@example.com',
-        status: 'Connected',
-        default: false,
-        icon: '🅿️'
-      },
-      {
-        id: 'pm_005',
-        type: 'Gift Card',
-        details: 'TLB Gift Card ****8765',
-        balance: '💎 50.00 TLB',
-        status: 'Active',
-        default: false,
-        icon: '🎁'
-      }
-    ];
+    setShowPaymentModal(true);
+  };
 
-    const methodsList = paymentMethods.map(method => {
-      const statusEmoji = method.status === 'Active' ? '✅' : 
-                         method.status === 'Verified' ? '✅' : 
-                         method.status === 'Connected' ? '🔗' : '⚠️';
-      const defaultText = method.default ? ' (Default)' : '';
-      const balanceText = method.balance ? `\nBalance: ${method.balance}` : '';
-      const additionalInfo = method.brand ? `\nBrand: ${method.brand} | Expires: ${method.expiry}` :
-                             method.routing ? `\nType: ${method.routing}` : '';
-      
-      return `${method.icon} ${method.type}${defaultText}\n${statusEmoji} ${method.details}${balanceText}${additionalInfo}`;
-    }).join('\n\n─────────────────────\n\n');
+  const handleAddPaymentMethod = (type) => {
+    setSelectedPaymentType(type);
+    setPaymentFormData({
+      cardNumber: '',
+      expiryDate: '',
+      cvv: '',
+      cardholderName: '',
+      bankName: '',
+      accountNumber: '',
+      routingNumber: '',
+      paypalEmail: '',
+      giftCardNumber: '',
+      giftCardPin: ''
+    });
+    setShowPaymentModal(false);
+    setShowAddPaymentModal(true);
+  };
 
-    const totalMethods = paymentMethods.length;
-    const activeMethods = paymentMethods.filter(method => 
-      method.status === 'Active' || method.status === 'Verified' || method.status === 'Connected'
-    ).length;
-    const defaultMethod = paymentMethods.find(method => method.default);
-    const tlbBalance = paymentMethods.find(method => method.type === 'TLB Wallet')?.balance || '💎 0.00';
+  const handleSavePaymentMethod = () => {
+    let isValid = false;
+    let message = '';
 
-    Alert.alert(
-      '💳 Payment Methods',
-      `Your saved payment methods:\n\n${methodsList}\n\n📊 Summary:\n• Total Methods: ${totalMethods}\n• Active Methods: ${activeMethods}\n• Default: ${defaultMethod?.type || 'None'}\n• TLB Wallet: ${tlbBalance}\n\n⚡ All payments are secured with 256-bit encryption`,
-      [
-        { text: 'Add New Method', onPress: () => Alert.alert('Add Payment', 'New payment method setup coming soon!') },
-        { text: 'Manage Methods', onPress: () => Alert.alert('Manage', 'Payment method management coming soon!') },
-        { text: 'Close', style: 'cancel' }
-      ]
-    );
+    switch (selectedPaymentType) {
+      case 'credit':
+        isValid = paymentFormData.cardNumber && paymentFormData.expiryDate && 
+                 paymentFormData.cvv && paymentFormData.cardholderName;
+        message = isValid ? 
+          `Credit Card ending in ${paymentFormData.cardNumber.slice(-4)} has been added successfully!` :
+          'Please fill in all credit card fields.';
+        break;
+      case 'bank':
+        isValid = paymentFormData.bankName && paymentFormData.accountNumber && 
+                 paymentFormData.routingNumber;
+        message = isValid ? 
+          `Bank account at ${paymentFormData.bankName} has been added successfully!` :
+          'Please fill in all bank account fields.';
+        break;
+      case 'paypal':
+        isValid = paymentFormData.paypalEmail;
+        message = isValid ? 
+          `PayPal account ${paymentFormData.paypalEmail} has been added successfully!` :
+          'Please enter your PayPal email address.';
+        break;
+      case 'gift':
+        isValid = paymentFormData.giftCardNumber && paymentFormData.giftCardPin;
+        message = isValid ? 
+          `Gift card ending in ${paymentFormData.giftCardNumber.slice(-4)} has been added successfully!` :
+          'Please fill in gift card number and PIN.';
+        break;
+    }
+
+    if (isValid) {
+      setShowAddPaymentModal(false);
+      setShowPaymentModal(true);
+      Alert.alert('Payment Method Added', message);
+    } else {
+      Alert.alert('Incomplete Information', message);
+    }
+  };
+
+  const handleCancelPaymentForm = () => {
+    setShowAddPaymentModal(false);
+    setShowPaymentModal(true);
   };
 
   const handleSettings = () => {
@@ -319,9 +288,16 @@ export default function ProfileScreen({ navigation }) {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
-        <View style={styles.avatarContainer}>
-          <Ionicons name="person" size={40} color="#D4AF37" />
-        </View>
+        <TouchableOpacity style={styles.avatarContainer} onPress={handleAvatarUpload}>
+          {profileData.avatar ? (
+            <Image source={{ uri: profileData.avatar }} style={styles.avatarImage} />
+          ) : (
+            <Ionicons name="person" size={40} color="#D4AF37" />
+          )}
+          <View style={styles.avatarEditBadge}>
+            <Ionicons name="camera" size={12} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
         <View style={styles.profileInfo}>
           <Text style={styles.profileName}>{profileData.name}</Text>
           <Text style={styles.profileEmail}>{profileData.email}</Text>
@@ -399,6 +375,630 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.versionText}>TLB Diamond v1.0.0</Text>
         <Text style={styles.buildText}>Build 2024.10.29</Text>
       </View>
+
+      {/* Payment Methods Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showPaymentModal}
+        onRequestClose={() => setShowPaymentModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💳 Payment Methods</Text>
+              <TouchableOpacity onPress={() => setShowPaymentModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              <Text style={styles.paymentDescription}>
+                Your saved payment methods
+              </Text>
+              
+              {/* Summary Stats */}
+              <View style={styles.paymentSummary}>
+                <Text style={styles.summaryTitle}>📊 Summary</Text>
+                <View style={styles.paymentStatsGrid}>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>5</Text>
+                    <Text style={styles.paymentStatLabel}>Total Methods</Text>
+                  </View>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>5</Text>
+                    <Text style={styles.paymentStatLabel}>Active</Text>
+                  </View>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>💎 1,300</Text>
+                    <Text style={styles.paymentStatLabel}>TLB Balance</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Payment Methods */}
+              <View style={styles.paymentSection}>
+                <Text style={styles.paymentSectionTitle}>💳 Your Payment Methods</Text>
+                
+                {/* TLB Wallet - Default */}
+                <TouchableOpacity style={[styles.paymentMethodCard, styles.defaultPaymentMethod]}>
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>💎</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <View style={styles.paymentMethodHeader}>
+                      <Text style={styles.paymentMethodType}>TLB Wallet</Text>
+                      <View style={styles.defaultBadge}>
+                        <Text style={styles.defaultText}>DEFAULT</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.paymentMethodDetails}>Primary Payment Method</Text>
+                    <Text style={styles.paymentMethodBalance}>💎 1,250.00 TLB</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Credit Card */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('credit')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>💳</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Credit Card</Text>
+                    <Text style={styles.paymentMethodDetails}>**** **** **** 4532</Text>
+                    <Text style={styles.paymentMethodExtra}>Visa | Expires: 12/27</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Bank Account */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('bank')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🏦</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Bank Account</Text>
+                    <Text style={styles.paymentMethodDetails}>Chase Bank ****1234</Text>
+                    <Text style={styles.paymentMethodExtra}>ACH Transfer</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* PayPal */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('paypal')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🅿️</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>PayPal</Text>
+                    <Text style={styles.paymentMethodDetails}>john.doe@example.com</Text>
+                    <Text style={styles.paymentMethodExtra}>Connected Account</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusConnected}>🔗</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Gift Card */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('gift')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🎁</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Gift Card</Text>
+                    <Text style={styles.paymentMethodDetails}>TLB Gift Card ****8765</Text>
+                    <Text style={styles.paymentMethodBalance}>💎 50.00 TLB</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Security Notice */}
+              <View style={styles.paymentSecurity}>
+                <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+                <Text style={styles.paymentSecurityText}>
+                  All payments are secured with 256-bit encryption and PCI DSS compliance
+                </Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.paymentActions}>
+              <TouchableOpacity 
+                style={styles.addMethodButton}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  Alert.alert('Add Payment', 'New payment method setup coming soon!');
+                }}
+              >
+                <Ionicons name="add" size={16} color="#FFFFFF" />
+                <Text style={styles.addMethodText}>Add New Method</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.manageMethodsButton}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  Alert.alert('Manage', 'Payment method management coming soon!');
+                }}
+              >
+                <Ionicons name="settings" size={16} color="#FFFFFF" />
+                <Text style={styles.manageMethodsText}>Manage Methods</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Payment Method Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showAddPaymentModal}
+        onRequestClose={() => setShowAddPaymentModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {selectedPaymentType === 'credit' && '💳 Add Credit Card'}
+                {selectedPaymentType === 'bank' && '🏦 Add Bank Account'}
+                {selectedPaymentType === 'paypal' && '🅿️ Add PayPal Account'}
+                {selectedPaymentType === 'gift' && '🎁 Add Gift Card'}
+              </Text>
+              <TouchableOpacity onPress={() => setShowAddPaymentModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent}>
+              {/* Credit Card Form */}
+              {selectedPaymentType === 'credit' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Credit Card Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Card Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234 5678 9012 3456"
+                      value={paymentFormData.cardNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardNumber: text})}
+                      keyboardType="numeric"
+                      maxLength={19}
+                    />
+                  </View>
+                  
+                  <View style={styles.inputRow}>
+                    <View style={styles.inputGroupHalf}>
+                      <Text style={styles.inputLabel}>Expiry Date</Text>
+                      <TextInput
+                        style={styles.paymentInput}
+                        placeholder="MM/YY"
+                        value={paymentFormData.expiryDate}
+                        onChangeText={(text) => setPaymentFormData({...paymentFormData, expiryDate: text})}
+                        keyboardType="numeric"
+                        maxLength={5}
+                      />
+                    </View>
+                    
+                    <View style={styles.inputGroupHalf}>
+                      <Text style={styles.inputLabel}>CVV</Text>
+                      <TextInput
+                        style={styles.paymentInput}
+                        placeholder="123"
+                        value={paymentFormData.cvv}
+                        onChangeText={(text) => setPaymentFormData({...paymentFormData, cvv: text})}
+                        keyboardType="numeric"
+                        maxLength={4}
+                        secureTextEntry
+                      />
+                    </View>
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Cardholder Name</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="John Doe"
+                      value={paymentFormData.cardholderName}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardholderName: text})}
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* Bank Account Form */}
+              {selectedPaymentType === 'bank' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Bank Account Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Bank Name</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="Chase Bank"
+                      value={paymentFormData.bankName}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, bankName: text})}
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Account Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234567890"
+                      value={paymentFormData.accountNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, accountNumber: text})}
+                      keyboardType="numeric"
+                      secureTextEntry
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Routing Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="021000021"
+                      value={paymentFormData.routingNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, routingNumber: text})}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* PayPal Form */}
+              {selectedPaymentType === 'paypal' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>PayPal Account Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>PayPal Email Address</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="john.doe@example.com"
+                      value={paymentFormData.paypalEmail}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, paypalEmail: text})}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  </View>
+                  
+                  <View style={styles.paymentNote}>
+                    <Ionicons name="information-circle" size={16} color="#F59E0B" />
+                    <Text style={styles.paymentNoteText}>
+                      You'll be redirected to PayPal to authorize this connection.
+                    </Text>
+                  </View>
+                </View>
+              )}
+              
+              {/* Gift Card Form */}
+              {selectedPaymentType === 'gift' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Gift Card Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Gift Card Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234 5678 9012 3456"
+                      value={paymentFormData.giftCardNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardNumber: text})}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Security PIN</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234"
+                      value={paymentFormData.giftCardPin}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardPin: text})}
+                      keyboardType="numeric"
+                      maxLength={8}
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* Action Buttons */}
+              <View style={styles.paymentFormActions}>
+                <TouchableOpacity 
+                  style={styles.cancelPaymentButton}
+                  onPress={handleCancelPaymentForm}
+                >
+                  <Text style={styles.cancelPaymentText}>Cancel</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.savePaymentButton}
+                  onPress={handleSavePaymentMethod}
+                >
+                  <Text style={styles.savePaymentText}>Save Payment Method</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Orders Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showOrdersModal}
+        onRequestClose={() => setShowOrdersModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>📦 My Orders</Text>
+              <TouchableOpacity onPress={() => setShowOrdersModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.orderModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={styles.orderDescription}>
+                Your complete order history and tracking information
+              </Text>
+              
+              {/* Summary Stats */}
+              <View style={styles.orderSummary}>
+                <Text style={styles.summaryTitle}>📊 Order Summary</Text>
+                <View style={styles.orderStatsGrid}>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>5</Text>
+                    <Text style={styles.orderStatLabel}>Total Orders</Text>
+                  </View>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>2</Text>
+                    <Text style={styles.orderStatLabel}>Delivered</Text>
+                  </View>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>💎 530</Text>
+                    <Text style={styles.orderStatLabel}>Total Spent</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Recent Orders */}
+              <View style={styles.orderSection}>
+                <Text style={styles.orderSectionTitle}>📋 Recent Orders</Text>
+                
+                {/* Order 1 - Delivered */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-001</Text>
+                      <Text style={styles.orderDate}>Feb 20, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.deliveredStatus]}>
+                      <Text style={styles.orderStatusText}>✅ Delivered</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="headset" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Premium Wireless Headphones</Text>
+                      <Text style={styles.orderItemPrice}>💎 200.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 200.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Review</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 2 - Processing */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-002</Text>
+                      <Text style={styles.orderDate}>Feb 15, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.processingStatus]}>
+                      <Text style={styles.orderStatusText}>⏳ Processing</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="watch" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Smart Fitness Watch</Text>
+                      <Text style={styles.orderItemPrice}>💎 150.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 150.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Track</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 3 - Shipped */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-003</Text>
+                      <Text style={styles.orderDate}>Feb 10, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.shippedStatus]}>
+                      <Text style={styles.orderStatusText}>🚚 Shipped</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="game-controller" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Gaming Mouse Pro</Text>
+                      <Text style={styles.orderItemPrice}>💎 75.00</Text>
+                    </View>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="volume-high" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Bluetooth Speaker</Text>
+                      <Text style={styles.orderItemPrice}>💎 85.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 160.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Track</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Details</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 4 - Delivered */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-004</Text>
+                      <Text style={styles.orderDate}>Feb 5, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.deliveredStatus]}>
+                      <Text style={styles.orderStatusText}>✅ Delivered</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="battery-charging" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Wireless Charging Pad</Text>
+                      <Text style={styles.orderItemPrice}>💎 45.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 45.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Review</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 5 - Cancelled */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-005</Text>
+                      <Text style={styles.orderDate}>Jan 28, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.cancelledStatus]}>
+                      <Text style={styles.orderStatusText}>❌ Cancelled</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="bulb" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Smart LED Bulb</Text>
+                      <Text style={styles.orderItemPrice}>💎 25.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <View style={styles.orderTotalContainer}>
+                      <Text style={styles.orderTotal}>Total: 💎 25.00 TLB</Text>
+                      <Text style={styles.refundedText}>(Refunded)</Text>
+                    </View>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Details</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Action Buttons */}
+              <View style={styles.orderModalActions}>
+                <TouchableOpacity 
+                  style={styles.trackAllButton}
+                  onPress={() => {
+                    setShowOrdersModal(false);
+                    Alert.alert('Track Orders', 'Order tracking feature coming soon!');
+                  }}
+                >
+                  <Ionicons name="location" size={16} color="#FFFFFF" />
+                  <Text style={styles.trackAllText}>Track All Active Orders</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.exportOrdersButton}
+                  onPress={() => {
+                    setShowOrdersModal(false);
+                    Alert.alert('Export', 'Order history export feature coming soon!');
+                  }}
+                >
+                  <Ionicons name="download" size={16} color="#FFFFFF" />
+                  <Text style={styles.exportOrdersText}>Export Order History</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Notifications Modal */}
       <Modal
@@ -1107,6 +1707,25 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderWidth: 2,
     borderColor: '#D4AF37',
+    position: 'relative',
+  },
+  avatarImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#D4AF37',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   profileInfo: {
     flex: 1,
@@ -1883,6 +2502,516 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   manageText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  paymentDescription: {
+    fontSize: 16,
+    color: '#2C1810',
+    marginBottom: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  paymentSummary: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  paymentStatsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  paymentStatCard: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 80,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  paymentStatNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 3,
+  },
+  paymentStatLabel: {
+    fontSize: 11,
+    color: '#8B4513',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  paymentSection: {
+    marginBottom: 25,
+  },
+  paymentSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
+  },
+  paymentMethodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  defaultPaymentMethod: {
+    borderColor: '#10B981',
+    borderWidth: 2,
+    backgroundColor: '#F0FDF4',
+  },
+  paymentMethodIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  paymentMethodEmoji: {
+    fontSize: 24,
+  },
+  paymentMethodContent: {
+    flex: 1,
+    marginRight: 10,
+  },
+  paymentMethodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  paymentMethodType: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginRight: 8,
+  },
+  defaultBadge: {
+    backgroundColor: '#10B981',
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  defaultText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  paymentMethodDetails: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 3,
+  },
+  paymentMethodExtra: {
+    fontSize: 12,
+    color: '#A0522D',
+    fontWeight: '500',
+  },
+  paymentMethodBalance: {
+    fontSize: 14,
+    color: '#D4AF37',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  paymentMethodStatus: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+  },
+  statusActive: {
+    fontSize: 18,
+  },
+  statusConnected: {
+    fontSize: 18,
+  },
+  paymentSecurity: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#10B981',
+  },
+  paymentSecurityText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#065F46',
+    fontWeight: '500',
+    lineHeight: 16,
+    marginLeft: 8,
+  },
+  paymentActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#D4AF37',
+    gap: 12,
+  },
+  addMethodButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addMethodText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  manageMethodsButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  manageMethodsText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  // Payment form styles
+  paymentForm: {
+    marginBottom: 20,
+  },
+  formSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+  },
+  inputGroup: {
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#8B4513',
+    marginBottom: 8,
+  },
+  paymentInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#2C1810',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  inputGroupHalf: {
+    flex: 1,
+  },
+  paymentNote: {
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  paymentNoteText: {
+    fontSize: 12,
+    color: '#856404',
+    marginLeft: 8,
+    flex: 1,
+  },
+  paymentFormActions: {
+    flexDirection: 'row',
+    gap: 15,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    marginTop: 20,
+  },
+  cancelPaymentButton: {
+    flex: 1,
+    backgroundColor: '#8B4513',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  cancelPaymentText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  savePaymentButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  savePaymentText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  // Orders modal styles
+  orderModalContentContainer: {
+    paddingBottom: 30,
+  },
+  orderDescription: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  orderSummary: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  orderStatsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  orderStatCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  orderStatNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  orderStatLabel: {
+    fontSize: 10,
+    color: '#8B4513',
+    textAlign: 'center',
+  },
+  orderSection: {
+    marginBottom: 20,
+  },
+  orderSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+  },
+  orderCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  orderIdSection: {
+    flex: 1,
+  },
+  orderId: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  orderDate: {
+    fontSize: 12,
+    color: '#8B4513',
+    marginTop: 2,
+  },
+  orderStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  deliveredStatus: {
+    backgroundColor: '#D1FAE5',
+  },
+  processingStatus: {
+    backgroundColor: '#FEF3C7',
+  },
+  shippedStatus: {
+    backgroundColor: '#DBEAFE',
+  },
+  cancelledStatus: {
+    backgroundColor: '#FEE2E2',
+  },
+  orderStatusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  orderItems: {
+    marginBottom: 12,
+  },
+  orderItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  orderItemName: {
+    flex: 1,
+    fontSize: 14,
+    color: '#2C1810',
+    marginLeft: 8,
+  },
+  orderItemPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#D4AF37',
+  },
+  orderFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    paddingTop: 12,
+    minHeight: 40,
+  },
+  orderTotalContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  refundedText: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  orderActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  orderActionButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginLeft: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  orderModalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingTop: 15,
+    paddingBottom: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    marginTop: 15,
+  },
+  trackAllButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackAllText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  exportOrdersButton: {
+    flex: 1,
+    backgroundColor: '#8B4513',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  exportOrdersText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
