@@ -61,6 +61,54 @@ export default function CommunityScreen() {
     Alert.alert('Share Referral', 'Your referral code: JOHN2024\n\nShare this code with friends!');
   };
 
+  const handleViewFullTree = () => {
+    const fullTreeData = [
+      {
+        generation: 1,
+        referrals: [
+          { name: 'Sarah M.', joined: '2024-01-15', earnings: '💎 8.50', status: 'Active' },
+          { name: 'Mike K.', joined: '2024-01-20', earnings: '💎 5.20', status: 'Active' },
+          { name: 'Emma L.', joined: '2024-02-03', earnings: '💎 6.80', status: 'Active' },
+          { name: 'David R.', joined: '2024-02-10', earnings: '💎 2.40', status: 'New' },
+          { name: 'Lisa P.', joined: '2024-02-15', earnings: '💎 2.10', status: 'New' }
+        ]
+      },
+      {
+        generation: 2,
+        referrals: [
+          { name: 'Alex T.', joined: '2024-01-25', earnings: '💎 3.20', status: 'Active' },
+          { name: 'Nina S.', joined: '2024-02-01', earnings: '💎 2.80', status: 'Active' },
+          { name: 'James W.', joined: '2024-02-05', earnings: '💎 2.10', status: 'Active' },
+          { name: 'Maria G.', joined: '2024-02-12', earnings: '💎 1.90', status: 'New' },
+          { name: 'Tom H.', joined: '2024-02-18', earnings: '💎 1.50', status: 'New' },
+          { name: 'Kate B.', joined: '2024-02-20', earnings: '💎 1.20', status: 'New' },
+          { name: 'Ryan C.', joined: '2024-02-22', earnings: '💎 1.30', status: 'New' }
+        ]
+      }
+    ];
+
+    const treeDisplay = fullTreeData.map(gen => {
+      const genDisplay = gen.referrals.map(ref => 
+        `  ${ref.name} - ${ref.earnings} (${ref.status})`
+      ).join('\n');
+      
+      return `Generation ${gen.generation} (${gen.referrals.length} people):\n${genDisplay}`;
+    }).join('\n\n');
+
+    const totalPeople = fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0);
+    const totalTreeEarnings = referralStats.totalEarnings;
+
+    Alert.alert(
+      '🌳 Full Referral Tree',
+      `Your complete referral network:\n\n${treeDisplay}\n\n📊 Summary:\n• Total Network: ${totalPeople} people\n• Total Earnings: 💎 ${totalTreeEarnings} TLB\n• Active Generations: ${fullTreeData.length}\n• Commission Rate: 50% (Gen 1), 25% (Gen 2)`,
+      [
+        { text: 'Share Network', onPress: () => Alert.alert('Share', 'Network sharing feature coming soon!') },
+        { text: 'Export Data', onPress: () => Alert.alert('Export', 'Network data export feature coming soon!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Your Network Overview */}
@@ -144,7 +192,7 @@ export default function CommunityScreen() {
           ))}
         </View>
         
-        <TouchableOpacity style={styles.viewTreeButton}>
+        <TouchableOpacity style={styles.viewTreeButton} onPress={handleViewFullTree}>
           <Text style={styles.viewTreeText}>View Full Tree</Text>
           <Ionicons name="arrow-forward" size={16} color="#D4AF37" />
         </TouchableOpacity>

@@ -83,6 +83,65 @@ export default function WalletScreen({ navigation }) {
     Alert.alert('Transaction Details', `${transaction.title}\nAmount: 💎 ${transaction.amount} TLB`);
   };
 
+  const handleViewAllTransactions = () => {
+    const allTransactions = [
+      ...transactions,
+      {
+        id: 5,
+        type: 'received',
+        amount: 25.00,
+        title: 'Daily Login Bonus',
+        subtitle: 'Streak: 7 days',
+        time: '4 days ago',
+        icon: 'calendar',
+        color: '#10B981'
+      },
+      {
+        id: 6,
+        type: 'sent',
+        amount: 75.00,
+        title: 'Gaming Mouse Pro',
+        subtitle: 'Installment #1',
+        time: '5 days ago',
+        icon: 'storefront',
+        color: '#EF4444'
+      },
+      {
+        id: 7,
+        type: 'received',
+        amount: 10.00,
+        title: 'Weekly Bonus',
+        subtitle: 'Community reward',
+        time: '1 week ago',
+        icon: 'gift',
+        color: '#10B981'
+      },
+      {
+        id: 8,
+        type: 'sent',
+        amount: 150.00,
+        title: 'Smart Fitness Watch',
+        subtitle: 'Full payment',
+        time: '1 week ago',
+        icon: 'card',
+        color: '#EF4444'
+      }
+    ];
+
+    const transactionList = allTransactions
+      .map(t => `${t.type === 'received' ? '+' : '-'}💎 ${t.amount} TLB - ${t.title} (${t.time})`)
+      .join('\n\n');
+
+    Alert.alert(
+      '💎 All Transactions',
+      `Recent transaction history:\n\n${transactionList}\n\nTotal transactions: ${allTransactions.length}`,
+      [
+        { text: 'Export History', onPress: () => Alert.alert('Export', 'Transaction history export feature coming soon!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   const totalBalance = walletData.available + walletData.locked + walletData.pending;
 
   return (
@@ -173,7 +232,7 @@ export default function WalletScreen({ navigation }) {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
-          <TouchableOpacity onPress={() => handleQuickAction('View All')}>
+          <TouchableOpacity onPress={handleViewAllTransactions}>
             <Text style={styles.viewAllText}>View All</Text>
           </TouchableOpacity>
         </View>
