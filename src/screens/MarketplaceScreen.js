@@ -5,6 +5,7 @@ import {
   ScrollView, 
   TouchableOpacity, 
   TextInput,
+  Image,
   StyleSheet,
   Dimensions
 } from 'react-native';
@@ -36,7 +37,7 @@ export default function MarketplaceScreen({ navigation }) {
       seller: 'TechStore',
       supportBonus: 50,
       installments: 4,
-      image: 'headset',
+      image: require('../../assets/pic1.jpeg'),
       featured: true
     },
     {
@@ -48,7 +49,7 @@ export default function MarketplaceScreen({ navigation }) {
       seller: 'FitGear',
       supportBonus: 50,
       installments: 3,
-      image: 'watch',
+      image: require('../../assets/pic2.jpeg'),
       featured: false
     },
     {
@@ -60,7 +61,7 @@ export default function MarketplaceScreen({ navigation }) {
       seller: 'GameHub',
       supportBonus: 40,
       installments: 2,
-      image: 'tablet',
+      image: require('../../assets/pic3.jpeg'),
       featured: true
     },
     {
@@ -72,7 +73,7 @@ export default function MarketplaceScreen({ navigation }) {
       seller: 'AudioMax',
       supportBonus: 45,
       installments: 2,
-      image: 'musical-notes',
+      image: require('../../assets/pic4.jpeg'),
       featured: false
     }
   ];
@@ -183,7 +184,11 @@ export default function MarketplaceScreen({ navigation }) {
                 )}
                 
                 <View style={styles.productImage}>
-                  <Ionicons name={product.image} size={40} color="#D4AF37" />
+                  <Image 
+                    source={product.image} 
+                    style={styles.productImageStyle}
+                    resizeMode="cover"
+                  />
                 </View>
                 
                 <View style={styles.productInfo}>
@@ -370,6 +375,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
+    overflow: 'hidden',
+  },
+  productImageStyle: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
   },
   productInfo: {
     flex: 1,
