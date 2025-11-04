@@ -9,6 +9,7 @@ export default function ProfileScreen({ navigation }) {
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState('');
   const [paymentFormData, setPaymentFormData] = useState({
     cardNumber: '',
@@ -58,80 +59,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleMyOrders = () => {
-    const orderHistory = [
-      {
-        id: 'ORD-001',
-        date: '2024-02-20',
-        status: 'Delivered',
-        total: 200.00,
-        items: [
-          { name: 'Premium Wireless Headphones', price: 200.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-002',
-        date: '2024-02-15',
-        status: 'Processing',
-        total: 150.00,
-        items: [
-          { name: 'Smart Fitness Watch', price: 150.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-003',
-        date: '2024-02-10',
-        status: 'Shipped',
-        total: 160.00,
-        items: [
-          { name: 'Gaming Mouse Pro', price: 75.00, qty: 1 },
-          { name: 'Bluetooth Speaker', price: 85.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-004',
-        date: '2024-02-05',
-        status: 'Delivered',
-        total: 45.00,
-        items: [
-          { name: 'Wireless Charging Pad', price: 45.00, qty: 1 }
-        ]
-      },
-      {
-        id: 'ORD-005',
-        date: '2024-01-28',
-        status: 'Cancelled',
-        total: 25.00,
-        items: [
-          { name: 'Smart LED Bulb', price: 25.00, qty: 1 }
-        ]
-      }
-    ];
-
-    const orderSummary = orderHistory.map(order => {
-      const itemsList = order.items.map(item => `  • ${item.name} (×${item.qty}) - 💎 ${item.price}`).join('\n');
-      const statusEmoji = order.status === 'Delivered' ? '✅' : 
-                         order.status === 'Shipped' ? '🚚' : 
-                         order.status === 'Processing' ? '⏳' : 
-                         order.status === 'Cancelled' ? '❌' : '📦';
-      
-      return `${statusEmoji} ${order.id} (${order.date})\nStatus: ${order.status}\nTotal: 💎 ${order.total} TLB\nItems:\n${itemsList}`;
-    }).join('\n\n─────────────────────\n\n');
-
-    const totalOrders = orderHistory.length;
-    const totalSpent = orderHistory
-      .filter(order => order.status !== 'Cancelled')
-      .reduce((sum, order) => sum + order.total, 0);
-    const deliveredOrders = orderHistory.filter(order => order.status === 'Delivered').length;
-
-    Alert.alert(
-      '📦 My Order History',
-      `Your complete order history:\n\n${orderSummary}\n\n📊 Summary:\n• Total Orders: ${totalOrders}\n• Delivered: ${deliveredOrders}\n• Total Spent: 💎 ${totalSpent} TLB\n• Active Orders: ${orderHistory.filter(o => o.status === 'Processing' || o.status === 'Shipped').length}`,
-      [
-        { text: 'Track Order', onPress: () => Alert.alert('Track Order', 'Order tracking feature coming soon!') },
-        { text: 'Reorder', onPress: () => Alert.alert('Reorder', 'Quick reorder feature coming soon!') },
-        { text: 'Close', style: 'cancel' }
-      ]
-    );
+    setShowOrdersModal(true);
   };
 
   const handlePaymentMethods = () => {
@@ -771,6 +699,257 @@ export default function ProfileScreen({ navigation }) {
                   onPress={handleSavePaymentMethod}
                 >
                   <Text style={styles.savePaymentText}>Save Payment Method</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Orders Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showOrdersModal}
+        onRequestClose={() => setShowOrdersModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>📦 My Orders</Text>
+              <TouchableOpacity onPress={() => setShowOrdersModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.orderModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={styles.orderDescription}>
+                Your complete order history and tracking information
+              </Text>
+              
+              {/* Summary Stats */}
+              <View style={styles.orderSummary}>
+                <Text style={styles.summaryTitle}>📊 Order Summary</Text>
+                <View style={styles.orderStatsGrid}>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>5</Text>
+                    <Text style={styles.orderStatLabel}>Total Orders</Text>
+                  </View>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>2</Text>
+                    <Text style={styles.orderStatLabel}>Delivered</Text>
+                  </View>
+                  <View style={styles.orderStatCard}>
+                    <Text style={styles.orderStatNumber}>💎 530</Text>
+                    <Text style={styles.orderStatLabel}>Total Spent</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Recent Orders */}
+              <View style={styles.orderSection}>
+                <Text style={styles.orderSectionTitle}>📋 Recent Orders</Text>
+                
+                {/* Order 1 - Delivered */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-001</Text>
+                      <Text style={styles.orderDate}>Feb 20, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.deliveredStatus]}>
+                      <Text style={styles.orderStatusText}>✅ Delivered</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="headset" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Premium Wireless Headphones</Text>
+                      <Text style={styles.orderItemPrice}>💎 200.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 200.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Review</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 2 - Processing */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-002</Text>
+                      <Text style={styles.orderDate}>Feb 15, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.processingStatus]}>
+                      <Text style={styles.orderStatusText}>⏳ Processing</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="watch" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Smart Fitness Watch</Text>
+                      <Text style={styles.orderItemPrice}>💎 150.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 150.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Track</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 3 - Shipped */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-003</Text>
+                      <Text style={styles.orderDate}>Feb 10, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.shippedStatus]}>
+                      <Text style={styles.orderStatusText}>🚚 Shipped</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="game-controller" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Gaming Mouse Pro</Text>
+                      <Text style={styles.orderItemPrice}>💎 75.00</Text>
+                    </View>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="volume-high" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Bluetooth Speaker</Text>
+                      <Text style={styles.orderItemPrice}>💎 85.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 160.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Track</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Details</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 4 - Delivered */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-004</Text>
+                      <Text style={styles.orderDate}>Feb 5, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.deliveredStatus]}>
+                      <Text style={styles.orderStatusText}>✅ Delivered</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="battery-charging" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Wireless Charging Pad</Text>
+                      <Text style={styles.orderItemPrice}>💎 45.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <Text style={styles.orderTotal}>Total: 💎 45.00 TLB</Text>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Review</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                {/* Order 5 - Cancelled */}
+                <View style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <View style={styles.orderIdSection}>
+                      <Text style={styles.orderId}>ORD-005</Text>
+                      <Text style={styles.orderDate}>Jan 28, 2024</Text>
+                    </View>
+                    <View style={[styles.orderStatus, styles.cancelledStatus]}>
+                      <Text style={styles.orderStatusText}>❌ Cancelled</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderItems}>
+                    <View style={styles.orderItem}>
+                      <Ionicons name="bulb" size={16} color="#D4AF37" />
+                      <Text style={styles.orderItemName}>Smart LED Bulb</Text>
+                      <Text style={styles.orderItemPrice}>💎 25.00</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.orderFooter}>
+                    <View style={styles.orderTotalContainer}>
+                      <Text style={styles.orderTotal}>Total: 💎 25.00 TLB</Text>
+                      <Text style={styles.refundedText}>(Refunded)</Text>
+                    </View>
+                    <View style={styles.orderActions}>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Reorder</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.orderActionButton}>
+                        <Text style={styles.orderActionText}>Details</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Action Buttons */}
+              <View style={styles.orderModalActions}>
+                <TouchableOpacity 
+                  style={styles.trackAllButton}
+                  onPress={() => {
+                    setShowOrdersModal(false);
+                    Alert.alert('Track Orders', 'Order tracking feature coming soon!');
+                  }}
+                >
+                  <Ionicons name="location" size={16} color="#FFFFFF" />
+                  <Text style={styles.trackAllText}>Track All Active Orders</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.exportOrdersButton}
+                  onPress={() => {
+                    setShowOrdersModal(false);
+                    Alert.alert('Export', 'Order history export feature coming soon!');
+                  }}
+                >
+                  <Ionicons name="download" size={16} color="#FFFFFF" />
+                  <Text style={styles.exportOrdersText}>Export Order History</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -2557,5 +2736,223 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  // Orders modal styles
+  orderModalContentContainer: {
+    paddingBottom: 30,
+  },
+  orderDescription: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  orderSummary: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  orderStatsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  orderStatCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  orderStatNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  orderStatLabel: {
+    fontSize: 10,
+    color: '#8B4513',
+    textAlign: 'center',
+  },
+  orderSection: {
+    marginBottom: 20,
+  },
+  orderSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+  },
+  orderCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  orderIdSection: {
+    flex: 1,
+  },
+  orderId: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  orderDate: {
+    fontSize: 12,
+    color: '#8B4513',
+    marginTop: 2,
+  },
+  orderStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  deliveredStatus: {
+    backgroundColor: '#D1FAE5',
+  },
+  processingStatus: {
+    backgroundColor: '#FEF3C7',
+  },
+  shippedStatus: {
+    backgroundColor: '#DBEAFE',
+  },
+  cancelledStatus: {
+    backgroundColor: '#FEE2E2',
+  },
+  orderStatusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  orderItems: {
+    marginBottom: 12,
+  },
+  orderItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  orderItemName: {
+    flex: 1,
+    fontSize: 14,
+    color: '#2C1810',
+    marginLeft: 8,
+  },
+  orderItemPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#D4AF37',
+  },
+  orderFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    paddingTop: 12,
+    minHeight: 40,
+  },
+  orderTotalContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  refundedText: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  orderActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  orderActionButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginLeft: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  orderModalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingTop: 15,
+    paddingBottom: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    marginTop: 15,
+  },
+  trackAllButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackAllText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  exportOrdersButton: {
+    flex: 1,
+    backgroundColor: '#8B4513',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  exportOrdersText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
   },
 });
