@@ -100,18 +100,39 @@ export default function HomeScreen({ navigation }) {
 
       {/* Quick Actions */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActionsGrid}>
-          {quickActions.map((action, index) => (
-            <TouchableOpacity 
-              key={index}
-              style={[styles.quickActionButton, { backgroundColor: action.color }]}
-              onPress={() => handleQuickAction(action.screen || action.action)}
-            >
-              <Ionicons name={action.icon} size={24} color="#FFFFFF" />
-              <Text style={styles.quickActionLabel}>{action.label}</Text>
-            </TouchableOpacity>
-          ))}
+        <Text style={styles.sectionTitle}>⚡ Quick Actions</Text>
+        <View style={styles.quickActionsContainer}>
+          {/* First Row - 4 buttons */}
+          <View style={styles.quickActionsRow}>
+            {quickActions.slice(0, 4).map((action, index) => (
+              <TouchableOpacity 
+                key={index}
+                style={[styles.quickActionButton, { backgroundColor: action.color }]}
+                onPress={() => handleQuickAction(action.screen || action.action)}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Ionicons name={action.icon} size={22} color="#FFFFFF" />
+                </View>
+                <Text style={styles.quickActionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          
+          {/* Second Row - 3 buttons */}
+          <View style={styles.quickActionsRow}>
+            {quickActions.slice(4, 7).map((action, index) => (
+              <TouchableOpacity 
+                key={index + 4}
+                style={[styles.quickActionButton, { backgroundColor: action.color }]}
+                onPress={() => handleQuickAction(action.screen || action.action)}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Ionicons name={action.icon} size={22} color="#FFFFFF" />
+                </View>
+                <Text style={styles.quickActionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
@@ -271,29 +292,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  quickActionsGrid: {
+  quickActionsContainer: {
+    gap: 12,
+  },
+  quickActionsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    paddingHorizontal: 2,
   },
   quickActionButton: {
-    width: (width - 60) / 3,
-    aspectRatio: 1,
-    borderRadius: 12,
+    flex: 1,
+    aspectRatio: 1.1,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginHorizontal: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  quickActionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   quickActionLabel: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 5,
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   overviewGrid: {
     flexDirection: 'row',
