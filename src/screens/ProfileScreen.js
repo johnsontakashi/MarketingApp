@@ -6,6 +6,7 @@ export default function ProfileScreen({ navigation }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [profileData, setProfileData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -272,6 +273,10 @@ export default function ProfileScreen({ navigation }) {
     setShowHelpModal(true);
   };
 
+  const handleNotifications = () => {
+    setShowNotificationsModal(true);
+  };
+
   const handleMenuPress = (action) => {
     switch (action) {
       case 'editProfile':
@@ -288,6 +293,9 @@ export default function ProfileScreen({ navigation }) {
         break;
       case 'support':
         handleHelpSupport();
+        break;
+      case 'notifications':
+        handleNotifications();
         break;
       case 'deviceStatus':
         navigation.navigate('DeviceStatus');
@@ -391,6 +399,207 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.versionText}>TLB Diamond v1.0.0</Text>
         <Text style={styles.buildText}>Build 2024.10.29</Text>
       </View>
+
+      {/* Notifications Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showNotificationsModal}
+        onRequestClose={() => setShowNotificationsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>🔔 Notifications</Text>
+              <TouchableOpacity onPress={() => setShowNotificationsModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              <Text style={styles.notificationDescription}>
+                Your notification center
+              </Text>
+              
+              {/* Summary Stats */}
+              <View style={styles.notificationSummary}>
+                <Text style={styles.summaryTitle}>📊 Summary</Text>
+                <View style={styles.summaryStatsGrid}>
+                  <View style={styles.summaryStatCard}>
+                    <Text style={styles.summaryStatNumber}>5</Text>
+                    <Text style={styles.summaryStatLabel}>Total</Text>
+                  </View>
+                  <View style={styles.summaryStatCard}>
+                    <Text style={styles.summaryStatNumber}>2</Text>
+                    <Text style={styles.summaryStatLabel}>Unread</Text>
+                  </View>
+                  <View style={styles.summaryStatCard}>
+                    <Text style={styles.summaryStatNumber}>3</Text>
+                    <Text style={styles.summaryStatLabel}>Read</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Recent Notifications */}
+              <View style={styles.notificationSection}>
+                <Text style={styles.notificationSectionTitle}>🔔 Recent Notifications</Text>
+                
+                <TouchableOpacity style={[styles.notificationItem, styles.unreadNotification]}>
+                  <View style={styles.notificationIcon}>
+                    <Text style={styles.notificationEmoji}>💳</Text>
+                  </View>
+                  <View style={styles.notificationContent}>
+                    <Text style={styles.notificationTitle}>Payment Reminder</Text>
+                    <Text style={styles.notificationMessage}>Next payment due in 3 days for your Wireless Headphones order</Text>
+                    <Text style={styles.notificationTime}>2 hours ago</Text>
+                  </View>
+                  <View style={styles.notificationStatus}>
+                    <View style={[styles.priorityDot, { backgroundColor: '#EF4444' }]} />
+                    <View style={styles.unreadDot} />
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={[styles.notificationItem, styles.unreadNotification]}>
+                  <View style={styles.notificationIcon}>
+                    <Text style={styles.notificationEmoji}>🎁</Text>
+                  </View>
+                  <View style={styles.notificationContent}>
+                    <Text style={styles.notificationTitle}>Daily Login Bonus Available</Text>
+                    <Text style={styles.notificationMessage}>Claim your 7-day streak bonus: 📎 5.00 TLB</Text>
+                    <Text style={styles.notificationTime}>4 hours ago</Text>
+                  </View>
+                  <View style={styles.notificationStatus}>
+                    <View style={[styles.priorityDot, { backgroundColor: '#F59E0B' }]} />
+                    <View style={styles.unreadDot} />
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.notificationItem}>
+                  <View style={styles.notificationIcon}>
+                    <Text style={styles.notificationEmoji}>🔒</Text>
+                  </View>
+                  <View style={styles.notificationContent}>
+                    <Text style={styles.notificationTitle}>Security Update Complete</Text>
+                    <Text style={styles.notificationMessage}>Your device has been successfully secured with latest updates</Text>
+                    <Text style={styles.notificationTime}>1 day ago</Text>
+                  </View>
+                  <View style={styles.notificationStatus}>
+                    <View style={[styles.priorityDot, { backgroundColor: '#10B981' }]} />
+                    <Ionicons name="checkmark" size={12} color="#10B981" />
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.notificationItem}>
+                  <View style={styles.notificationIcon}>
+                    <Text style={styles.notificationEmoji}>🚚</Text>
+                  </View>
+                  <View style={styles.notificationContent}>
+                    <Text style={styles.notificationTitle}>Order Shipped</Text>
+                    <Text style={styles.notificationMessage}>Your Gaming Mouse Pro has been shipped! Track: #TLB123456</Text>
+                    <Text style={styles.notificationTime}>2 days ago</Text>
+                  </View>
+                  <View style={styles.notificationStatus}>
+                    <View style={[styles.priorityDot, { backgroundColor: '#F59E0B' }]} />
+                    <Ionicons name="checkmark" size={12} color="#10B981" />
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.notificationItem}>
+                  <View style={styles.notificationIcon}>
+                    <Text style={styles.notificationEmoji}>👥</Text>
+                  </View>
+                  <View style={styles.notificationContent}>
+                    <Text style={styles.notificationTitle}>New Referral Bonus</Text>
+                    <Text style={styles.notificationMessage}>Sarah M. joined using your referral code. You earned 📎 2.50 TLB</Text>
+                    <Text style={styles.notificationTime}>3 days ago</Text>
+                  </View>
+                  <View style={styles.notificationStatus}>
+                    <View style={[styles.priorityDot, { backgroundColor: '#10B981' }]} />
+                    <Ionicons name="checkmark" size={12} color="#10B981" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Notification Settings */}
+              <View style={styles.notificationSection}>
+                <Text style={styles.notificationSectionTitle}>⚙️ Current Settings</Text>
+                
+                <View style={styles.settingItem}>
+                  <View style={styles.settingInfo}>
+                    <Text style={styles.settingName}>Push Notifications</Text>
+                    <Text style={styles.settingDescription}>Receive notifications on your device</Text>
+                  </View>
+                  <View style={styles.settingToggle}>
+                    <Text style={styles.settingStatus}>✅</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.settingItem}>
+                  <View style={styles.settingInfo}>
+                    <Text style={styles.settingName}>Payment Alerts</Text>
+                    <Text style={styles.settingDescription}>Reminders for upcoming payments</Text>
+                  </View>
+                  <View style={styles.settingToggle}>
+                    <Text style={styles.settingStatus}>✅</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.settingItem}>
+                  <View style={styles.settingInfo}>
+                    <Text style={styles.settingName}>Order Updates</Text>
+                    <Text style={styles.settingDescription}>Shipping and delivery notifications</Text>
+                  </View>
+                  <View style={styles.settingToggle}>
+                    <Text style={styles.settingStatus}>✅</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.settingItem}>
+                  <View style={styles.settingInfo}>
+                    <Text style={styles.settingName}>Community Updates</Text>
+                    <Text style={styles.settingDescription}>Referral and community activity</Text>
+                  </View>
+                  <View style={styles.settingToggle}>
+                    <Text style={styles.settingStatus}>❌</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Tip */}
+              <View style={styles.notificationTip}>
+                <Ionicons name="bulb" size={16} color="#F59E0B" />
+                <Text style={styles.notificationTipText}>
+                  Tap on any notification to view details and take action. Manage all settings from the main settings menu.
+                </Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.notificationActions}>
+              <TouchableOpacity 
+                style={styles.markReadButton}
+                onPress={() => {
+                  setShowNotificationsModal(false);
+                  Alert.alert('Marked as Read', 'All notifications have been marked as read!');
+                }}
+              >
+                <Ionicons name="checkmark-done" size={16} color="#FFFFFF" />
+                <Text style={styles.markReadText}>Mark All Read</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.manageButton}
+                onPress={() => {
+                  setShowNotificationsModal(false);
+                  Alert.alert('Notification Settings', 'Notification preferences can be customized in the full settings menu.\n\nComing features:\n• Custom notification times\n• Priority filtering\n• Sound preferences\n• Do not disturb schedules');
+                }}
+              >
+                <Ionicons name="settings" size={16} color="#FFFFFF" />
+                <Text style={styles.manageText}>Manage Settings</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Help & Support Modal */}
       <Modal
@@ -1454,6 +1663,226 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   ticketText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  notificationDescription: {
+    fontSize: 16,
+    color: '#2C1810',
+    marginBottom: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  notificationSummary: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  summaryStatsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  summaryStatCard: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 60,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  summaryStatNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 3,
+  },
+  summaryStatLabel: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontWeight: '600',
+  },
+  notificationSection: {
+    marginBottom: 25,
+  },
+  notificationSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
+  },
+  notificationItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  unreadNotification: {
+    borderColor: '#F59E0B',
+    borderWidth: 2,
+    backgroundColor: '#FFFBEB',
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  notificationEmoji: {
+    fontSize: 20,
+  },
+  notificationContent: {
+    flex: 1,
+    marginRight: 10,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: '#8B4513',
+    lineHeight: 18,
+    marginBottom: 6,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: '#A0522D',
+    fontWeight: '500',
+  },
+  notificationStatus: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+  },
+  priorityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginBottom: 6,
+  },
+  unreadDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#F59E0B',
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 14,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  settingInfo: {
+    flex: 1,
+  },
+  settingName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 12,
+    color: '#8B4513',
+    lineHeight: 16,
+  },
+  settingToggle: {
+    width: 30,
+    alignItems: 'center',
+  },
+  settingStatus: {
+    fontSize: 16,
+  },
+  notificationTip: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FFFBEB',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+  },
+  notificationTipText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#8B4513',
+    fontStyle: 'italic',
+    lineHeight: 16,
+    marginLeft: 8,
+  },
+  notificationActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#D4AF37',
+    gap: 12,
+  },
+  markReadButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  markReadText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  manageButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  manageText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
