@@ -7,6 +7,21 @@ export default function ProfileScreen({ navigation }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [selectedPaymentType, setSelectedPaymentType] = useState('');
+  const [paymentFormData, setPaymentFormData] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardholderName: '',
+    bankName: '',
+    accountNumber: '',
+    routingNumber: '',
+    paypalEmail: '',
+    giftCardNumber: '',
+    giftCardPin: ''
+  });
   const [profileData, setProfileData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -120,82 +135,72 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handlePaymentMethods = () => {
-    const paymentMethods = [
-      {
-        id: 'pm_001',
-        type: 'TLB Wallet',
-        details: 'Primary Payment Method',
-        balance: '💎 1,250.00 TLB',
-        status: 'Active',
-        default: true,
-        icon: '💎'
-      },
-      {
-        id: 'pm_002',
-        type: 'Credit Card',
-        details: '**** **** **** 4532',
-        brand: 'Visa',
-        expiry: '12/27',
-        status: 'Active',
-        default: false,
-        icon: '💳'
-      },
-      {
-        id: 'pm_003',
-        type: 'Bank Account',
-        details: 'Chase Bank ****1234',
-        routing: 'ACH Transfer',
-        status: 'Verified',
-        default: false,
-        icon: '🏦'
-      },
-      {
-        id: 'pm_004',
-        type: 'PayPal',
-        details: 'john.doe@example.com',
-        status: 'Connected',
-        default: false,
-        icon: '🅿️'
-      },
-      {
-        id: 'pm_005',
-        type: 'Gift Card',
-        details: 'TLB Gift Card ****8765',
-        balance: '💎 50.00 TLB',
-        status: 'Active',
-        default: false,
-        icon: '🎁'
-      }
-    ];
+    setShowPaymentModal(true);
+  };
 
-    const methodsList = paymentMethods.map(method => {
-      const statusEmoji = method.status === 'Active' ? '✅' : 
-                         method.status === 'Verified' ? '✅' : 
-                         method.status === 'Connected' ? '🔗' : '⚠️';
-      const defaultText = method.default ? ' (Default)' : '';
-      const balanceText = method.balance ? `\nBalance: ${method.balance}` : '';
-      const additionalInfo = method.brand ? `\nBrand: ${method.brand} | Expires: ${method.expiry}` :
-                             method.routing ? `\nType: ${method.routing}` : '';
-      
-      return `${method.icon} ${method.type}${defaultText}\n${statusEmoji} ${method.details}${balanceText}${additionalInfo}`;
-    }).join('\n\n─────────────────────\n\n');
+  const handleAddPaymentMethod = (type) => {
+    setSelectedPaymentType(type);
+    setPaymentFormData({
+      cardNumber: '',
+      expiryDate: '',
+      cvv: '',
+      cardholderName: '',
+      bankName: '',
+      accountNumber: '',
+      routingNumber: '',
+      paypalEmail: '',
+      giftCardNumber: '',
+      giftCardPin: ''
+    });
+    setShowPaymentModal(false);
+    setShowAddPaymentModal(true);
+  };
 
-    const totalMethods = paymentMethods.length;
-    const activeMethods = paymentMethods.filter(method => 
-      method.status === 'Active' || method.status === 'Verified' || method.status === 'Connected'
-    ).length;
-    const defaultMethod = paymentMethods.find(method => method.default);
-    const tlbBalance = paymentMethods.find(method => method.type === 'TLB Wallet')?.balance || '💎 0.00';
+  const handleSavePaymentMethod = () => {
+    let isValid = false;
+    let message = '';
 
-    Alert.alert(
-      '💳 Payment Methods',
-      `Your saved payment methods:\n\n${methodsList}\n\n📊 Summary:\n• Total Methods: ${totalMethods}\n• Active Methods: ${activeMethods}\n• Default: ${defaultMethod?.type || 'None'}\n• TLB Wallet: ${tlbBalance}\n\n⚡ All payments are secured with 256-bit encryption`,
-      [
-        { text: 'Add New Method', onPress: () => Alert.alert('Add Payment', 'New payment method setup coming soon!') },
-        { text: 'Manage Methods', onPress: () => Alert.alert('Manage', 'Payment method management coming soon!') },
-        { text: 'Close', style: 'cancel' }
-      ]
-    );
+    switch (selectedPaymentType) {
+      case 'credit':
+        isValid = paymentFormData.cardNumber && paymentFormData.expiryDate && 
+                 paymentFormData.cvv && paymentFormData.cardholderName;
+        message = isValid ? 
+          `Credit Card ending in ${paymentFormData.cardNumber.slice(-4)} has been added successfully!` :
+          'Please fill in all credit card fields.';
+        break;
+      case 'bank':
+        isValid = paymentFormData.bankName && paymentFormData.accountNumber && 
+                 paymentFormData.routingNumber;
+        message = isValid ? 
+          `Bank account at ${paymentFormData.bankName} has been added successfully!` :
+          'Please fill in all bank account fields.';
+        break;
+      case 'paypal':
+        isValid = paymentFormData.paypalEmail;
+        message = isValid ? 
+          `PayPal account ${paymentFormData.paypalEmail} has been added successfully!` :
+          'Please enter your PayPal email address.';
+        break;
+      case 'gift':
+        isValid = paymentFormData.giftCardNumber && paymentFormData.giftCardPin;
+        message = isValid ? 
+          `Gift card ending in ${paymentFormData.giftCardNumber.slice(-4)} has been added successfully!` :
+          'Please fill in gift card number and PIN.';
+        break;
+    }
+
+    if (isValid) {
+      setShowAddPaymentModal(false);
+      setShowPaymentModal(true);
+      Alert.alert('Payment Method Added', message);
+    } else {
+      Alert.alert('Incomplete Information', message);
+    }
+  };
+
+  const handleCancelPaymentForm = () => {
+    setShowAddPaymentModal(false);
+    setShowPaymentModal(true);
   };
 
   const handleSettings = () => {
@@ -399,6 +404,379 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.versionText}>TLB Diamond v1.0.0</Text>
         <Text style={styles.buildText}>Build 2024.10.29</Text>
       </View>
+
+      {/* Payment Methods Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showPaymentModal}
+        onRequestClose={() => setShowPaymentModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💳 Payment Methods</Text>
+              <TouchableOpacity onPress={() => setShowPaymentModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              <Text style={styles.paymentDescription}>
+                Your saved payment methods
+              </Text>
+              
+              {/* Summary Stats */}
+              <View style={styles.paymentSummary}>
+                <Text style={styles.summaryTitle}>📊 Summary</Text>
+                <View style={styles.paymentStatsGrid}>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>5</Text>
+                    <Text style={styles.paymentStatLabel}>Total Methods</Text>
+                  </View>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>5</Text>
+                    <Text style={styles.paymentStatLabel}>Active</Text>
+                  </View>
+                  <View style={styles.paymentStatCard}>
+                    <Text style={styles.paymentStatNumber}>💎 1,300</Text>
+                    <Text style={styles.paymentStatLabel}>TLB Balance</Text>
+                  </View>
+                </View>
+              </View>
+              
+              {/* Payment Methods */}
+              <View style={styles.paymentSection}>
+                <Text style={styles.paymentSectionTitle}>💳 Your Payment Methods</Text>
+                
+                {/* TLB Wallet - Default */}
+                <TouchableOpacity style={[styles.paymentMethodCard, styles.defaultPaymentMethod]}>
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>💎</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <View style={styles.paymentMethodHeader}>
+                      <Text style={styles.paymentMethodType}>TLB Wallet</Text>
+                      <View style={styles.defaultBadge}>
+                        <Text style={styles.defaultText}>DEFAULT</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.paymentMethodDetails}>Primary Payment Method</Text>
+                    <Text style={styles.paymentMethodBalance}>💎 1,250.00 TLB</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Credit Card */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('credit')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>💳</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Credit Card</Text>
+                    <Text style={styles.paymentMethodDetails}>**** **** **** 4532</Text>
+                    <Text style={styles.paymentMethodExtra}>Visa | Expires: 12/27</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Bank Account */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('bank')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🏦</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Bank Account</Text>
+                    <Text style={styles.paymentMethodDetails}>Chase Bank ****1234</Text>
+                    <Text style={styles.paymentMethodExtra}>ACH Transfer</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* PayPal */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('paypal')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🅿️</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>PayPal</Text>
+                    <Text style={styles.paymentMethodDetails}>john.doe@example.com</Text>
+                    <Text style={styles.paymentMethodExtra}>Connected Account</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusConnected}>🔗</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+                
+                {/* Gift Card */}
+                <TouchableOpacity 
+                  style={styles.paymentMethodCard}
+                  onPress={() => handleAddPaymentMethod('gift')}
+                >
+                  <View style={styles.paymentMethodIcon}>
+                    <Text style={styles.paymentMethodEmoji}>🎁</Text>
+                  </View>
+                  <View style={styles.paymentMethodContent}>
+                    <Text style={styles.paymentMethodType}>Gift Card</Text>
+                    <Text style={styles.paymentMethodDetails}>TLB Gift Card ****8765</Text>
+                    <Text style={styles.paymentMethodBalance}>💎 50.00 TLB</Text>
+                  </View>
+                  <View style={styles.paymentMethodStatus}>
+                    <Text style={styles.statusActive}>✅</Text>
+                    <Ionicons name="create" size={16} color="#D4AF37" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Security Notice */}
+              <View style={styles.paymentSecurity}>
+                <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+                <Text style={styles.paymentSecurityText}>
+                  All payments are secured with 256-bit encryption and PCI DSS compliance
+                </Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.paymentActions}>
+              <TouchableOpacity 
+                style={styles.addMethodButton}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  Alert.alert('Add Payment', 'New payment method setup coming soon!');
+                }}
+              >
+                <Ionicons name="add" size={16} color="#FFFFFF" />
+                <Text style={styles.addMethodText}>Add New Method</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.manageMethodsButton}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  Alert.alert('Manage', 'Payment method management coming soon!');
+                }}
+              >
+                <Ionicons name="settings" size={16} color="#FFFFFF" />
+                <Text style={styles.manageMethodsText}>Manage Methods</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Payment Method Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showAddPaymentModal}
+        onRequestClose={() => setShowAddPaymentModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {selectedPaymentType === 'credit' && '💳 Add Credit Card'}
+                {selectedPaymentType === 'bank' && '🏦 Add Bank Account'}
+                {selectedPaymentType === 'paypal' && '🅿️ Add PayPal Account'}
+                {selectedPaymentType === 'gift' && '🎁 Add Gift Card'}
+              </Text>
+              <TouchableOpacity onPress={() => setShowAddPaymentModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent}>
+              {/* Credit Card Form */}
+              {selectedPaymentType === 'credit' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Credit Card Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Card Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234 5678 9012 3456"
+                      value={paymentFormData.cardNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardNumber: text})}
+                      keyboardType="numeric"
+                      maxLength={19}
+                    />
+                  </View>
+                  
+                  <View style={styles.inputRow}>
+                    <View style={styles.inputGroupHalf}>
+                      <Text style={styles.inputLabel}>Expiry Date</Text>
+                      <TextInput
+                        style={styles.paymentInput}
+                        placeholder="MM/YY"
+                        value={paymentFormData.expiryDate}
+                        onChangeText={(text) => setPaymentFormData({...paymentFormData, expiryDate: text})}
+                        keyboardType="numeric"
+                        maxLength={5}
+                      />
+                    </View>
+                    
+                    <View style={styles.inputGroupHalf}>
+                      <Text style={styles.inputLabel}>CVV</Text>
+                      <TextInput
+                        style={styles.paymentInput}
+                        placeholder="123"
+                        value={paymentFormData.cvv}
+                        onChangeText={(text) => setPaymentFormData({...paymentFormData, cvv: text})}
+                        keyboardType="numeric"
+                        maxLength={4}
+                        secureTextEntry
+                      />
+                    </View>
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Cardholder Name</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="John Doe"
+                      value={paymentFormData.cardholderName}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardholderName: text})}
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* Bank Account Form */}
+              {selectedPaymentType === 'bank' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Bank Account Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Bank Name</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="Chase Bank"
+                      value={paymentFormData.bankName}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, bankName: text})}
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Account Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234567890"
+                      value={paymentFormData.accountNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, accountNumber: text})}
+                      keyboardType="numeric"
+                      secureTextEntry
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Routing Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="021000021"
+                      value={paymentFormData.routingNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, routingNumber: text})}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* PayPal Form */}
+              {selectedPaymentType === 'paypal' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>PayPal Account Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>PayPal Email Address</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="john.doe@example.com"
+                      value={paymentFormData.paypalEmail}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, paypalEmail: text})}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  </View>
+                  
+                  <View style={styles.paymentNote}>
+                    <Ionicons name="information-circle" size={16} color="#F59E0B" />
+                    <Text style={styles.paymentNoteText}>
+                      You'll be redirected to PayPal to authorize this connection.
+                    </Text>
+                  </View>
+                </View>
+              )}
+              
+              {/* Gift Card Form */}
+              {selectedPaymentType === 'gift' && (
+                <View style={styles.paymentForm}>
+                  <Text style={styles.formSectionTitle}>Gift Card Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Gift Card Number</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234 5678 9012 3456"
+                      value={paymentFormData.giftCardNumber}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardNumber: text})}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Security PIN</Text>
+                    <TextInput
+                      style={styles.paymentInput}
+                      placeholder="1234"
+                      value={paymentFormData.giftCardPin}
+                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardPin: text})}
+                      keyboardType="numeric"
+                      maxLength={8}
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
+              )}
+              
+              {/* Action Buttons */}
+              <View style={styles.paymentFormActions}>
+                <TouchableOpacity 
+                  style={styles.cancelPaymentButton}
+                  onPress={handleCancelPaymentForm}
+                >
+                  <Text style={styles.cancelPaymentText}>Cancel</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.savePaymentButton}
+                  onPress={handleSavePaymentMethod}
+                >
+                  <Text style={styles.savePaymentText}>Save Payment Method</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Notifications Modal */}
       <Modal
@@ -1887,5 +2265,297 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 6,
+  },
+  paymentDescription: {
+    fontSize: 16,
+    color: '#2C1810',
+    marginBottom: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  paymentSummary: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  paymentStatsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  paymentStatCard: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 80,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  paymentStatNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 3,
+  },
+  paymentStatLabel: {
+    fontSize: 11,
+    color: '#8B4513',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  paymentSection: {
+    marginBottom: 25,
+  },
+  paymentSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
+  },
+  paymentMethodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  defaultPaymentMethod: {
+    borderColor: '#10B981',
+    borderWidth: 2,
+    backgroundColor: '#F0FDF4',
+  },
+  paymentMethodIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  paymentMethodEmoji: {
+    fontSize: 24,
+  },
+  paymentMethodContent: {
+    flex: 1,
+    marginRight: 10,
+  },
+  paymentMethodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  paymentMethodType: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginRight: 8,
+  },
+  defaultBadge: {
+    backgroundColor: '#10B981',
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  defaultText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  paymentMethodDetails: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 3,
+  },
+  paymentMethodExtra: {
+    fontSize: 12,
+    color: '#A0522D',
+    fontWeight: '500',
+  },
+  paymentMethodBalance: {
+    fontSize: 14,
+    color: '#D4AF37',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  paymentMethodStatus: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+  },
+  statusActive: {
+    fontSize: 18,
+  },
+  statusConnected: {
+    fontSize: 18,
+  },
+  paymentSecurity: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#10B981',
+  },
+  paymentSecurityText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#065F46',
+    fontWeight: '500',
+    lineHeight: 16,
+    marginLeft: 8,
+  },
+  paymentActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#D4AF37',
+    gap: 12,
+  },
+  addMethodButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addMethodText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  manageMethodsButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  manageMethodsText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  // Payment form styles
+  paymentForm: {
+    marginBottom: 20,
+  },
+  formSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+  },
+  inputGroup: {
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#8B4513',
+    marginBottom: 8,
+  },
+  paymentInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#2C1810',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  inputGroupHalf: {
+    flex: 1,
+  },
+  paymentNote: {
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  paymentNoteText: {
+    fontSize: 12,
+    color: '#856404',
+    marginLeft: 8,
+    flex: 1,
+  },
+  paymentFormActions: {
+    flexDirection: 'row',
+    gap: 15,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    marginTop: 20,
+  },
+  cancelPaymentButton: {
+    flex: 1,
+    backgroundColor: '#8B4513',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  cancelPaymentText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  savePaymentButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  savePaymentText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
