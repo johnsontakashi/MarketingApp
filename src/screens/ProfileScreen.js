@@ -392,7 +392,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalContent}>
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.paymentModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={styles.paymentDescription}>
                 Your saved payment methods
               </Text>
@@ -1870,6 +1874,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
+  paymentModalContentContainer: {
+    paddingBottom: 30,
+    flexGrow: 1,
+  },
   inputGroup: {
     marginBottom: 20,
   },
@@ -2647,21 +2655,23 @@ const styles = StyleSheet.create({
   },
   paymentSecurity: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: '#F0FDF4',
     borderRadius: 8,
-    padding: 12,
-    marginTop: 10,
+    padding: 15,
+    marginTop: 15,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#10B981',
   },
   paymentSecurityText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     color: '#065F46',
     fontWeight: '500',
-    lineHeight: 16,
-    marginLeft: 8,
+    lineHeight: 18,
+    marginLeft: 10,
+    flexWrap: 'wrap',
   },
   paymentActions: {
     flexDirection: 'row',
