@@ -7,7 +7,8 @@ import {
   TextInput,
   Image,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -26,7 +27,7 @@ export default function MarketplaceScreen({ navigation }) {
     { name: 'Books', icon: 'book', count: 16 },
   ];
 
-  const products = [
+  const [products, setProducts] = useState([
     {
       id: 1,
       title: 'Premium Wireless Headphones',
@@ -38,7 +39,8 @@ export default function MarketplaceScreen({ navigation }) {
       supportBonus: 50,
       installments: 4,
       image: require('../../assets/pic1.jpeg'),
-      featured: true
+      featured: true,
+      category: 'Electronics'
     },
     {
       id: 2,
@@ -50,7 +52,8 @@ export default function MarketplaceScreen({ navigation }) {
       supportBonus: 50,
       installments: 3,
       image: require('../../assets/pic2.jpeg'),
-      featured: false
+      featured: false,
+      category: 'Sports'
     },
     {
       id: 3,
@@ -62,7 +65,8 @@ export default function MarketplaceScreen({ navigation }) {
       supportBonus: 40,
       installments: 2,
       image: require('../../assets/pic3.jpeg'),
-      featured: true
+      featured: true,
+      category: 'Electronics'
     },
     {
       id: 4,
@@ -74,13 +78,82 @@ export default function MarketplaceScreen({ navigation }) {
       supportBonus: 45,
       installments: 2,
       image: require('../../assets/pic4.jpeg'),
-      featured: false
+      featured: false,
+      category: 'Electronics'
     }
-  ];
+  ]);
 
   const handleProductPress = (product) => {
     // Navigate to product detail screen
     console.log('Product pressed:', product.title);
+  };
+
+  const handleLoadMore = () => {
+    // Simulate loading more products
+    const moreProducts = [
+      {
+        id: 5,
+        title: 'Wireless Charging Pad',
+        price: 45.00,
+        rating: 4.3,
+        reviews: 92,
+        seller: 'ChargeTech',
+        supportBonus: 30,
+        installments: 2,
+        image: require('../../assets/pic1.jpeg'),
+        featured: false,
+        category: 'Electronics'
+      },
+      {
+        id: 6,
+        title: 'Smart LED Bulb',
+        price: 25.00,
+        rating: 4.7,
+        reviews: 234,
+        seller: 'SmartHome',
+        supportBonus: 25,
+        installments: 1,
+        image: require('../../assets/pic2.jpeg'),
+        featured: true,
+        category: 'Home'
+      },
+      {
+        id: 7,
+        title: 'Portable Power Bank',
+        price: 35.00,
+        rating: 4.6,
+        reviews: 178,
+        seller: 'PowerUp',
+        supportBonus: 35,
+        installments: 2,
+        image: require('../../assets/pic3.jpeg'),
+        featured: false,
+        category: 'Electronics'
+      },
+      {
+        id: 8,
+        title: 'Noise Cancelling Earbuds',
+        price: 120.00,
+        rating: 4.8,
+        reviews: 145,
+        seller: 'AudioPro',
+        supportBonus: 60,
+        installments: 3,
+        image: require('../../assets/pic4.jpeg'),
+        featured: true,
+        category: 'Electronics'
+      }
+    ];
+
+    // Add new products to existing products array
+    setProducts(prevProducts => [...prevProducts, ...moreProducts]);
+    
+    // Show confirmation message
+    Alert.alert(
+      '✅ Products Loaded',
+      `${moreProducts.length} new products have been added to the marketplace!`,
+      [{ text: 'OK' }]
+    );
   };
 
   const renderStars = (rating) => {
@@ -103,6 +176,29 @@ export default function MarketplaceScreen({ navigation }) {
     
     return stars;
   };
+
+  // Filter products based on search query and selected category
+  const getFilteredProducts = () => {
+    let filtered = products;
+    
+    // Filter by search query
+    if (searchQuery.trim() !== '') {
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.seller.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Filter by category
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+    
+    return filtered;
+  };
+
+  const filteredProducts = getFilteredProducts();
 
   return (
     <View style={styles.container}>
@@ -171,7 +267,7 @@ export default function MarketplaceScreen({ navigation }) {
           </View>
           
           <View style={styles.productsGrid}>
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <TouchableOpacity 
                 key={product.id}
                 style={styles.productCard}
@@ -236,7 +332,7 @@ export default function MarketplaceScreen({ navigation }) {
 
         {/* Load More */}
         <View style={styles.loadMoreContainer}>
-          <TouchableOpacity style={styles.loadMoreButton}>
+          <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore}>
             <Text style={styles.loadMoreText}>Load More Products</Text>
             <Ionicons name="chevron-down" size={16} color="#D4AF37" />
           </TouchableOpacity>
