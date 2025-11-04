@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation }) {
@@ -27,7 +27,8 @@ export default function ProfileScreen({ navigation }) {
     name: 'John Doe',
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
-    address: '123 Main Street, City, State 12345'
+    address: '123 Main Street, City, State 12345',
+    avatar: null
   });
   const [editData, setEditData] = useState({ ...profileData });
 
@@ -56,6 +57,41 @@ export default function ProfileScreen({ navigation }) {
   const handleCancelEdit = () => {
     setEditData({ ...profileData });
     setShowEditModal(false);
+  };
+
+  const handleAvatarUpload = () => {
+    // Demo placeholder avatars for development
+    const avatarOptions = [
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80'
+    ];
+
+    Alert.alert(
+      "🖼️ Select Avatar (Demo)",
+      "Choose a demo profile picture or remove current avatar",
+      [
+        { text: "Avatar 1", onPress: () => selectDemoAvatar(avatarOptions[0]) },
+        { text: "Avatar 2", onPress: () => selectDemoAvatar(avatarOptions[1]) },
+        { text: "Avatar 3", onPress: () => selectDemoAvatar(avatarOptions[2]) },
+        { text: "Avatar 4", onPress: () => selectDemoAvatar(avatarOptions[3]) },
+        { text: "Remove Avatar", onPress: () => removeAvatar() },
+        { text: "Cancel", style: "cancel" }
+      ]
+    );
+  };
+
+  const selectDemoAvatar = (avatarUri) => {
+    setProfileData({ ...profileData, avatar: avatarUri });
+    setEditData({ ...editData, avatar: avatarUri });
+    Alert.alert("✅ Success", "Profile picture updated successfully!");
+  };
+
+  const removeAvatar = () => {
+    setProfileData({ ...profileData, avatar: null });
+    setEditData({ ...editData, avatar: null });
+    Alert.alert("✅ Success", "Profile picture removed successfully!");
   };
 
   const handleMyOrders = () => {
@@ -252,9 +288,16 @@ export default function ProfileScreen({ navigation }) {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
-        <View style={styles.avatarContainer}>
-          <Ionicons name="person" size={40} color="#D4AF37" />
-        </View>
+        <TouchableOpacity style={styles.avatarContainer} onPress={handleAvatarUpload}>
+          {profileData.avatar ? (
+            <Image source={{ uri: profileData.avatar }} style={styles.avatarImage} />
+          ) : (
+            <Ionicons name="person" size={40} color="#D4AF37" />
+          )}
+          <View style={styles.avatarEditBadge}>
+            <Ionicons name="camera" size={12} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
         <View style={styles.profileInfo}>
           <Text style={styles.profileName}>{profileData.name}</Text>
           <Text style={styles.profileEmail}>{profileData.email}</Text>
@@ -1664,6 +1707,25 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderWidth: 2,
     borderColor: '#D4AF37',
+    position: 'relative',
+  },
+  avatarImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#D4AF37',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   profileInfo: {
     flex: 1,
