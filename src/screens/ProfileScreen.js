@@ -267,6 +267,59 @@ export default function ProfileScreen({ navigation }) {
     setShowSettingsModal(true);
   };
 
+  const handleHelpSupport = () => {
+    const supportOptions = [
+      {
+        category: 'Quick Help',
+        icon: '⚡',
+        items: [
+          { title: 'Account Issues', description: 'Login, profile, verification problems' },
+          { title: 'Payment Problems', description: 'Transaction errors, wallet issues' },
+          { title: 'Technical Support', description: 'App crashes, bugs, performance' },
+          { title: 'Security Concerns', description: 'Device lock, unauthorized access' }
+        ]
+      },
+      {
+        category: 'Resources',
+        icon: '📚',
+        items: [
+          { title: 'User Guide', description: 'Complete app usage instructions' },
+          { title: 'Video Tutorials', description: 'Step-by-step visual guides' },
+          { title: 'FAQ', description: 'Frequently asked questions' },
+          { title: 'Community Forum', description: 'Connect with other users' }
+        ]
+      },
+      {
+        category: 'Contact Support',
+        icon: '📞',
+        items: [
+          { title: 'Live Chat', description: 'Available 24/7 for urgent issues' },
+          { title: 'Email Support', description: 'support@tlbdiamond.com' },
+          { title: 'Phone Support', description: '+1 (555) DIAMOND (342-6663)' },
+          { title: 'Submit Ticket', description: 'Detailed support request form' }
+        ]
+      }
+    ];
+
+    const supportDisplay = supportOptions.map(category => {
+      const categoryItems = category.items.map(item => 
+        `  • ${item.title}\n    ${item.description}`
+      ).join('\n\n');
+      
+      return `${category.icon} ${category.category}:\n\n${categoryItems}`;
+    }).join('\n\n─────────────────────\n\n');
+
+    Alert.alert(
+      '🆘 Help & Support',
+      `Get assistance with TLB Diamond:\n\n${supportDisplay}\n\n📱 App Version: 1.0.0\n🔧 Last Updated: Today\n⭐ User Rating: 4.8/5\n\n💡 Tip: For fastest response, use Live Chat for urgent issues or submit a detailed ticket for complex problems.`,
+      [
+        { text: 'Live Chat', onPress: () => Alert.alert('Live Chat', 'Connecting to support agent...\n\nEstimated wait time: < 2 minutes\n\nPlease describe your issue briefly when connected.') },
+        { text: 'Submit Ticket', onPress: () => Alert.alert('Submit Ticket', 'Ticket submission form coming soon!\n\nIn the meantime, please email us at support@tlbdiamond.com with:\n\n• Your issue description\n• Device model\n• App version\n• Screenshots (if applicable)') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   const handleMenuPress = (action) => {
     switch (action) {
       case 'editProfile':
@@ -280,6 +333,9 @@ export default function ProfileScreen({ navigation }) {
         break;
       case 'settings':
         handleSettings();
+        break;
+      case 'support':
+        handleHelpSupport();
         break;
       case 'deviceStatus':
         navigation.navigate('DeviceStatus');
@@ -479,15 +535,44 @@ export default function ProfileScreen({ navigation }) {
               })()}
               
               <View style={styles.settingsSummary}>
-                <Text style={styles.summaryTitle}>📊 Summary:</Text>
-                <Text style={styles.summaryText}>• Total Settings: 21</Text>
-                <Text style={styles.summaryText}>• Active/Enabled: 15</Text>
-                <Text style={styles.summaryText}>• Security Level: High 🔒</Text>
-                <Text style={styles.summaryText}>• Last Updated: Today</Text>
+                <Text style={styles.summaryTitle}>📊 Summary</Text>
                 
-                <Text style={styles.summaryTip}>
-                  💡 Tip: Most settings can be customized in the full settings menu
-                </Text>
+                <View style={styles.summaryGrid}>
+                  <View style={styles.summaryCard}>
+                    <Text style={styles.summaryNumber}>21</Text>
+                    <Text style={styles.summaryLabel}>Total Settings</Text>
+                  </View>
+                  
+                  <View style={styles.summaryCard}>
+                    <Text style={styles.summaryNumber}>15</Text>
+                    <Text style={styles.summaryLabel}>Active/Enabled</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.summaryInfoRow}>
+                  <View style={styles.summaryInfoItem}>
+                    <Text style={styles.summaryIcon}>🔒</Text>
+                    <View style={styles.summaryInfoText}>
+                      <Text style={styles.summaryInfoLabel}>Security Level</Text>
+                      <Text style={styles.summaryInfoValue}>High</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.summaryInfoItem}>
+                    <Text style={styles.summaryIcon}>📅</Text>
+                    <View style={styles.summaryInfoText}>
+                      <Text style={styles.summaryInfoLabel}>Last Updated</Text>
+                      <Text style={styles.summaryInfoValue}>Today</Text>
+                    </View>
+                  </View>
+                </View>
+                
+                <View style={styles.summaryTipContainer}>
+                  <Text style={styles.summaryTipIcon}>💡</Text>
+                  <Text style={styles.summaryTip}>
+                    Most settings can be customized in the full settings menu
+                  </Text>
+                </View>
               </View>
             </ScrollView>
 
@@ -889,28 +974,104 @@ const styles = StyleSheet.create({
   },
   settingsSummary: {
     backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 15,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  summaryGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+    gap: 10,
+  },
+  summaryCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 15,
-    marginTop: 10,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#D4AF37',
   },
-  summaryTitle: {
-    fontSize: 16,
+  summaryNumber: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
-    marginBottom: 8,
+    color: '#D4AF37',
+    marginBottom: 5,
   },
-  summaryText: {
+  summaryLabel: {
+    fontSize: 12,
+    color: '#8B4513',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  summaryInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+    gap: 10,
+  },
+  summaryInfoItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  summaryIcon: {
+    fontSize: 20,
+    marginRight: 10,
+  },
+  summaryInfoText: {
+    flex: 1,
+  },
+  summaryInfoLabel: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontWeight: '500',
+  },
+  summaryInfoValue: {
     fontSize: 14,
     color: '#2C1810',
-    marginBottom: 3,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  summaryTipContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  summaryTipIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    marginTop: 2,
   },
   summaryTip: {
+    flex: 1,
     fontSize: 12,
     color: '#8B4513',
     fontStyle: 'italic',
-    marginTop: 8,
     lineHeight: 16,
   },
   settingsActions: {
