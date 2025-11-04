@@ -44,7 +44,8 @@ The app supports iOS, Android, and Web platforms. Platform-specific code can be 
 
 ### Entry Point
 - [index.js](index.js) - Application entry point that registers the root component using `registerRootComponent` from Expo
-- [App.js](App.js) - Main application component
+- [App.js](App.js) - Root component that wraps the navigation with SafeAreaProvider
+- [src/navigation/AppNavigator.js](src/navigation/AppNavigator.js) - Main navigation configuration with tab and stack navigators
 
 ### Configuration
 - [app.json](app.json) - Expo application configuration including:
@@ -60,51 +61,53 @@ The app supports iOS, Android, and Web platforms. Platform-specific code can be 
   - `adaptive-icon.png` - Android adaptive icon
   - `splash-icon.png` - Splash screen image
   - `favicon.png` - Web favicon
+- `/src` - Main source code directory
+  - `/navigation` - Navigation configuration
+  - `/screens` - All screen components (Home, Marketplace, Wallet, Community, Profile, DeviceStatus, LockScreen)
+  - `/components` - Reusable components including MDM functionality
 
 ### React Native New Architecture
 This project has the React Native new architecture enabled. When working with native modules or third-party libraries, ensure they are compatible with the new architecture (Fabric, TurboModules).
 
 ## Application Architecture
 
+### Navigation Structure
+The app uses React Navigation with a hybrid approach:
+- **Bottom Tab Navigator** - Main navigation with 5 tabs (Home, Marketplace, Wallet, Community, Profile)
+- **Stack Navigator** - Handles modal screens like DeviceStatus and LockScreen
+- **LockManager Component** - Wraps the entire app to manage kiosk mode functionality
+
+### Screen Components
+- **HomeScreen** - Dashboard with quick actions, balance display, and status cards
+- **MarketplaceScreen** - Shopping interface for TLB Diamond marketplace
+- **WalletScreen** - Digital wallet for TLB Diamond tokens and payment management
+- **CommunityScreen** - Social features, referrals, and bonus system
+- **ProfileScreen** - User settings and account management
+- **DeviceStatusScreen** - MDM device status and diagnostics
+- **LockScreen** - Kiosk mode interface with payment and unlock functionality
+
 ### State Management
-The app uses React hooks for state management:
-- `isLocked` - Controls kiosk mode state
-- `showConfirmModal` - Controls lock confirmation dialog
-- `homeButtonDisabled` - Tracks hardware button restrictions
-- `toggleValue` - Controls the lock toggle switch
+The app uses React hooks and context for state management:
+- Local state in individual screens for component-specific data
+- LockManager handles global kiosk mode state
+- Navigation state managed by React Navigation
 
-### Key Components
-- **Lock Screen Button** - Triggers kiosk mode activation with confirmation
-- **Confirmation Modal** - Bottom sheet with toggle switch for kiosk activation
-- **Lock Screen Overlay** - Full-screen modal displayed during kiosk mode
-- **Payment Button** - Payment processing interface (currently shows placeholder alert)
-- **Unlock Button** - Exits kiosk mode
+### MDM Integration
+- **LockManager Component** - Central kiosk mode management in [src/components/mdm/LockManager.js](src/components/mdm/LockManager.js)
+- **Device Owner Setup** - Requires ADB setup for production kiosk functionality
+- **Hardware Integration** - BackHandler and native lock task mode integration
+- **Development Mode** - Alert-based simulation for emulator testing
 
-### Hardware Integration
-The app integrates with Android's Lock Task Mode API (currently commented out for emulator compatibility):
-- `react-native-lock-task` library for native kiosk functionality
-- Device Owner privileges required for full kiosk mode
-- BackHandler integration to intercept hardware back button
+### Design System
+- **Golden Theme** - Consistent gold/bronze color palette (`#D4AF37`, `#B8860B`, `#8B4513`)
+- **Ionicons** - Vector icons throughout the interface
+- **Safe Area** - Full safe area support with react-native-safe-area-context
+- **Responsive Design** - Dimensions-based responsive layouts
 
 ### Development Notes
-- Native kiosk functionality is disabled by default for emulator testing
-- Uncomment `LockTask` imports and function calls for real device testing
-- Requires device owner setup via ADB for production kiosk mode
+- MDM functionality disabled by default for emulator compatibility
+- Requires physical Android device with device owner privileges for full kiosk mode
 - See [KIOSK_SETUP.md](KIOSK_SETUP.md) for complete setup instructions
-
-### Device Owner Setup Requirements
-For full kiosk functionality on Android devices:
-1. Device must have no Google accounts (factory reset or remove accounts)
-2. Install app via `npm run android` or APK
-3. Set device owner: `adb shell dpm set-device-owner com.anonymous.MyAppNew/com.rnlocktask.MyAdmin`
-4. Verify setup by testing lock screen functionality
-
-### Current Implementation Details
-- **Single-file architecture**: All UI and logic contained in [App.js](App.js)
-- **Modal-based UI**: Uses React Native Modal components for confirmation and lock screens
-- **State-driven interface**: React hooks manage kiosk state, modal visibility, and hardware button controls
-- **Emulator-friendly**: Native kiosk code commented out for development, replaced with Alert dialogs
-- **Golden theme**: Consistent gold/bronze color scheme throughout UI components
 
 ## TLB Diamond Marketplace Expansion
 

@@ -6,7 +6,9 @@ import {
   StyleSheet, 
   BackHandler, 
   Alert,
-  Dimensions 
+  Dimensions,
+  AppState,
+  Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -23,21 +25,84 @@ export default function LockScreen({ navigation }) {
     nextPaymentDue: 'Nov 12, 2024'
   });
 
+  const [homeButtonAttempts, setHomeButtonAttempts] = useState(0);
+  const [showKioskWarning, setShowKioskWarning] = useState(false);
+
   useEffect(() => {
-    // Disable back button when in lock screen
-    const backAction = () => {
-      Alert.alert(
-        'Device Locked',
-        'All navigation buttons are disabled in kiosk mode. Please complete your payments or contact support.',
-        [{ text: 'OK' }]
-      );
-      return true; // Prevent default behavior
+    let backHandler;
+    let appStateListener;
+    let homeButtonDetector;
+
+    // Enhanced hardware button blocking
+    const setupKioskMode = () => {
+      // BACK button blocking
+      const backAction = () => {
+        setHomeButtonAttempts(prev => prev + 1);
+        Alert.alert(
+          '🔒 Device Locked - BACK Button',
+          'BACK button is disabled in kiosk mode.\n\nTo unlock device:\n• Complete your payment\n• Contact emergency support\n\nAttempts: ' + (homeButtonAttempts + 1),
+          [
+            { text: 'Pay Now', onPress: () => handlePayNow() },
+            { text: 'Emergency Support', onPress: () => handleContactSupport() },
+            { text: 'OK', style: 'cancel' }
+          ]
+        );
+        return true; // Prevent default behavior
+      };
+
+      // HOME button detection via AppState changes
+      const handleAppStateChange = (nextAppState) => {
+        if (nextAppState === 'background') {
+          setHomeButtonAttempts(prev => prev + 1);
+          console.warn('Kiosk violation: HOME button pressed or app switching attempted');
+          
+          // Show immediate warning
+          setShowKioskWarning(true);
+          
+          // Auto-hide warning after 3 seconds
+          setTimeout(() => {
+            setShowKioskWarning(false);
+          }, 3000);
+
+          // Force app back to foreground after brief delay
+          setTimeout(() => {
+            if (AppState.currentState === 'background') {
+              Alert.alert(
+                '⚠️ Kiosk Mode Violation - HOME Button',
+                'HOME button and app switching are disabled.\n\nDevice is locked in kiosk mode.\n\nAttempts: ' + homeButtonAttempts,
+                [
+                  { text: 'Return to App', onPress: () => {
+                    // In real implementation, this would bring app to foreground
+                    console.log('Attempting to return to app foreground');
+                  }},
+                  { text: 'Pay Now', onPress: () => handlePayNow() }
+                ]
+              );
+            }
+          }, 500);
+        }
+      };
+
+      // Periodic check to ensure app stays in foreground (anti-overview/recent apps)
+      homeButtonDetector = setInterval(() => {
+        if (AppState.currentState !== 'active') {
+          console.warn('Kiosk violation: App not in active state');
+          setHomeButtonAttempts(prev => prev + 1);
+        }
+      }, 1000);
+
+      backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+      appStateListener = AppState.addEventListener('change', handleAppStateChange);
     };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    setupKioskMode();
 
-    return () => backHandler.remove();
-  }, []);
+    return () => {
+      if (backHandler) backHandler.remove();
+      if (appStateListener) appStateListener.remove();
+      if (homeButtonDetector) clearInterval(homeButtonDetector);
+    };
+  }, [homeButtonAttempts]);
 
   const handlePayNow = () => {
     Alert.alert(
@@ -155,6 +220,37 @@ export default function LockScreen({ navigation }) {
         <Text style={styles.footerContact}>
           📞 1-800-TLB-HELP • 📧 support@tlbdiamond.com
         </Text>
+      </View>
+
+      {/* Kiosk Violation Warning Overlay */}
+      <Modal
+        visible={showKioskWarning}
+        transparent={true}
+        animationType="fade"
+      >
+        <View style={styles.warningOverlay}>
+          <View style={styles.warningContent}>
+            <Ionicons name="warning" size={40} color="#FF6B35" />
+            <Text style={styles.warningTitle}>🔒 Kiosk Mode Violation</Text>
+            <Text style={styles.warningMessage}>
+              Hardware button detected!{'\n\n'}
+              • HOME button disabled{'\n'}
+              • App switching blocked{'\n'}
+              • Device locked in kiosk mode{'\n\n'}
+              Attempts: {homeButtonAttempts}
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Hardware Button Blocking Indicator */}
+      <View style={styles.kioskStatus}>
+        <View style={styles.kioskIndicator}>
+          <Ionicons name="shield-checkmark" size={16} color="#FF6B35" />
+          <Text style={styles.kioskText}>
+            KIOSK ACTIVE • BUTTONS DISABLED • ATTEMPTS: {homeButtonAttempts}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -343,6 +439,62 @@ const styles = StyleSheet.create({
   footerContact: {
     fontSize: 12,
     color: '#8B4513',
+    textAlign: 'center',
+  },
+  warningOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 107, 53, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  warningContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 30,
+    alignItems: 'center',
+    maxWidth: 350,
+    borderWidth: 3,
+    borderColor: '#FF6B35',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  warningTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF6B35',
+    marginVertical: 15,
+    textAlign: 'center',
+  },
+  warningMessage: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  kioskStatus: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 107, 53, 0.95)',
+    paddingVertical: 8,
+    zIndex: 1000,
+  },
+  kioskIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+  },
+  kioskText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 8,
     textAlign: 'center',
   },
 });

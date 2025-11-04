@@ -28,6 +28,7 @@ export default function HomeScreen({ navigation }) {
     { icon: 'gift', label: 'Bonuses', screen: 'Community', color: '#CD853F' },
     { icon: 'cube', label: 'Orders', screen: 'Profile', color: '#8B4513' },
     { icon: 'people', label: 'Referrals', screen: 'Community', color: '#A0522D' },
+    { icon: 'warning', label: 'Blocking Demo', screen: 'BlockingDemo', color: '#F59E0B' },
     { icon: 'lock-closed', label: 'Lock', action: 'lock', color: '#EF4444' },
   ];
 

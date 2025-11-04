@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import LockManager from '../components/mdm/LockManager';
+import KioskManager from '../components/mdm/KioskManager';
+import SystemKioskManager from '../components/mdm/SystemKioskManager';
+import BlockingManager from '../components/mdm/BlockingManager';
+import networkManager from '../components/mdm/NetworkManager';
+import appRestrictionManager from '../components/mdm/AppRestrictionManager';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -15,6 +20,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 // Import MDM screens
 import DeviceStatusScreen from '../screens/DeviceStatusScreen';
 import LockScreen from '../screens/LockScreen';
+import BlockingDemoScreen from '../screens/BlockingDemoScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -116,17 +122,66 @@ function AppWithLockManager() {
           headerShown: false,
         }}
       />
+      <Stack.Screen 
+        name="BlockingDemo" 
+        component={BlockingDemoScreen}
+        options={{
+          headerShown: true,
+          title: 'Blocking Demo',
+          headerStyle: { backgroundColor: '#FFF8E7' },
+          headerTintColor: '#2C1810',
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-// Root navigator with modals
+// Root navigator with graduated blocking system
 function AppNavigator() {
+  const [paymentStatus, setPaymentStatus] = useState({
+    overdue: false,
+    overdueHours: 0,
+    paid: false
+  });
+
+  // Simulate payment status changes (in real app, this would come from API)
+  useEffect(() => {
+    // For demonstration, simulate overdue payment after 5 seconds
+    const timer = setTimeout(() => {
+      setPaymentStatus({
+        overdue: true,
+        overdueHours: 2, // 2 hours overdue - will trigger warning stage
+        paid: false
+      });
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle payment requirement navigation
+  const handlePaymentRequired = () => {
+    // In real app, this would navigate to payment screen
+    console.log('Navigating to payment screen...');
+    // For demo, simulate payment completion after 3 seconds
+    setTimeout(() => {
+      setPaymentStatus(prev => ({
+        ...prev,
+        paid: true,
+        overdue: false
+      }));
+    }, 3000);
+  };
+
   return (
     <NavigationContainer>
-      <LockManager>
-        <AppWithLockManager />
-      </LockManager>
+      <BlockingManager 
+        paymentStatus={paymentStatus}
+        onPaymentRequired={handlePaymentRequired}
+      >
+        <SystemKioskManager>
+          <AppWithLockManager />
+        </SystemKioskManager>
+      </BlockingManager>
     </NavigationContainer>
   );
 }

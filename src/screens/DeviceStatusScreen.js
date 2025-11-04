@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import simCardManager from '../components/mdm/SimCardManager';
 
 export default function DeviceStatusScreen({ navigation }) {
   const [deviceStatus] = useState({
@@ -13,6 +14,26 @@ export default function DeviceStatusScreen({ navigation }) {
     securityStatus: 'secure',
     complianceScore: 95
   });
+
+  const [simStatus, setSimStatus] = useState({
+    isMonitoring: false,
+    simState: 'unknown',
+    removalCount: 0,
+    lockTriggered: false
+  });
+
+  // Update SIM status periodically
+  useEffect(() => {
+    const updateSimStatus = () => {
+      const status = simCardManager.getSimStatus();
+      setSimStatus(status);
+    };
+
+    updateSimStatus();
+    const interval = setInterval(updateSimStatus, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const securityChecks = [
     { name: 'Root Detection', status: 'passed', icon: 'shield-checkmark', color: '#10B981' },
@@ -39,6 +60,41 @@ export default function DeviceStatusScreen({ navigation }) {
 
   const handleContactSupport = () => {
     Alert.alert('Contact Support', 'Support contact options:\n\n📧 support@tlbdiamond.com\n📞 1-800-TLB-HELP\n💬 Live Chat (24/7)');
+  };
+
+  const handleSimRemovalTest = () => {
+    Alert.alert(
+      '🧪 Test SIM Removal',
+      'This will simulate SIM card removal to test the security lock functionality.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Simulate Removal', 
+          style: 'destructive',
+          onPress: () => {
+            simCardManager.simulateSimRemoval();
+            Alert.alert('SIM Removal Simulated', 'Check the console and device lock status.');
+          }
+        }
+      ]
+    );
+  };
+
+  const handleResetSimMonitoring = () => {
+    Alert.alert(
+      '🔄 Reset SIM Monitoring',
+      'This will reset all SIM monitoring data and violations.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Reset', 
+          onPress: async () => {
+            await simCardManager.resetSimMonitoring();
+            Alert.alert('Reset Complete', 'SIM monitoring has been reset.');
+          }
+        }
+      ]
+    );
   };
 
   const getStatusColor = (status) => {
@@ -104,6 +160,62 @@ export default function DeviceStatusScreen({ navigation }) {
               </View>
             </View>
           ))}
+        </View>
+      </View>
+
+      {/* SIM Card Monitoring */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>📱 SIM Card Monitoring</Text>
+        <View style={styles.simMonitoringCard}>
+          <View style={styles.simInfoRow}>
+            <Text style={styles.simInfoLabel}>Monitoring Status:</Text>
+            <Text style={[styles.simInfoValue, { color: simStatus.isMonitoring ? '#10B981' : '#EF4444' }]}>
+              {simStatus.isMonitoring ? 'ACTIVE' : 'INACTIVE'}
+            </Text>
+          </View>
+          
+          <View style={styles.simInfoRow}>
+            <Text style={styles.simInfoLabel}>SIM State:</Text>
+            <Text style={[styles.simInfoValue, { 
+              color: simStatus.simState === 'present' ? '#10B981' : 
+                    simStatus.simState === 'absent' ? '#EF4444' : '#F59E0B' 
+            }]}>
+              {simStatus.simState.toUpperCase()}
+            </Text>
+          </View>
+          
+          <View style={styles.simInfoRow}>
+            <Text style={styles.simInfoLabel}>Removal Count:</Text>
+            <Text style={[styles.simInfoValue, { color: simStatus.removalCount > 0 ? '#EF4444' : '#10B981' }]}>
+              {simStatus.removalCount}
+            </Text>
+          </View>
+          
+          <View style={styles.simInfoRow}>
+            <Text style={styles.simInfoLabel}>Security Lock:</Text>
+            <Text style={[styles.simInfoValue, { color: simStatus.lockTriggered ? '#EF4444' : '#10B981' }]}>
+              {simStatus.lockTriggered ? 'TRIGGERED' : 'NORMAL'}
+            </Text>
+          </View>
+          
+          {/* SIM Test Actions */}
+          <View style={styles.simTestActions}>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.testButton]} 
+              onPress={handleSimRemovalTest}
+            >
+              <Ionicons name="warning" size={20} color="#FF6B35" />
+              <Text style={[styles.actionText, { color: '#FF6B35' }]}>Test SIM Removal</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.resetButton]} 
+              onPress={handleResetSimMonitoring}
+            >
+              <Ionicons name="refresh" size={20} color="#6B7280" />
+              <Text style={[styles.actionText, { color: '#6B7280' }]}>Reset Monitoring</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -383,5 +495,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#2C1810',
+  },
+  simMonitoringCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  simInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5E6A3',
+  },
+  simInfoLabel: {
+    fontSize: 14,
+    color: '#8B4513',
+    fontWeight: '500',
+  },
+  simInfoValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  simTestActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+  },
+  testButton: {
+    borderColor: '#FF6B35',
+    flex: 1,
+  },
+  resetButton: {
+    borderColor: '#6B7280',
+    flex: 1,
   },
 });
