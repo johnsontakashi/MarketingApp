@@ -52,6 +52,18 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('DeviceStatus');
   };
 
+  const handleNotifications = () => {
+    Alert.alert(
+      '🔔 Notifications',
+      'Recent notifications:\n\n• Payment reminder: Next payment due in 3 days\n• Security update: Device successfully secured\n• Bonus available: Daily login bonus ready to claim\n\nWould you like to view all notifications?',
+      [
+        { text: 'Mark as Read', onPress: () => setAvailableBonuses(0) },
+        { text: 'View All', onPress: () => navigation.navigate('Profile') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <StatusBar style="dark" />
@@ -60,7 +72,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <View style={styles.greeting}>
           <Text style={styles.greetingText}>👋 Hi John!</Text>
-          <TouchableOpacity style={styles.notificationButton}>
+          <TouchableOpacity style={styles.notificationButton} onPress={handleNotifications}>
             <Ionicons name="notifications" size={24} color="#D4AF37" />
             <View style={styles.notificationBadge}>
               <Text style={styles.notificationCount}>3</Text>
