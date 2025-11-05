@@ -271,11 +271,45 @@ export default function ProfileScreen({ navigation }) {
         break;
       case 'signOut':
         Alert.alert(
-          'Sign Out',
-          'Are you sure you want to sign out?',
+          '🚪 Sign Out',
+          'Are you sure you want to sign out?\n\n• Your session will be ended\n• You will need to log back in\n• Any unsaved changes will be lost',
           [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Sign Out', style: 'destructive', onPress: () => Alert.alert('Signed Out') }
+            { 
+              text: 'Sign Out', 
+              style: 'destructive', 
+              onPress: () => {
+                // Show signing out process
+                Alert.alert(
+                  '✅ Signing Out',
+                  'Please wait while we securely sign you out...',
+                  [],
+                  { cancelable: false }
+                );
+                
+                // Simulate sign out process
+                setTimeout(() => {
+                  Alert.alert(
+                    '👋 Signed Out Successfully',
+                    'You have been securely signed out of TLB Diamond.\n\n• All local data cleared\n• Session terminated\n• Security tokens removed\n\nThank you for using TLB Diamond!',
+                    [
+                      { 
+                        text: 'Return to Home', 
+                        onPress: () => {
+                          // Navigate back to home screen
+                          navigation.navigate('Home');
+                          // In a real app, you would:
+                          // - Clear AsyncStorage/SecureStore
+                          // - Reset navigation state
+                          // - Navigate to login screen
+                          console.log('User signed out successfully');
+                        }
+                      }
+                    ]
+                  );
+                }, 2000);
+              }
+            }
           ]
         );
         break;
@@ -392,7 +426,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalContent}>
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.paymentModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={styles.paymentDescription}>
                 Your saved payment methods
               </Text>
@@ -1016,7 +1054,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalContent}>
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.notificationModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={styles.notificationDescription}>
                 Your notification center
               </Text>
@@ -1217,7 +1259,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalContent}>
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.helpModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={styles.helpDescription}>
                 Get assistance with TLB Diamond
               </Text>
@@ -1441,7 +1487,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalContent}>
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.settingsModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={styles.settingsDescription}>
                 Current app configuration:
               </Text>
@@ -1870,6 +1920,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
+  paymentModalContentContainer: {
+    paddingBottom: 30,
+    flexGrow: 1,
+  },
+  notificationModalContentContainer: {
+    paddingBottom: 30,
+    flexGrow: 1,
+  },
   inputGroup: {
     marginBottom: 20,
   },
@@ -2062,21 +2120,27 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    padding: 12,
+    padding: 15,
+    marginTop: 15,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#D4AF37',
   },
   summaryTipIcon: {
     fontSize: 16,
-    marginRight: 8,
+    marginRight: 10,
     marginTop: 2,
   },
   summaryTip: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     color: '#8B4513',
     fontStyle: 'italic',
-    lineHeight: 16,
+    lineHeight: 18,
+    flexWrap: 'wrap',
+  },
+  settingsModalContentContainer: {
+    paddingBottom: 30,
   },
   settingsActions: {
     flexDirection: 'row',
@@ -2226,17 +2290,23 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    padding: 12,
+    padding: 15,
+    marginTop: 15,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#D4AF37',
   },
   helpTipText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     color: '#8B4513',
     fontStyle: 'italic',
-    lineHeight: 16,
-    marginLeft: 8,
+    lineHeight: 18,
+    marginLeft: 10,
+    flexWrap: 'wrap',
+  },
+  helpModalContentContainer: {
+    paddingBottom: 30,
   },
   helpActions: {
     flexDirection: 'row',
@@ -2445,18 +2515,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: '#FFFBEB',
     borderRadius: 8,
-    padding: 12,
-    marginTop: 10,
+    padding: 15,
+    marginTop: 15,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#F59E0B',
   },
   notificationTipText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     color: '#8B4513',
     fontStyle: 'italic',
-    lineHeight: 16,
-    marginLeft: 8,
+    lineHeight: 18,
+    marginLeft: 10,
+    flexWrap: 'wrap',
   },
   notificationActions: {
     flexDirection: 'row',
@@ -2647,21 +2719,23 @@ const styles = StyleSheet.create({
   },
   paymentSecurity: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: '#F0FDF4',
     borderRadius: 8,
-    padding: 12,
-    marginTop: 10,
+    padding: 15,
+    marginTop: 15,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#10B981',
   },
   paymentSecurityText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     color: '#065F46',
     fontWeight: '500',
-    lineHeight: 16,
-    marginLeft: 8,
+    lineHeight: 18,
+    marginLeft: 10,
+    flexWrap: 'wrap',
   },
   paymentActions: {
     flexDirection: 'row',

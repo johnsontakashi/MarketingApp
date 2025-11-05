@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+const { width } = Dimensions.get('window');
+
 export default function CommunityScreen() {
+  const [showTreeModal, setShowTreeModal] = useState(false);
   const [availableBonuses] = useState([
     {
       id: 1,
@@ -61,52 +64,43 @@ export default function CommunityScreen() {
     Alert.alert('Share Referral', 'Your referral code: JOHN2024\n\nShare this code with friends!');
   };
 
-  const handleViewFullTree = () => {
-    const fullTreeData = [
-      {
-        generation: 1,
-        referrals: [
-          { name: 'Sarah M.', joined: '2024-01-15', earnings: '💎 8.50', status: 'Active' },
-          { name: 'Mike K.', joined: '2024-01-20', earnings: '💎 5.20', status: 'Active' },
-          { name: 'Emma L.', joined: '2024-02-03', earnings: '💎 6.80', status: 'Active' },
-          { name: 'David R.', joined: '2024-02-10', earnings: '💎 2.40', status: 'New' },
-          { name: 'Lisa P.', joined: '2024-02-15', earnings: '💎 2.10', status: 'New' }
-        ]
-      },
-      {
-        generation: 2,
-        referrals: [
-          { name: 'Alex T.', joined: '2024-01-25', earnings: '💎 3.20', status: 'Active' },
-          { name: 'Nina S.', joined: '2024-02-01', earnings: '💎 2.80', status: 'Active' },
-          { name: 'James W.', joined: '2024-02-05', earnings: '💎 2.10', status: 'Active' },
-          { name: 'Maria G.', joined: '2024-02-12', earnings: '💎 1.90', status: 'New' },
-          { name: 'Tom H.', joined: '2024-02-18', earnings: '💎 1.50', status: 'New' },
-          { name: 'Kate B.', joined: '2024-02-20', earnings: '💎 1.20', status: 'New' },
-          { name: 'Ryan C.', joined: '2024-02-22', earnings: '💎 1.30', status: 'New' }
-        ]
-      }
-    ];
-
-    const treeDisplay = fullTreeData.map(gen => {
-      const genDisplay = gen.referrals.map(ref => 
-        `  ${ref.name} - ${ref.earnings} (${ref.status})`
-      ).join('\n');
-      
-      return `Generation ${gen.generation} (${gen.referrals.length} people):\n${genDisplay}`;
-    }).join('\n\n');
-
-    const totalPeople = fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0);
-    const totalTreeEarnings = referralStats.totalEarnings;
-
-    Alert.alert(
-      '🌳 Full Referral Tree',
-      `Your complete referral network:\n\n${treeDisplay}\n\n📊 Summary:\n• Total Network: ${totalPeople} people\n• Total Earnings: 💎 ${totalTreeEarnings} TLB\n• Active Generations: ${fullTreeData.length}\n• Commission Rate: 50% (Gen 1), 25% (Gen 2)`,
-      [
-        { text: 'Share Network', onPress: () => Alert.alert('Share', 'Network sharing feature coming soon!') },
-        { text: 'Export Data', onPress: () => Alert.alert('Export', 'Network data export feature coming soon!') },
-        { text: 'Close', style: 'cancel' }
+  const fullTreeData = [
+    {
+      generation: 1,
+      referrals: [
+        { name: 'Sarah M.', joined: '2024-01-15', earnings: '💎 8.50', status: 'Active' },
+        { name: 'Mike K.', joined: '2024-01-20', earnings: '💎 5.20', status: 'Active' },
+        { name: 'Emma L.', joined: '2024-02-03', earnings: '💎 6.80', status: 'Active' },
+        { name: 'David R.', joined: '2024-02-10', earnings: '💎 2.40', status: 'New' },
+        { name: 'Lisa P.', joined: '2024-02-15', earnings: '💎 2.10', status: 'New' }
       ]
-    );
+    },
+    {
+      generation: 2,
+      referrals: [
+        { name: 'Alex T.', joined: '2024-01-25', earnings: '💎 3.20', status: 'Active' },
+        { name: 'Nina S.', joined: '2024-02-01', earnings: '💎 2.80', status: 'Active' },
+        { name: 'James W.', joined: '2024-02-05', earnings: '💎 2.10', status: 'Active' },
+        { name: 'Maria G.', joined: '2024-02-12', earnings: '💎 1.90', status: 'New' },
+        { name: 'Tom H.', joined: '2024-02-18', earnings: '💎 1.50', status: 'New' },
+        { name: 'Kate B.', joined: '2024-02-20', earnings: '💎 1.20', status: 'New' },
+        { name: 'Ryan C.', joined: '2024-02-22', earnings: '💎 1.30', status: 'New' }
+      ]
+    }
+  ];
+
+  const handleViewFullTree = () => {
+    setShowTreeModal(true);
+  };
+
+  const handleShareNetwork = () => {
+    setShowTreeModal(false);
+    Alert.alert('Share Network', 'Network sharing feature coming soon!');
+  };
+
+  const handleExportData = () => {
+    setShowTreeModal(false);
+    Alert.alert('Export Data', 'Network data export feature coming soon!');
   };
 
   return (
@@ -228,6 +222,123 @@ export default function CommunityScreen() {
           </View>
         </View>
       </View>
+
+      {/* Full Tree Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showTreeModal}
+        onRequestClose={() => setShowTreeModal(false)}
+      >
+        <View style={styles.treeModalOverlay}>
+          <View style={styles.treeModalContainer}>
+            <View style={styles.treeModalHeader}>
+              <Text style={styles.treeModalTitle}>🌳 Full Referral Tree</Text>
+              <TouchableOpacity onPress={() => setShowTreeModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView 
+              style={styles.treeModalContent}
+              contentContainerStyle={styles.treeModalContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={styles.treeDescription}>
+                Your complete referral network
+              </Text>
+              
+              {fullTreeData.map((generation, genIndex) => (
+                <View key={genIndex} style={styles.generationContainer}>
+                  <View style={styles.generationHeader}>
+                    <Text style={styles.generationTitle}>
+                      Generation {generation.generation}
+                    </Text>
+                    <Text style={styles.generationCount}>
+                      {generation.referrals.length} people
+                    </Text>
+                  </View>
+                  
+                  {generation.referrals.map((referral, refIndex) => (
+                    <View key={refIndex} style={styles.referralCard}>
+                      <View style={styles.referralInfo}>
+                        <View style={styles.referralHeader}>
+                          <Text style={styles.referralName}>{referral.name}</Text>
+                          <View style={[
+                            styles.statusBadge,
+                            referral.status === 'Active' ? styles.activeBadge : styles.newBadge
+                          ]}>
+                            <Text style={[
+                              styles.statusText,
+                              referral.status === 'Active' ? styles.activeText : styles.newText
+                            ]}>
+                              {referral.status}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.referralDetails}>
+                          <Text style={styles.referralEarnings}>{referral.earnings} TLB</Text>
+                          <Text style={styles.referralJoined}>Joined: {referral.joined}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ))}
+              
+              {/* Summary Section */}
+              <View style={styles.treeSummarySection}>
+                <Text style={styles.treeSummaryTitle}>📊 Network Summary</Text>
+                
+                <View style={styles.treeSummaryGrid}>
+                  <View style={styles.treeSummaryCard}>
+                    <Text style={styles.treeSummaryNumber}>
+                      {fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0)}
+                    </Text>
+                    <Text style={styles.treeSummaryLabel}>Total People</Text>
+                  </View>
+                  
+                  <View style={styles.treeSummaryCard}>
+                    <Text style={styles.treeSummaryNumber}>💎 {referralStats.totalEarnings}</Text>
+                    <Text style={styles.treeSummaryLabel}>Total Earnings</Text>
+                  </View>
+                  
+                  <View style={styles.treeSummaryCard}>
+                    <Text style={styles.treeSummaryNumber}>{fullTreeData.length}</Text>
+                    <Text style={styles.treeSummaryLabel}>Generations</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.commissionInfo}>
+                  <Text style={styles.commissionTitle}>💰 Commission Rates</Text>
+                  <View style={styles.commissionRow}>
+                    <Text style={styles.commissionText}>• Generation 1: 50%</Text>
+                    <Text style={styles.commissionText}>• Generation 2: 25%</Text>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.treeModalActions}>
+              <TouchableOpacity 
+                style={styles.treeActionButton}
+                onPress={handleShareNetwork}
+              >
+                <Ionicons name="share" size={16} color="#FFFFFF" />
+                <Text style={styles.treeActionText}>Share Network</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.treeActionButton, styles.exportButton]}
+                onPress={handleExportData}
+              >
+                <Ionicons name="download" size={16} color="#FFFFFF" />
+                <Text style={styles.treeActionText}>Export Data</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -460,5 +571,218 @@ const styles = StyleSheet.create({
     color: '#8B4513',
     textAlign: 'center',
     marginTop: 2,
+  },
+  // Tree Modal Styles
+  treeModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  treeModalContainer: {
+    width: width * 0.95,
+    maxHeight: '90%',
+    backgroundColor: '#FFF8E7',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  treeModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D4AF37',
+  },
+  treeModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  treeModalContent: {
+    flex: 1,
+  },
+  treeModalContentContainer: {
+    padding: 20,
+    paddingBottom: 30,
+  },
+  treeDescription: {
+    fontSize: 16,
+    color: '#8B4513',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  generationContainer: {
+    marginBottom: 25,
+  },
+  generationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F5E6A3',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  generationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  generationCount: {
+    fontSize: 14,
+    color: '#8B4513',
+    fontWeight: '600',
+  },
+  referralCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    marginLeft: 15,
+  },
+  referralInfo: {
+    flex: 1,
+  },
+  referralHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  referralName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2C1810',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  activeBadge: {
+    backgroundColor: '#10B981',
+  },
+  newBadge: {
+    backgroundColor: '#F59E0B',
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  activeText: {
+    color: '#FFFFFF',
+  },
+  newText: {
+    color: '#FFFFFF',
+  },
+  referralDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  referralEarnings: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  referralJoined: {
+    fontSize: 12,
+    color: '#8B4513',
+  },
+  treeSummarySection: {
+    marginTop: 20,
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  treeSummaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  treeSummaryGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  treeSummaryCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    width: '31%',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  treeSummaryNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 4,
+  },
+  treeSummaryLabel: {
+    fontSize: 11,
+    color: '#8B4513',
+    textAlign: 'center',
+  },
+  commissionInfo: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  commissionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  commissionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  commissionText: {
+    fontSize: 12,
+    color: '#8B4513',
+  },
+  treeModalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#D4AF37',
+    gap: 10,
+  },
+  treeActionButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  exportButton: {
+    backgroundColor: '#8B4513',
+  },
+  treeActionText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginLeft: 8,
+    fontSize: 14,
   },
 });

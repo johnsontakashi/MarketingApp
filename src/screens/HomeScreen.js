@@ -6,7 +6,8 @@ import {
   TouchableOpacity, 
   Alert, 
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -20,6 +21,35 @@ export default function HomeScreen({ navigation }) {
   const [pendingPayments, setPendingPayments] = useState(50.00);
   const [availableBonuses, setAvailableBonuses] = useState(3);
   const [referralEarnings, setReferralEarnings] = useState(25.00);
+
+  // Featured products data
+  const featuredProducts = [
+    {
+      id: 1,
+      title: 'Premium Wireless Headphones',
+      price: 200.00,
+      originalPrice: 250.00,
+      image: require('../../assets/pic1.jpeg'),
+      supportBonus: 50,
+      installments: 4
+    },
+    {
+      id: 2,
+      title: 'Smart Fitness Watch',
+      price: 150.00,
+      image: require('../../assets/pic2.jpeg'),
+      supportBonus: 45,
+      installments: 3
+    },
+    {
+      id: 3,
+      title: 'Gaming Mouse Pro',
+      price: 75.00,
+      image: require('../../assets/pic3.jpeg'),
+      supportBonus: 40,
+      installments: 2
+    }
+  ];
 
   // Quick action buttons data
   const quickActions = [
@@ -100,18 +130,39 @@ export default function HomeScreen({ navigation }) {
 
       {/* Quick Actions */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActionsGrid}>
-          {quickActions.map((action, index) => (
-            <TouchableOpacity 
-              key={index}
-              style={[styles.quickActionButton, { backgroundColor: action.color }]}
-              onPress={() => handleQuickAction(action.screen || action.action)}
-            >
-              <Ionicons name={action.icon} size={24} color="#FFFFFF" />
-              <Text style={styles.quickActionLabel}>{action.label}</Text>
-            </TouchableOpacity>
-          ))}
+        <Text style={styles.sectionTitle}>⚡ Quick Actions</Text>
+        <View style={styles.quickActionsContainer}>
+          {/* First Row - 4 buttons */}
+          <View style={styles.quickActionsRow}>
+            {quickActions.slice(0, 4).map((action, index) => (
+              <TouchableOpacity 
+                key={index}
+                style={[styles.quickActionButton, { backgroundColor: action.color }]}
+                onPress={() => handleQuickAction(action.screen || action.action)}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Ionicons name={action.icon} size={22} color="#FFFFFF" />
+                </View>
+                <Text style={styles.quickActionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          
+          {/* Second Row - 3 buttons */}
+          <View style={styles.quickActionsRow}>
+            {quickActions.slice(4, 7).map((action, index) => (
+              <TouchableOpacity 
+                key={index + 4}
+                style={[styles.quickActionButton, { backgroundColor: action.color }]}
+                onPress={() => handleQuickAction(action.screen || action.action)}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Ionicons name={action.icon} size={22} color="#FFFFFF" />
+                </View>
+                <Text style={styles.quickActionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
@@ -156,18 +207,43 @@ export default function HomeScreen({ navigation }) {
         
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.featuredProductsContainer}>
-            {[1, 2, 3].map((item) => (
-              <View key={item} style={styles.productCard}>
-                <View style={styles.productImage}>
-                  <Ionicons name="image" size={40} color="#D4AF37" />
+            {featuredProducts.map((product) => (
+              <TouchableOpacity 
+                key={product.id} 
+                style={styles.productCard}
+                onPress={() => navigation.navigate('Marketplace')}
+              >
+                <View style={styles.productImageContainer}>
+                  <Image 
+                    source={product.image} 
+                    style={styles.productImage}
+                    resizeMode="cover"
+                  />
+                  {product.originalPrice && (
+                    <View style={styles.discountBadge}>
+                      <Text style={styles.discountText}>SALE</Text>
+                    </View>
+                  )}
                 </View>
-                <Text style={styles.productTitle}>Premium Headphones</Text>
-                <Text style={styles.productPrice}>💎 200.00 TLB</Text>
-                <View style={styles.productFeatures}>
-                  <Text style={styles.featureText}>🎁 50% Support Bonus</Text>
-                  <Text style={styles.featureText}>💳 4 Installments</Text>
+                
+                <View style={styles.productInfo}>
+                  <Text style={styles.productTitle} numberOfLines={2}>
+                    {product.title}
+                  </Text>
+                  
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.productPrice}>💎 {product.price.toFixed(2)} TLB</Text>
+                    {product.originalPrice && (
+                      <Text style={styles.originalPrice}>💎 {product.originalPrice.toFixed(2)}</Text>
+                    )}
+                  </View>
+                  
+                  <View style={styles.productFeatures}>
+                    <Text style={styles.featureText}>🎁 {product.supportBonus}% Bonus</Text>
+                    <Text style={styles.featureText}>💳 {product.installments} Payments</Text>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
@@ -271,29 +347,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  quickActionsGrid: {
+  quickActionsContainer: {
+    gap: 12,
+  },
+  quickActionsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    paddingHorizontal: 2,
   },
   quickActionButton: {
-    width: (width - 60) / 3,
-    aspectRatio: 1,
-    borderRadius: 12,
+    flex: 1,
+    aspectRatio: 1.1,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginHorizontal: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  quickActionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   quickActionLabel: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 5,
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   overviewGrid: {
     flexDirection: 'row',
@@ -326,39 +419,77 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   productCard: {
-    width: 160,
+    width: 180,
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 15,
+    borderRadius: 16,
+    padding: 12,
     marginRight: 15,
     borderWidth: 1,
     borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  productImageContainer: {
+    position: 'relative',
+    marginBottom: 10,
   },
   productImage: {
-    height: 80,
+    width: '100%',
+    height: 100,
+    borderRadius: 12,
     backgroundColor: '#F5E6A3',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
+  },
+  discountBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#EF4444',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  discountText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  productInfo: {
+    flex: 1,
   },
   productTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#2C1810',
-    marginBottom: 5,
+    marginBottom: 8,
+    lineHeight: 18,
+  },
+  priceContainer: {
+    marginBottom: 8,
   },
   productPrice: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#D4AF37',
-    marginBottom: 8,
+    marginBottom: 2,
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#8B4513',
+    textDecorationLine: 'line-through',
   },
   productFeatures: {
-    gap: 2,
+    gap: 3,
   },
   featureText: {
     fontSize: 10,
     color: '#8B4513',
+    backgroundColor: '#F5E6A3',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
   },
 });
