@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import simCardManager from '../components/mdm/SimCardManager';
 
@@ -21,6 +21,11 @@ export default function DeviceStatusScreen({ navigation }) {
     removalCount: 0,
     lockTriggered: false
   });
+
+  // Modal states
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   // Update SIM status periodically
   useEffect(() => {
@@ -59,7 +64,15 @@ export default function DeviceStatusScreen({ navigation }) {
   };
 
   const handleContactSupport = () => {
-    Alert.alert('Contact Support', 'Support contact options:\n\n📧 support@tlbdiamond.com\n📞 1-800-TLB-HELP\n💬 Live Chat (24/7)');
+    setShowHelpModal(true);
+  };
+
+  const handleViewWallet = () => {
+    setShowWalletModal(true);
+  };
+
+  const handleViewOrders = () => {
+    setShowOrdersModal(true);
   };
 
   const handleSimRemovalTest = () => {
@@ -260,12 +273,12 @@ export default function DeviceStatusScreen({ navigation }) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>⚡ Quick Actions</Text>
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Wallet')}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleViewWallet}>
             <Ionicons name="wallet" size={20} color="#D4AF37" />
             <Text style={styles.actionText}>View Wallet</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleViewOrders}>
             <Ionicons name="cube" size={20} color="#D4AF37" />
             <Text style={styles.actionText}>My Orders</Text>
           </TouchableOpacity>
@@ -309,6 +322,277 @@ export default function DeviceStatusScreen({ navigation }) {
           </View>
         </View>
       </View>
+
+      {/* Wallet Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showWalletModal}
+        onRequestClose={() => setShowWalletModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💎 TLB Diamond Wallet</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowWalletModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Wallet Balance */}
+              <View style={styles.walletBalanceCard}>
+                <Text style={styles.balanceLabel}>Current Balance</Text>
+                <Text style={styles.balanceAmount}>💎 1,250.00 TLB</Text>
+                <Text style={styles.balanceUSD}>≈ $2,500.00 USD</Text>
+              </View>
+
+              {/* Recent Transactions */}
+              <View style={styles.walletSection}>
+                <Text style={styles.walletSectionTitle}>Recent Transactions</Text>
+                
+                <View style={styles.transactionItem}>
+                  <View style={styles.transactionIcon}>
+                    <Ionicons name="add" size={20} color="#10B981" />
+                  </View>
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionTitle}>Payment Received</Text>
+                    <Text style={styles.transactionDate}>Today, 2:30 PM</Text>
+                  </View>
+                  <Text style={styles.transactionAmount}>+💎 50.00</Text>
+                </View>
+
+                <View style={styles.transactionItem}>
+                  <View style={styles.transactionIcon}>
+                    <Ionicons name="remove" size={20} color="#EF4444" />
+                  </View>
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionTitle}>Device Payment</Text>
+                    <Text style={styles.transactionDate}>Yesterday, 10:15 AM</Text>
+                  </View>
+                  <Text style={styles.transactionAmount}>-💎 25.00</Text>
+                </View>
+
+                <View style={styles.transactionItem}>
+                  <View style={styles.transactionIcon}>
+                    <Ionicons name="add" size={20} color="#10B981" />
+                  </View>
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionTitle}>Bonus Credit</Text>
+                    <Text style={styles.transactionDate}>Dec 3, 2024</Text>
+                  </View>
+                  <Text style={styles.transactionAmount}>+💎 15.00</Text>
+                </View>
+              </View>
+
+              {/* Quick Actions */}
+              <View style={styles.walletActions}>
+                <TouchableOpacity style={styles.walletActionButton}>
+                  <Ionicons name="add-circle" size={20} color="#FFFFFF" />
+                  <Text style={styles.walletActionText}>Add Funds</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={[styles.walletActionButton, styles.secondaryButton]}>
+                  <Ionicons name="send" size={20} color="#6B7280" />
+                  <Text style={[styles.walletActionText, styles.secondaryText]}>Transfer</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Orders Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showOrdersModal}
+        onRequestClose={() => setShowOrdersModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>📦 My Orders</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowOrdersModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Order Summary */}
+              <View style={styles.orderSummaryCard}>
+                <Text style={styles.orderSummaryTitle}>Order Summary</Text>
+                <View style={styles.orderSummaryRow}>
+                  <Text style={styles.orderSummaryLabel}>Total Orders:</Text>
+                  <Text style={styles.orderSummaryValue}>3</Text>
+                </View>
+                <View style={styles.orderSummaryRow}>
+                  <Text style={styles.orderSummaryLabel}>Completed:</Text>
+                  <Text style={styles.orderSummaryValue}>2</Text>
+                </View>
+                <View style={styles.orderSummaryRow}>
+                  <Text style={styles.orderSummaryLabel}>In Progress:</Text>
+                  <Text style={styles.orderSummaryValue}>1</Text>
+                </View>
+              </View>
+
+              {/* Recent Orders */}
+              <View style={styles.ordersSection}>
+                <Text style={styles.ordersSectionTitle}>Recent Orders</Text>
+                
+                <View style={styles.orderItem}>
+                  <View style={styles.orderItemHeader}>
+                    <Text style={styles.orderNumber}>Order #TLB-001</Text>
+                    <View style={[styles.orderStatus, styles.inProgressStatus]}>
+                      <Text style={styles.orderStatusText}>IN PROGRESS</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.orderProduct}>Samsung Galaxy S23 Ultra</Text>
+                  <Text style={styles.orderDate}>Ordered: Dec 1, 2024</Text>
+                  <Text style={styles.orderTotal}>💎 800.00 TLB</Text>
+                </View>
+
+                <View style={styles.orderItem}>
+                  <View style={styles.orderItemHeader}>
+                    <Text style={styles.orderNumber}>Order #TLB-002</Text>
+                    <View style={[styles.orderStatus, styles.completedStatus]}>
+                      <Text style={styles.orderStatusText}>COMPLETED</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.orderProduct}>iPhone 15 Pro</Text>
+                  <Text style={styles.orderDate}>Delivered: Nov 28, 2024</Text>
+                  <Text style={styles.orderTotal}>💎 950.00 TLB</Text>
+                </View>
+
+                <View style={styles.orderItem}>
+                  <View style={styles.orderItemHeader}>
+                    <Text style={styles.orderNumber}>Order #TLB-003</Text>
+                    <View style={[styles.orderStatus, styles.completedStatus]}>
+                      <Text style={styles.orderStatusText}>COMPLETED</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.orderProduct}>AirPods Pro (2nd Gen)</Text>
+                  <Text style={styles.orderDate}>Delivered: Nov 25, 2024</Text>
+                  <Text style={styles.orderTotal}>💎 120.00 TLB</Text>
+                </View>
+              </View>
+
+              {/* Quick Actions */}
+              <View style={styles.orderActions}>
+                <TouchableOpacity style={styles.orderActionButton}>
+                  <Ionicons name="storefront" size={20} color="#FFFFFF" />
+                  <Text style={styles.orderActionText}>Shop Now</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={[styles.orderActionButton, styles.secondaryButton]}>
+                  <Ionicons name="refresh" size={20} color="#6B7280" />
+                  <Text style={[styles.orderActionText, styles.secondaryText]}>Track Orders</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Help Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showHelpModal}
+        onRequestClose={() => setShowHelpModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>🆘 Help & Support</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowHelpModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Contact Methods */}
+              <View style={styles.helpSection}>
+                <Text style={styles.helpSectionTitle}>Contact Support</Text>
+                
+                <TouchableOpacity style={styles.helpContactItem}>
+                  <View style={styles.helpContactIcon}>
+                    <Ionicons name="mail" size={24} color="#D4AF37" />
+                  </View>
+                  <View style={styles.helpContactInfo}>
+                    <Text style={styles.helpContactTitle}>Email Support</Text>
+                    <Text style={styles.helpContactDetail}>support@tlbdiamond.com</Text>
+                    <Text style={styles.helpContactTime}>Response within 24 hours</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.helpContactItem}>
+                  <View style={styles.helpContactIcon}>
+                    <Ionicons name="call" size={24} color="#D4AF37" />
+                  </View>
+                  <View style={styles.helpContactInfo}>
+                    <Text style={styles.helpContactTitle}>Phone Support</Text>
+                    <Text style={styles.helpContactDetail}>1-800-TLB-HELP</Text>
+                    <Text style={styles.helpContactTime}>Mon-Fri 9AM-6PM EST</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.helpContactItem}>
+                  <View style={styles.helpContactIcon}>
+                    <Ionicons name="chatbubbles" size={24} color="#D4AF37" />
+                  </View>
+                  <View style={styles.helpContactInfo}>
+                    <Text style={styles.helpContactTitle}>Live Chat</Text>
+                    <Text style={styles.helpContactDetail}>Chat with an agent</Text>
+                    <Text style={styles.helpContactTime}>Available 24/7</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* FAQ Section */}
+              <View style={styles.helpSection}>
+                <Text style={styles.helpSectionTitle}>Frequently Asked Questions</Text>
+                
+                <View style={styles.faqItem}>
+                  <Text style={styles.faqQuestion}>How do I unlock my device?</Text>
+                  <Text style={styles.faqAnswer}>Complete your payment plan or contact support for assistance.</Text>
+                </View>
+
+                <View style={styles.faqItem}>
+                  <Text style={styles.faqQuestion}>What happens if I remove the SIM card?</Text>
+                  <Text style={styles.faqAnswer}>The device will automatically lock for security. Contact support to unlock.</Text>
+                </View>
+
+                <View style={styles.faqItem}>
+                  <Text style={styles.faqQuestion}>How do I add funds to my wallet?</Text>
+                  <Text style={styles.faqAnswer}>Go to the Wallet section and select "Add Funds" to deposit TLB Diamonds.</Text>
+                </View>
+              </View>
+
+              {/* Emergency Actions */}
+              <View style={styles.emergencySection}>
+                <Text style={styles.emergencySectionTitle}>Emergency Support</Text>
+                <TouchableOpacity style={styles.emergencyButton} onPress={handleEmergencyUnlock}>
+                  <Ionicons name="alert-circle" size={20} color="#FFFFFF" />
+                  <Text style={styles.emergencyButtonText}>Request Emergency Unlock</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -536,5 +820,387 @@ const styles = StyleSheet.create({
   resetButton: {
     borderColor: '#6B7280',
     flex: 1,
+  },
+
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    maxHeight: '85%',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    backgroundColor: '#F5E6A3',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 175, 55, 0.3)',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2C1810',
+    letterSpacing: 0.5,
+  },
+  modalCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.6)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  modalContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+  },
+
+  // Wallet Modal Styles
+  walletBalanceCard: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  balanceLabel: {
+    fontSize: 16,
+    color: '#8B4513',
+    marginBottom: 8,
+  },
+  balanceAmount: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  balanceUSD: {
+    fontSize: 16,
+    color: '#8B4513',
+  },
+  walletSection: {
+    marginBottom: 24,
+  },
+  walletSectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  transactionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  transactionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  transactionInfo: {
+    flex: 1,
+  },
+  transactionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  transactionDate: {
+    fontSize: 14,
+    color: '#8B4513',
+  },
+  transactionAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  walletActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  walletActionButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  walletActionText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  secondaryButton: {
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E5E7EB',
+  },
+  secondaryText: {
+    color: '#6B7280',
+  },
+
+  // Orders Modal Styles
+  orderSummaryCard: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  orderSummaryTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  orderSummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  orderSummaryLabel: {
+    fontSize: 16,
+    color: '#8B4513',
+  },
+  orderSummaryValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+  },
+  ordersSection: {
+    marginBottom: 24,
+  },
+  ordersSectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  orderItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  orderItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  orderNumber: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+  },
+  orderStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  orderStatusText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  inProgressStatus: {
+    backgroundColor: '#F59E0B',
+  },
+  completedStatus: {
+    backgroundColor: '#10B981',
+  },
+  orderProduct: {
+    fontSize: 15,
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  orderDate: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 4,
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  orderActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  orderActionButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  orderActionText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+
+  // Help Modal Styles
+  helpSection: {
+    marginBottom: 24,
+  },
+  helpSectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  helpContactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  helpContactIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  helpContactInfo: {
+    flex: 1,
+  },
+  helpContactTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  helpContactDetail: {
+    fontSize: 15,
+    color: '#D4AF37',
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  helpContactTime: {
+    fontSize: 14,
+    color: '#8B4513',
+  },
+  faqItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  faqQuestion: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 8,
+  },
+  faqAnswer: {
+    fontSize: 15,
+    color: '#8B4513',
+    lineHeight: 22,
+  },
+  emergencySection: {
+    marginTop: 8,
+  },
+  emergencySectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  emergencyButton: {
+    backgroundColor: '#EF4444',
+    borderRadius: 12,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#DC2626',
+    shadowColor: 'rgba(239, 68, 68, 0.3)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  emergencyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
   },
 });
