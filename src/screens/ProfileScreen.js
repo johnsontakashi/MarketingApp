@@ -874,138 +874,218 @@ export default function ProfileScreen({ navigation }) {
         visible={showAddPaymentModal}
         onRequestClose={() => setShowAddPaymentModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
+        <View style={styles.addPaymentModalOverlay}>
+          <View style={styles.addPaymentModalContainer}>
+            
+            {/* Header Section */}
+            <View style={styles.addPaymentModalHeader}>
+              <View style={styles.addPaymentIconContainer}>
+                {selectedPaymentType === 'credit' && <Ionicons name="card" size={32} color="#D4AF37" />}
+                {selectedPaymentType === 'bank' && <Ionicons name="business" size={32} color="#D4AF37" />}
+                {selectedPaymentType === 'paypal' && <Ionicons name="logo-paypal" size={32} color="#D4AF37" />}
+                {selectedPaymentType === 'gift' && <Ionicons name="gift" size={32} color="#D4AF37" />}
+              </View>
+              
+              <Text style={styles.addPaymentModalTitle}>
                 {selectedPaymentType === 'credit' && '💳 Add Credit Card'}
                 {selectedPaymentType === 'bank' && '🏦 Add Bank Account'}
                 {selectedPaymentType === 'paypal' && '🅿️ Add PayPal Account'}
                 {selectedPaymentType === 'gift' && '🎁 Add Gift Card'}
               </Text>
-              <TouchableOpacity onPress={() => setShowAddPaymentModal(false)}>
+              
+              <Text style={styles.addPaymentModalSubtitle}>
+                Securely add your payment information to your TLB Diamond wallet
+              </Text>
+              
+              <TouchableOpacity 
+                style={styles.addPaymentCloseButton}
+                onPress={() => setShowAddPaymentModal(false)}
+              >
                 <Ionicons name="close" size={24} color="#8B4513" />
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalContent}>
+            <ScrollView style={styles.addPaymentModalContent} showsVerticalScrollIndicator={false}>
               {/* Credit Card Form */}
               {selectedPaymentType === 'credit' && (
-                <View style={styles.paymentForm}>
-                  <Text style={styles.formSectionTitle}>Credit Card Information</Text>
-                  
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Card Number</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="1234 5678 9012 3456"
-                      value={paymentFormData.cardNumber}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardNumber: text})}
-                      keyboardType="numeric"
-                      maxLength={19}
-                    />
-                  </View>
-                  
-                  <View style={styles.inputRow}>
-                    <View style={styles.inputGroupHalf}>
-                      <Text style={styles.inputLabel}>Expiry Date</Text>
-                      <TextInput
-                        style={styles.paymentInput}
-                        placeholder="MM/YY"
-                        value={paymentFormData.expiryDate}
-                        onChangeText={(text) => setPaymentFormData({...paymentFormData, expiryDate: text})}
-                        keyboardType="numeric"
-                        maxLength={5}
-                      />
+                <View style={styles.addPaymentForm}>
+                  <View style={styles.addPaymentFormSection}>
+                    <Text style={styles.addPaymentSectionTitle}>
+                      <Ionicons name="card" size={18} color="#D4AF37" /> Credit Card Information
+                    </Text>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Card Number</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="card-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="1234 5678 9012 3456"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.cardNumber}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, cardNumber: text})}
+                          keyboardType="numeric"
+                          maxLength={19}
+                        />
+                      </View>
                     </View>
                     
-                    <View style={styles.inputGroupHalf}>
-                      <Text style={styles.inputLabel}>CVV</Text>
-                      <TextInput
-                        style={styles.paymentInput}
-                        placeholder="123"
-                        value={paymentFormData.cvv}
-                        onChangeText={(text) => setPaymentFormData({...paymentFormData, cvv: text})}
-                        keyboardType="numeric"
-                        maxLength={4}
-                        secureTextEntry
-                      />
+                    <View style={styles.addPaymentInputRow}>
+                      <View style={styles.addPaymentInputContainerHalf}>
+                        <Text style={styles.addPaymentInputLabel}>Expiry Date</Text>
+                        <View style={styles.addPaymentInputWrapper}>
+                          <Ionicons name="calendar-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                          <TextInput
+                            style={styles.addPaymentInput}
+                            placeholder="MM/YY"
+                            placeholderTextColor="#B8860B"
+                            value={paymentFormData.expiryDate}
+                            onChangeText={(text) => setPaymentFormData({...paymentFormData, expiryDate: text})}
+                            keyboardType="numeric"
+                            maxLength={5}
+                          />
+                        </View>
+                      </View>
+                      
+                      <View style={styles.addPaymentInputContainerHalf}>
+                        <Text style={styles.addPaymentInputLabel}>CVV</Text>
+                        <View style={styles.addPaymentInputWrapper}>
+                          <Ionicons name="shield-checkmark-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                          <TextInput
+                            style={styles.addPaymentInput}
+                            placeholder="123"
+                            placeholderTextColor="#B8860B"
+                            value={paymentFormData.cvv}
+                            onChangeText={(text) => setPaymentFormData({...paymentFormData, cvv: text})}
+                            keyboardType="numeric"
+                            maxLength={4}
+                            secureTextEntry
+                          />
+                        </View>
+                      </View>
+                    </View>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Cardholder Name</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="person-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="John Doe"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.cardholderName}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, cardholderName: text})}
+                          autoCapitalize="words"
+                        />
+                      </View>
                     </View>
                   </View>
                   
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Cardholder Name</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="John Doe"
-                      value={paymentFormData.cardholderName}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, cardholderName: text})}
-                    />
+                  {/* Security Notice */}
+                  <View style={styles.addPaymentSecurityNotice}>
+                    <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+                    <Text style={styles.addPaymentSecurityText}>
+                      Your payment information is encrypted and securely stored
+                    </Text>
                   </View>
                 </View>
               )}
               
               {/* Bank Account Form */}
               {selectedPaymentType === 'bank' && (
-                <View style={styles.paymentForm}>
-                  <Text style={styles.formSectionTitle}>Bank Account Information</Text>
-                  
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Bank Name</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="Chase Bank"
-                      value={paymentFormData.bankName}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, bankName: text})}
-                    />
+                <View style={styles.addPaymentForm}>
+                  <View style={styles.addPaymentFormSection}>
+                    <Text style={styles.addPaymentSectionTitle}>
+                      <Ionicons name="business" size={18} color="#D4AF37" /> Bank Account Information
+                    </Text>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Bank Name</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="business-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="Chase Bank"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.bankName}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, bankName: text})}
+                          autoCapitalize="words"
+                        />
+                      </View>
+                    </View>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Account Number</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="keypad-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="1234567890"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.accountNumber}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, accountNumber: text})}
+                          keyboardType="numeric"
+                          secureTextEntry
+                        />
+                      </View>
+                    </View>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Routing Number</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="git-network-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="021000021"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.routingNumber}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, routingNumber: text})}
+                          keyboardType="numeric"
+                        />
+                      </View>
+                    </View>
                   </View>
                   
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Account Number</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="1234567890"
-                      value={paymentFormData.accountNumber}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, accountNumber: text})}
-                      keyboardType="numeric"
-                      secureTextEntry
-                    />
-                  </View>
-                  
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Routing Number</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="021000021"
-                      value={paymentFormData.routingNumber}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, routingNumber: text})}
-                      keyboardType="numeric"
-                    />
+                  {/* Bank Security Notice */}
+                  <View style={styles.addPaymentSecurityNotice}>
+                    <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+                    <Text style={styles.addPaymentSecurityText}>
+                      Bank-level encryption protects your account information
+                    </Text>
                   </View>
                 </View>
               )}
               
               {/* PayPal Form */}
               {selectedPaymentType === 'paypal' && (
-                <View style={styles.paymentForm}>
-                  <Text style={styles.formSectionTitle}>PayPal Account Information</Text>
-                  
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>PayPal Email Address</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="john.doe@example.com"
-                      value={paymentFormData.paypalEmail}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, paypalEmail: text})}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                    />
+                <View style={styles.addPaymentForm}>
+                  <View style={styles.addPaymentFormSection}>
+                    <Text style={styles.addPaymentSectionTitle}>
+                      <Ionicons name="logo-paypal" size={18} color="#D4AF37" /> PayPal Account Information
+                    </Text>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>PayPal Email Address</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="mail-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="john.doe@example.com"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.paypalEmail}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, paypalEmail: text})}
+                          keyboardType="email-address"
+                          autoCapitalize="none"
+                        />
+                      </View>
+                    </View>
                   </View>
                   
-                  <View style={styles.paymentNote}>
-                    <Ionicons name="information-circle" size={16} color="#F59E0B" />
-                    <Text style={styles.paymentNoteText}>
-                      You'll be redirected to PayPal to authorize this connection.
+                  {/* PayPal Notice */}
+                  <View style={styles.addPaymentPaypalNotice}>
+                    <Ionicons name="information-circle" size={20} color="#0070BA" />
+                    <Text style={styles.addPaymentPaypalText}>
+                      You'll be redirected to PayPal to securely authorize this connection
                     </Text>
                   </View>
                 </View>
@@ -1013,49 +1093,71 @@ export default function ProfileScreen({ navigation }) {
               
               {/* Gift Card Form */}
               {selectedPaymentType === 'gift' && (
-                <View style={styles.paymentForm}>
-                  <Text style={styles.formSectionTitle}>Gift Card Information</Text>
-                  
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Gift Card Number</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="1234 5678 9012 3456"
-                      value={paymentFormData.giftCardNumber}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardNumber: text})}
-                      keyboardType="numeric"
-                    />
+                <View style={styles.addPaymentForm}>
+                  <View style={styles.addPaymentFormSection}>
+                    <Text style={styles.addPaymentSectionTitle}>
+                      <Ionicons name="gift" size={18} color="#D4AF37" /> Gift Card Information
+                    </Text>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Gift Card Number</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="card-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="1234 5678 9012 3456"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.giftCardNumber}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardNumber: text})}
+                          keyboardType="numeric"
+                        />
+                      </View>
+                    </View>
+                    
+                    <View style={styles.addPaymentInputContainer}>
+                      <Text style={styles.addPaymentInputLabel}>Security PIN</Text>
+                      <View style={styles.addPaymentInputWrapper}>
+                        <Ionicons name="keypad-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <TextInput
+                          style={styles.addPaymentInput}
+                          placeholder="1234"
+                          placeholderTextColor="#B8860B"
+                          value={paymentFormData.giftCardPin}
+                          onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardPin: text})}
+                          keyboardType="numeric"
+                          maxLength={8}
+                          secureTextEntry
+                        />
+                      </View>
+                    </View>
                   </View>
                   
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Security PIN</Text>
-                    <TextInput
-                      style={styles.paymentInput}
-                      placeholder="1234"
-                      value={paymentFormData.giftCardPin}
-                      onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardPin: text})}
-                      keyboardType="numeric"
-                      maxLength={8}
-                      secureTextEntry
-                    />
+                  {/* Gift Card Notice */}
+                  <View style={styles.addPaymentSecurityNotice}>
+                    <Ionicons name="gift" size={20} color="#F59E0B" />
+                    <Text style={styles.addPaymentSecurityText}>
+                      Gift card balance will be added to your TLB Diamond wallet
+                    </Text>
                   </View>
                 </View>
               )}
               
               {/* Action Buttons */}
-              <View style={styles.paymentFormActions}>
+              <View style={styles.addPaymentModalActions}>
                 <TouchableOpacity 
-                  style={styles.cancelPaymentButton}
+                  style={styles.addPaymentCancelButton}
                   onPress={handleCancelPaymentForm}
                 >
-                  <Text style={styles.cancelPaymentText}>Cancel</Text>
+                  <Ionicons name="close-circle-outline" size={20} color="#6B7280" />
+                  <Text style={styles.addPaymentCancelText}>Cancel</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
-                  style={styles.savePaymentButton}
+                  style={styles.addPaymentSaveButton}
                   onPress={handleSavePaymentMethod}
                 >
-                  <Text style={styles.savePaymentText}>Save Payment Method</Text>
+                  <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+                  <Text style={styles.addPaymentSaveText}>Save Payment Method</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -5375,5 +5477,232 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+
+  // Add Payment Method Modal Styles
+  addPaymentModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  addPaymentModalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 500,
+    maxHeight: '90%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 3,
+    borderColor: '#D4AF37',
+  },
+  addPaymentModalHeader: {
+    backgroundColor: '#F5E6A3',
+    borderTopLeftRadius: 17,
+    borderTopRightRadius: 17,
+    paddingVertical: 25,
+    paddingHorizontal: 25,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
+    position: 'relative',
+  },
+  addPaymentIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderWidth: 3,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  addPaymentModalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  addPaymentModalSubtitle: {
+    fontSize: 14,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  addPaymentCloseButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addPaymentModalContent: {
+    flex: 1,
+    padding: 25,
+  },
+  addPaymentForm: {
+    flex: 1,
+  },
+  addPaymentFormSection: {
+    marginBottom: 20,
+  },
+  addPaymentSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 20,
+    paddingHorizontal: 5,
+  },
+  addPaymentInputContainer: {
+    marginBottom: 20,
+  },
+  addPaymentInputContainerHalf: {
+    flex: 1,
+    marginBottom: 20,
+  },
+  addPaymentInputRow: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  addPaymentInputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 8,
+    paddingHorizontal: 5,
+  },
+  addPaymentInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8E7',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    paddingHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  addPaymentInputIcon: {
+    marginRight: 12,
+  },
+  addPaymentInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#2C1810',
+    paddingVertical: 15,
+    fontWeight: '500',
+  },
+  addPaymentSecurityNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    padding: 15,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#10B981',
+  },
+  addPaymentSecurityText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: '#065F46',
+    fontWeight: '500',
+    flex: 1,
+    lineHeight: 20,
+  },
+  addPaymentPaypalNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBF4FF',
+    borderRadius: 12,
+    padding: 15,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#0070BA',
+  },
+  addPaymentPaypalText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: '#003087',
+    fontWeight: '500',
+    flex: 1,
+    lineHeight: 20,
+  },
+  addPaymentModalActions: {
+    flexDirection: 'row',
+    gap: 15,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+  },
+  addPaymentCancelButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  addPaymentCancelText: {
+    color: '#6B7280',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  addPaymentSaveButton: {
+    flex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: '#B8860B',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  addPaymentSaveText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
