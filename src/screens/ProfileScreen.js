@@ -115,6 +115,35 @@ export default function ProfileScreen({ navigation }) {
     setShowPaymentModal(true);
   };
 
+  const handleShowAddMethodOptions = () => {
+    Alert.alert(
+      '💳 Add Payment Method',
+      'Choose the type of payment method you want to add:',
+      [
+        {
+          text: '💳 Credit/Debit Card',
+          onPress: () => handleAddPaymentMethod('credit')
+        },
+        {
+          text: '🏦 Bank Account',
+          onPress: () => handleAddPaymentMethod('bank')
+        },
+        {
+          text: '📱 PayPal',
+          onPress: () => handleAddPaymentMethod('paypal')
+        },
+        {
+          text: '🎁 Gift Card',
+          onPress: () => handleAddPaymentMethod('gift')
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ]
+    );
+  };
+
   const handleAddPaymentMethod = (type) => {
     setSelectedPaymentType(type);
     setPaymentFormData({
@@ -816,7 +845,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.addMethodButton}
                 onPress={() => {
                   setShowPaymentModal(false);
-                  Alert.alert('Add Payment', 'New payment method setup coming soon!');
+                  handleShowAddMethodOptions();
                 }}
               >
                 <Ionicons name="add" size={16} color="#FFFFFF" />
