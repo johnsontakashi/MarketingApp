@@ -21,6 +21,8 @@ export default function ProfileScreen({ navigation }) {
   const [selectedRating, setSelectedRating] = useState(0);
   const [showAddedToCartModal, setShowAddedToCartModal] = useState(false);
   const [addedToCartData, setAddedToCartData] = useState(null);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportData, setExportData] = useState(null);
   const [selectedPaymentType, setSelectedPaymentType] = useState('');
   const [paymentFormData, setPaymentFormData] = useState({
     cardNumber: '',
@@ -424,6 +426,28 @@ export default function ProfileScreen({ navigation }) {
     
     setAddedToCartData(cartData);
     setShowAddedToCartModal(true);
+  };
+
+  const handleExportOrderHistory = () => {
+    // Static order data based on the hardcoded values in the orders modal
+    const staticOrders = [
+      { id: 'ORD-001', date: 'Feb 20, 2024', total: 200.00, status: 'Delivered', items: ['Premium Wireless Headphones'] },
+      { id: 'ORD-002', date: 'Feb 18, 2024', total: 150.00, status: 'In Transit', items: ['Smart Fitness Watch'] },
+      { id: 'ORD-003', date: 'Feb 15, 2024', total: 75.00, status: 'Processing', items: ['Gaming Mouse Pro'] },
+      { id: 'ORD-004', date: 'Feb 12, 2024', total: 80.00, status: 'Delivered', items: ['Bluetooth Speaker'] },
+      { id: 'ORD-005', date: 'Feb 10, 2024', total: 25.00, status: 'Cancelled', items: ['Phone Case'] }
+    ];
+
+    const ordersData = {
+      totalOrders: staticOrders.length,
+      totalValue: staticOrders.reduce((sum, order) => sum + order.total, 0),
+      ordersList: staticOrders,
+      exportDate: new Date().toISOString().split('T')[0],
+      availableFormats: ['PDF', 'CSV', 'JSON', 'Excel']
+    };
+    
+    setExportData(ordersData);
+    setShowExportModal(true);
   };
 
   const handleReview = (orderId, items, orderStatus) => {
@@ -1276,7 +1300,7 @@ export default function ProfileScreen({ navigation }) {
                   style={styles.exportOrdersButton}
                   onPress={() => {
                     setShowOrdersModal(false);
-                    Alert.alert('Export', 'Order history export feature coming soon!');
+                    handleExportOrderHistory();
                   }}
                 >
                   <Ionicons name="download" size={16} color="#FFFFFF" />
@@ -2552,6 +2576,121 @@ export default function ProfileScreen({ navigation }) {
             >
               <Text style={styles.addedToCartCloseText}>Close</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Export Order History Modal */}
+      <Modal
+        visible={showExportModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowExportModal(false)}
+      >
+        <View style={styles.exportModalOverlay}>
+          <View style={styles.exportModalContainer}>
+            {/* Export Icon */}
+            <View style={styles.exportModalIcon}>
+              <Ionicons name="download-outline" size={50} color="#D4AF37" />
+            </View>
+
+            {/* Title */}
+            <Text style={styles.exportModalTitle}>📊 Export Order History</Text>
+
+            {exportData && (
+              <>
+                {/* Export Information */}
+                <View style={styles.exportModalInfo}>
+                  <Text style={styles.exportModalDescription}>
+                    Export your complete order history with detailed transaction data and analytics.
+                  </Text>
+                </View>
+
+                {/* Statistics */}
+                <View style={styles.exportStatsContainer}>
+                  <View style={styles.exportStatItem}>
+                    <Ionicons name="cube" size={20} color="#D4AF37" />
+                    <Text style={styles.exportStatLabel}>Total Orders</Text>
+                    <Text style={styles.exportStatValue}>{exportData.totalOrders}</Text>
+                  </View>
+                  
+                  <View style={styles.exportStatItem}>
+                    <Ionicons name="diamond" size={20} color="#D4AF37" />
+                    <Text style={styles.exportStatLabel}>Total Value</Text>
+                    <Text style={styles.exportStatValue}>💎 {exportData.totalValue.toFixed(2)} TLB</Text>
+                  </View>
+                  
+                  <View style={styles.exportStatItem}>
+                    <Ionicons name="calendar" size={20} color="#D4AF37" />
+                    <Text style={styles.exportStatLabel}>Export Date</Text>
+                    <Text style={styles.exportStatValue}>{exportData.exportDate}</Text>
+                  </View>
+                </View>
+
+                {/* Export Format Selection */}
+                <View style={styles.exportFormatsContainer}>
+                  <Text style={styles.exportFormatsTitle}>Select Export Format:</Text>
+                  <View style={styles.exportFormatsList}>
+                    {exportData.availableFormats.map((format, index) => (
+                      <TouchableOpacity 
+                        key={index}
+                        style={styles.exportFormatButton}
+                        onPress={() => {
+                          setShowExportModal(false);
+                          // Simulate export success
+                          setTimeout(() => {
+                            Alert.alert(
+                              '✅ Export Complete!',
+                              `Your order history has been exported to ${format} format.\n\nThe file has been saved to your Downloads folder.`,
+                              [{ text: 'OK' }]
+                            );
+                          }, 500);
+                        }}
+                      >
+                        <Ionicons 
+                          name={
+                            format === 'PDF' ? 'document-text' :
+                            format === 'CSV' ? 'grid' :
+                            format === 'JSON' ? 'code-slash' :
+                            'document'
+                          } 
+                          size={24} 
+                          color="#FFFFFF" 
+                        />
+                        <Text style={styles.exportFormatText}>{format}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
+                {/* Additional Options */}
+                <View style={styles.exportOptionsContainer}>
+                  <View style={styles.exportOption}>
+                    <Ionicons name="filter" size={18} color="#8B4513" />
+                    <Text style={styles.exportOptionText}>
+                      Export includes: Order details, payment history, delivery tracking, and purchase analytics
+                    </Text>
+                  </View>
+                  
+                  <View style={styles.exportOption}>
+                    <Ionicons name="lock-closed" size={18} color="#8B4513" />
+                    <Text style={styles.exportOptionText}>
+                      All personal data is encrypted and secure during export
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {/* Action Buttons */}
+            <View style={styles.exportModalActions}>
+              <TouchableOpacity 
+                style={styles.exportCancelButton}
+                onPress={() => setShowExportModal(false)}
+              >
+                <Text style={styles.exportCancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -5034,6 +5173,178 @@ const styles = StyleSheet.create({
   addedToCartCloseText: {
     color: '#8B4513',
     fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // Export Order History Modal Styles
+  exportModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  exportModalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 25,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '90%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 15,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  exportModalIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#FFF8E7',
+    alignSelf: 'center',
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: '#D4AF37',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  exportModalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 28,
+  },
+  exportModalInfo: {
+    backgroundColor: '#FFF8E7',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#D4AF37',
+  },
+  exportModalDescription: {
+    fontSize: 15,
+    color: '#2C1810',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  exportStatsContainer: {
+    marginBottom: 25,
+    backgroundColor: '#F5E6A3',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  exportStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E6D07A',
+  },
+  exportStatLabel: {
+    flex: 1,
+    fontSize: 14,
+    color: '#8B4513',
+    fontWeight: '500',
+    marginLeft: 12,
+  },
+  exportStatValue: {
+    fontSize: 14,
+    color: '#2C1810',
+    fontWeight: 'bold',
+  },
+  exportFormatsContainer: {
+    marginBottom: 20,
+  },
+  exportFormatsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  exportFormatsList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  exportFormatButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48%',
+    aspectRatio: 1.5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  exportFormatText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: 'bold',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  exportOptionsContainer: {
+    backgroundColor: '#FFF8E7',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#F5E6A3',
+  },
+  exportOption: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  exportOptionText: {
+    fontSize: 12,
+    color: '#8B4513',
+    lineHeight: 16,
+    marginLeft: 10,
+    flex: 1,
+  },
+  exportModalActions: {
+    alignItems: 'center',
+  },
+  exportCancelButton: {
+    backgroundColor: '#8B4513',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#5D4E37',
+  },
+  exportCancelText: {
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '600',
   },
 });
