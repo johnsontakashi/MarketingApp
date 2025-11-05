@@ -10,6 +10,8 @@ export default function ProfileScreen({ navigation }) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
   const [showOrdersModal, setShowOrdersModal] = useState(false);
+  const [showTrackModal, setShowTrackModal] = useState(false);
+  const [trackingData, setTrackingData] = useState(null);
   const [selectedPaymentType, setSelectedPaymentType] = useState('');
   const [paymentFormData, setPaymentFormData] = useState({
     cardNumber: '',
@@ -244,6 +246,123 @@ export default function ProfileScreen({ navigation }) {
 
   const handleNotifications = () => {
     setShowNotificationsModal(true);
+  };
+
+  const handleTrackOrder = (orderId, orderStatus, productName) => {
+    let trackingData;
+    
+    switch (orderStatus) {
+      case 'Processing':
+        trackingData = {
+          orderId,
+          productName,
+          status: 'Processing',
+          statusColor: '#F59E0B',
+          statusIcon: 'hourglass',
+          steps: [
+            { step: 'Order Placed', completed: true, date: 'Feb 15, 2024 at 2:30 PM' },
+            { step: 'Processing Payment', completed: false, date: 'In Progress', current: true },
+            { step: 'Preparing for Shipment', completed: false, date: 'Pending' },
+            { step: 'Shipped', completed: false, date: 'Pending' },
+            { step: 'Out for Delivery', completed: false, date: 'Pending' },
+            { step: 'Delivered', completed: false, date: 'Pending' }
+          ],
+          estimatedDelivery: 'Feb 18-20, 2024',
+          trackingNumber: null,
+          carrier: null
+        };
+        break;
+      case 'Shipped':
+        trackingData = {
+          orderId,
+          productName,
+          status: 'Shipped',
+          statusColor: '#3B82F6',
+          statusIcon: 'car',
+          steps: [
+            { step: 'Order Placed', completed: true, date: 'Feb 10, 2024 at 10:15 AM' },
+            { step: 'Payment Confirmed', completed: true, date: 'Feb 10, 2024 at 10:16 AM' },
+            { step: 'Prepared for Shipment', completed: true, date: 'Feb 11, 2024 at 9:00 AM' },
+            { step: 'Shipped', completed: true, date: 'Feb 12, 2024 at 8:30 AM' },
+            { step: 'Out for Delivery', completed: false, date: 'Today', current: true },
+            { step: 'Delivered', completed: false, date: 'Pending' }
+          ],
+          estimatedDelivery: 'Today by 6:00 PM',
+          trackingNumber: 'TLB123456789',
+          carrier: 'TLB Express'
+        };
+        break;
+      case 'Delivered':
+        trackingData = {
+          orderId,
+          productName,
+          status: 'Delivered',
+          statusColor: '#10B981',
+          statusIcon: 'checkmark-circle',
+          steps: [
+            { step: 'Order Placed', completed: true, date: 'Feb 5, 2024 at 3:45 PM' },
+            { step: 'Payment Confirmed', completed: true, date: 'Feb 5, 2024 at 3:46 PM' },
+            { step: 'Prepared for Shipment', completed: true, date: 'Feb 6, 2024 at 11:00 AM' },
+            { step: 'Shipped', completed: true, date: 'Feb 7, 2024 at 7:20 AM' },
+            { step: 'Out for Delivery', completed: true, date: 'Feb 8, 2024 at 8:00 AM' },
+            { step: 'Delivered', completed: true, date: 'Feb 8, 2024 at 2:15 PM', current: true }
+          ],
+          estimatedDelivery: 'Delivered',
+          trackingNumber: 'TLB123456789',
+          carrier: 'TLB Express',
+          deliveryDetails: {
+            deliveredTo: 'John Doe',
+            location: 'Front Door',
+            signature: 'Not Required'
+          }
+        };
+        break;
+      default:
+        trackingData = {
+          orderId,
+          productName,
+          status: 'Unknown',
+          statusColor: '#8B4513',
+          statusIcon: 'help-circle',
+          steps: [],
+          estimatedDelivery: 'Information being updated',
+          trackingNumber: null,
+          carrier: null
+        };
+    }
+
+    setTrackingData(trackingData);
+    setShowTrackModal(true);
+  };
+
+  const handleOrderDetails = (orderId, orderStatus, items, total, orderDate) => {
+    const itemsList = items.map(item => `• ${item.name} - 💎 ${item.price}`).join('\n');
+    
+    let statusDetails;
+    switch (orderStatus) {
+      case 'Processing':
+        statusDetails = '🔄 Your order is being processed and will be shipped soon.';
+        break;
+      case 'Shipped':
+        statusDetails = '🚚 Your order has been shipped and is on its way!';
+        break;
+      case 'Delivered':
+        statusDetails = '✅ Your order has been successfully delivered.';
+        break;
+      case 'Cancelled':
+        statusDetails = '❌ This order has been cancelled and refunded.';
+        break;
+      default:
+        statusDetails = '📋 Order status information.';
+    }
+
+    const orderDetails = `📋 Order ${orderId}\n\n📅 Order Date: ${orderDate}\n🔸 Status: ${orderStatus}\n\n🛍️ Items Ordered:\n${itemsList}\n\n💰 Total Amount: 💎 ${total} TLB\n\n📋 Order Details:\n${statusDetails}\n\n💳 Payment Method: TLB Diamond Wallet\n📦 Shipping Method: Standard Delivery\n📍 Delivery Address: 123 Main Street, City, State 12345\n\n📞 Questions? Contact support at support@tlbdiamond.com`;
+
+    Alert.alert('📋 Order Details', orderDetails, [
+      { text: 'Track Order', onPress: () => handleTrackOrder(orderId, orderStatus, items[0]?.name || 'Product') },
+      { text: 'Contact Support', onPress: () => Alert.alert('📞 Support', 'Redirecting to support chat...') },
+      { text: 'Close', style: 'cancel' }
+    ]);
   };
 
   const handleMenuPress = (action) => {
@@ -891,7 +1010,10 @@ export default function ProfileScreen({ navigation }) {
                   <View style={styles.orderFooter}>
                     <Text style={styles.orderTotal}>Total: 💎 150.00 TLB</Text>
                     <View style={styles.orderActions}>
-                      <TouchableOpacity style={styles.orderActionButton}>
+                      <TouchableOpacity 
+                        style={styles.orderActionButton}
+                        onPress={() => handleTrackOrder('ORD-002', 'Processing', 'Smart Fitness Watch')}
+                      >
                         <Text style={styles.orderActionText}>Track</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.orderActionButton}>
@@ -929,10 +1051,16 @@ export default function ProfileScreen({ navigation }) {
                   <View style={styles.orderFooter}>
                     <Text style={styles.orderTotal}>Total: 💎 160.00 TLB</Text>
                     <View style={styles.orderActions}>
-                      <TouchableOpacity style={styles.orderActionButton}>
+                      <TouchableOpacity 
+                        style={styles.orderActionButton}
+                        onPress={() => handleTrackOrder('ORD-003', 'Shipped', 'Gaming Mouse Pro')}
+                      >
                         <Text style={styles.orderActionText}>Track</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.orderActionButton}>
+                      <TouchableOpacity 
+                        style={styles.orderActionButton}
+                        onPress={() => handleOrderDetails('ORD-003', 'Shipped', [{name: 'Gaming Mouse Pro', price: '75.00'}, {name: 'Bluetooth Speaker', price: '85.00'}], '160.00', 'Feb 10, 2024')}
+                      >
                         <Text style={styles.orderActionText}>Details</Text>
                       </TouchableOpacity>
                     </View>
@@ -1001,7 +1129,10 @@ export default function ProfileScreen({ navigation }) {
                       <TouchableOpacity style={styles.orderActionButton}>
                         <Text style={styles.orderActionText}>Reorder</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.orderActionButton}>
+                      <TouchableOpacity 
+                        style={styles.orderActionButton}
+                        onPress={() => handleOrderDetails('ORD-005', 'Cancelled', [{name: 'Smart LED Bulb', price: '25.00'}], '25.00', 'Jan 28, 2024')}
+                      >
                         <Text style={styles.orderActionText}>Details</Text>
                       </TouchableOpacity>
                     </View>
@@ -1723,6 +1854,146 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+      </Modal>
+
+      {/* Track Order Modal */}
+      <Modal
+        visible={showTrackModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowTrackModal(false)}
+      >
+        <View style={styles.trackModalContainer}>
+          <View style={styles.trackModalHeader}>
+            <Text style={styles.trackModalTitle}>📦 Order Tracking</Text>
+            <TouchableOpacity 
+              style={styles.trackModalCloseButton}
+              onPress={() => setShowTrackModal(false)}
+            >
+              <Ionicons name="close" size={24} color="#8B4513" />
+            </TouchableOpacity>
+          </View>
+
+          {trackingData && (
+            <ScrollView style={styles.trackModalContent} contentContainerStyle={styles.trackModalContentContainer}>
+              {/* Order Header */}
+              <View style={styles.trackOrderHeader}>
+                <View style={styles.trackOrderInfo}>
+                  <Text style={styles.trackOrderId}>Order {trackingData.orderId}</Text>
+                  <Text style={styles.trackProductName}>{trackingData.productName}</Text>
+                </View>
+                <View style={[styles.trackStatusBadge, { backgroundColor: trackingData.statusColor }]}>
+                  <Ionicons name={trackingData.statusIcon} size={16} color="#FFFFFF" />
+                  <Text style={styles.trackStatusText}>{trackingData.status}</Text>
+                </View>
+              </View>
+
+              {/* Tracking Information */}
+              {trackingData.trackingNumber && (
+                <View style={styles.trackInfoCard}>
+                  <Text style={styles.trackInfoTitle}>Tracking Information</Text>
+                  <View style={styles.trackInfoRow}>
+                    <Text style={styles.trackInfoLabel}>Tracking Number:</Text>
+                    <Text style={styles.trackInfoValue}>{trackingData.trackingNumber}</Text>
+                  </View>
+                  <View style={styles.trackInfoRow}>
+                    <Text style={styles.trackInfoLabel}>Carrier:</Text>
+                    <Text style={styles.trackInfoValue}>{trackingData.carrier}</Text>
+                  </View>
+                  <View style={styles.trackInfoRow}>
+                    <Text style={styles.trackInfoLabel}>Estimated Delivery:</Text>
+                    <Text style={styles.trackInfoValue}>{trackingData.estimatedDelivery}</Text>
+                  </View>
+                </View>
+              )}
+
+              {/* Progress Steps */}
+              <View style={styles.trackProgressCard}>
+                <Text style={styles.trackProgressTitle}>Order Progress</Text>
+                {trackingData.steps.map((step, index) => (
+                  <View key={index} style={styles.trackProgressStep}>
+                    <View style={styles.trackProgressIndicator}>
+                      <View style={[
+                        styles.trackProgressDot,
+                        {
+                          backgroundColor: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#E5E5E5',
+                          borderColor: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#C7C7C7'
+                        }
+                      ]}>
+                        {step.completed && <Ionicons name="checkmark" size={12} color="#FFFFFF" />}
+                        {step.current && !step.completed && <View style={styles.trackProgressCurrentIndicator} />}
+                      </View>
+                      {index < trackingData.steps.length - 1 && (
+                        <View style={[
+                          styles.trackProgressLine,
+                          { backgroundColor: step.completed ? '#10B981' : '#E5E5E5' }
+                        ]} />
+                      )}
+                    </View>
+                    <View style={styles.trackProgressDetails}>
+                      <Text style={[
+                        styles.trackProgressStepTitle,
+                        { 
+                          color: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#8B4513',
+                          fontWeight: step.current ? 'bold' : '500'
+                        }
+                      ]}>
+                        {step.step}
+                      </Text>
+                      <Text style={styles.trackProgressStepDate}>{step.date}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+
+              {/* Delivery Details for completed orders */}
+              {trackingData.deliveryDetails && (
+                <View style={styles.trackDeliveryCard}>
+                  <Text style={styles.trackDeliveryTitle}>Delivery Details</Text>
+                  <View style={styles.trackDeliveryRow}>
+                    <Text style={styles.trackDeliveryLabel}>Delivered to:</Text>
+                    <Text style={styles.trackDeliveryValue}>{trackingData.deliveryDetails.deliveredTo}</Text>
+                  </View>
+                  <View style={styles.trackDeliveryRow}>
+                    <Text style={styles.trackDeliveryLabel}>Location:</Text>
+                    <Text style={styles.trackDeliveryValue}>{trackingData.deliveryDetails.location}</Text>
+                  </View>
+                  <View style={styles.trackDeliveryRow}>
+                    <Text style={styles.trackDeliveryLabel}>Signature:</Text>
+                    <Text style={styles.trackDeliveryValue}>{trackingData.deliveryDetails.signature}</Text>
+                  </View>
+                </View>
+              )}
+
+              {/* Action Buttons */}
+              <View style={styles.trackActionButtons}>
+                <TouchableOpacity 
+                  style={styles.trackActionButton}
+                  onPress={() => {
+                    setShowTrackModal(false);
+                    Alert.alert('📞 Support', 'Redirecting to support chat...');
+                  }}
+                >
+                  <Ionicons name="headset" size={18} color="#FFFFFF" />
+                  <Text style={styles.trackActionButtonText}>Contact Support</Text>
+                </TouchableOpacity>
+                
+                {trackingData.status === 'Delivered' && (
+                  <TouchableOpacity 
+                    style={[styles.trackActionButton, styles.trackRatingButton]}
+                    onPress={() => {
+                      setShowTrackModal(false);
+                      Alert.alert('⭐ Rate Delivery', 'Thank you for your feedback!');
+                    }}
+                  >
+                    <Ionicons name="star" size={18} color="#FFFFFF" />
+                    <Text style={styles.trackActionButtonText}>Rate Delivery</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </ScrollView>
+          )}
         </View>
       </Modal>
     </ScrollView>
@@ -3086,6 +3357,243 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   exportOrdersText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+
+  // Track Modal Styles
+  trackModalContainer: {
+    flex: 1,
+    backgroundColor: '#FFF8E7',
+  },
+  trackModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D4AF37',
+    backgroundColor: '#F5E6A3',
+  },
+  trackModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  trackModalCloseButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(139, 69, 19, 0.1)',
+  },
+  trackModalContent: {
+    flex: 1,
+  },
+  trackModalContentContainer: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  trackOrderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackOrderInfo: {
+    flex: 1,
+  },
+  trackOrderId: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  trackProductName: {
+    fontSize: 14,
+    color: '#8B4513',
+  },
+  trackStatusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginLeft: 12,
+  },
+  trackStatusText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  trackInfoCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackInfoTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 12,
+  },
+  trackInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  trackInfoLabel: {
+    fontSize: 14,
+    color: '#8B4513',
+    flex: 1,
+  },
+  trackInfoValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C1810',
+    flex: 1,
+    textAlign: 'right',
+  },
+  trackProgressCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackProgressTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  trackProgressStep: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  trackProgressIndicator: {
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  trackProgressDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  trackProgressCurrentIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+  },
+  trackProgressLine: {
+    width: 2,
+    height: 24,
+    marginTop: 4,
+  },
+  trackProgressDetails: {
+    flex: 1,
+    paddingTop: 2,
+  },
+  trackProgressStepTitle: {
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  trackProgressStepDate: {
+    fontSize: 12,
+    color: '#8B4513',
+  },
+  trackDeliveryCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackDeliveryTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 12,
+  },
+  trackDeliveryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  trackDeliveryLabel: {
+    fontSize: 14,
+    color: '#8B4513',
+    flex: 1,
+  },
+  trackDeliveryValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C1810',
+    flex: 1,
+    textAlign: 'right',
+  },
+  trackActionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  trackActionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D4AF37',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  trackRatingButton: {
+    backgroundColor: '#F59E0B',
+  },
+  trackActionButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
