@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import modalRegistry from '../../services/ModalRegistry';
 
 class SimCardManager {
   constructor() {
@@ -247,14 +248,16 @@ class SimCardManager {
     const isOriginalSim = await this.verifyOriginalSim();
     
     if (!isOriginalSim) {
-      Alert.alert(
-        '⚠️ Different SIM Card Detected',
-        'A different SIM card has been inserted. Device remains locked for security.\n\nComplete payment to unlock device with any SIM card.',
-        [
-          { text: 'Pay Now', onPress: () => this.redirectToPayment() },
-          { text: 'OK' }
-        ]
-      );
+      modalRegistry.showSimCardModal({
+        title: '⚠️ Different SIM Card Detected',
+        message: `A different SIM card has been inserted. Device remains locked for security.
+
+Complete payment to unlock device with any SIM card.
+
+Removal Count: ${this.simRemovedCount}`,
+        onPayment: () => this.redirectToPayment(),
+        onClose: () => console.log('SIM card modal closed')
+      });
     } else {
       console.log('📱 Original SIM card re-inserted');
     }
