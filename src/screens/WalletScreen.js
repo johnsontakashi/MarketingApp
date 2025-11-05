@@ -6,7 +6,8 @@ import {
   TouchableOpacity, 
   StyleSheet,
   Dimensions,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -14,6 +15,7 @@ const { width } = Dimensions.get('window');
 
 export default function WalletScreen({ navigation }) {
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [walletData] = useState({
     available: 1200.00,
     locked: 50.00,
@@ -25,7 +27,7 @@ export default function WalletScreen({ navigation }) {
     monthlyBonuses: 75.00
   });
 
-  const transactions = [
+  const [allTransactions] = useState([
     {
       id: 1,
       type: 'received',
@@ -33,8 +35,11 @@ export default function WalletScreen({ navigation }) {
       title: 'Referral Bonus',
       subtitle: 'From: Sarah M.',
       time: 'Today',
+      date: '2024-12-05',
       icon: 'people',
-      color: '#10B981'
+      color: '#10B981',
+      status: 'completed',
+      transactionId: 'TXN-001234'
     },
     {
       id: 2,
@@ -43,8 +48,11 @@ export default function WalletScreen({ navigation }) {
       title: 'Order Payment',
       subtitle: 'Installment #2',
       time: 'Yesterday',
+      date: '2024-12-04',
       icon: 'card',
-      color: '#EF4444'
+      color: '#EF4444',
+      status: 'completed',
+      transactionId: 'TXN-001235'
     },
     {
       id: 3,
@@ -53,8 +61,11 @@ export default function WalletScreen({ navigation }) {
       title: 'Birthday Bonus',
       subtitle: 'Special reward',
       time: '2 days ago',
+      date: '2024-12-03',
       icon: 'gift',
-      color: '#10B981'
+      color: '#10B981',
+      status: 'completed',
+      transactionId: 'TXN-001236'
     },
     {
       id: 4,
@@ -63,10 +74,93 @@ export default function WalletScreen({ navigation }) {
       title: 'Product Purchase',
       subtitle: 'Wireless Headphones',
       time: '3 days ago',
+      date: '2024-12-02',
       icon: 'storefront',
-      color: '#EF4444'
+      color: '#EF4444',
+      status: 'completed',
+      transactionId: 'TXN-001237'
+    },
+    {
+      id: 5,
+      type: 'received',
+      amount: 25.00,
+      title: 'Daily Login Bonus',
+      subtitle: 'Streak: 7 days',
+      time: '4 days ago',
+      date: '2024-12-01',
+      icon: 'calendar',
+      color: '#10B981',
+      status: 'completed',
+      transactionId: 'TXN-001238'
+    },
+    {
+      id: 6,
+      type: 'sent',
+      amount: 75.00,
+      title: 'Gaming Mouse Pro',
+      subtitle: 'Installment #1',
+      time: '5 days ago',
+      date: '2024-11-30',
+      icon: 'storefront',
+      color: '#EF4444',
+      status: 'completed',
+      transactionId: 'TXN-001239'
+    },
+    {
+      id: 7,
+      type: 'received',
+      amount: 10.00,
+      title: 'Weekly Bonus',
+      subtitle: 'Community reward',
+      time: '1 week ago',
+      date: '2024-11-28',
+      icon: 'gift',
+      color: '#10B981',
+      status: 'completed',
+      transactionId: 'TXN-001240'
+    },
+    {
+      id: 8,
+      type: 'sent',
+      amount: 150.00,
+      title: 'Smart Fitness Watch',
+      subtitle: 'Full payment',
+      time: '1 week ago',
+      date: '2024-11-27',
+      icon: 'card',
+      color: '#EF4444',
+      status: 'completed',
+      transactionId: 'TXN-001241'
+    },
+    {
+      id: 9,
+      type: 'received',
+      amount: 30.00,
+      title: 'Support Bonus',
+      subtitle: 'Payment assistance',
+      time: '2 weeks ago',
+      date: '2024-11-20',
+      icon: 'shield-checkmark',
+      color: '#10B981',
+      status: 'completed',
+      transactionId: 'TXN-001242'
+    },
+    {
+      id: 10,
+      type: 'sent',
+      amount: 85.00,
+      title: 'Bluetooth Speaker',
+      subtitle: 'Installment #2',
+      time: '2 weeks ago',
+      date: '2024-11-19',
+      icon: 'storefront',
+      color: '#EF4444',
+      status: 'completed',
+      transactionId: 'TXN-001243'
     }
-  ];
+  ]);
+
+  const transactions = allTransactions.slice(0, 4); // Show only first 4 in recent
 
   const quickActions = [
     { icon: 'send', label: 'Send', color: '#D4AF37' },
@@ -76,7 +170,11 @@ export default function WalletScreen({ navigation }) {
   ];
 
   const handleQuickAction = (action) => {
-    Alert.alert('Coming Soon', `${action} functionality will be available soon!`);
+    if (action === 'History') {
+      setShowHistoryModal(true);
+    } else {
+      Alert.alert('Coming Soon', `${action} functionality will be available soon!`);
+    }
   };
 
   const handleTransactionPress = (transaction) => {
@@ -84,62 +182,7 @@ export default function WalletScreen({ navigation }) {
   };
 
   const handleViewAllTransactions = () => {
-    const allTransactions = [
-      ...transactions,
-      {
-        id: 5,
-        type: 'received',
-        amount: 25.00,
-        title: 'Daily Login Bonus',
-        subtitle: 'Streak: 7 days',
-        time: '4 days ago',
-        icon: 'calendar',
-        color: '#10B981'
-      },
-      {
-        id: 6,
-        type: 'sent',
-        amount: 75.00,
-        title: 'Gaming Mouse Pro',
-        subtitle: 'Installment #1',
-        time: '5 days ago',
-        icon: 'storefront',
-        color: '#EF4444'
-      },
-      {
-        id: 7,
-        type: 'received',
-        amount: 10.00,
-        title: 'Weekly Bonus',
-        subtitle: 'Community reward',
-        time: '1 week ago',
-        icon: 'gift',
-        color: '#10B981'
-      },
-      {
-        id: 8,
-        type: 'sent',
-        amount: 150.00,
-        title: 'Smart Fitness Watch',
-        subtitle: 'Full payment',
-        time: '1 week ago',
-        icon: 'card',
-        color: '#EF4444'
-      }
-    ];
-
-    const transactionList = allTransactions
-      .map(t => `${t.type === 'received' ? '+' : '-'}💎 ${t.amount} TLB - ${t.title} (${t.time})`)
-      .join('\n\n');
-
-    Alert.alert(
-      '💎 All Transactions',
-      `Recent transaction history:\n\n${transactionList}\n\nTotal transactions: ${allTransactions.length}`,
-      [
-        { text: 'Export History', onPress: () => handleExportTransactionHistory() },
-        { text: 'Close', style: 'cancel' }
-      ]
-    );
+    setShowHistoryModal(true);
   };
 
   const handleExportTransactionHistory = () => {
@@ -308,9 +351,162 @@ export default function WalletScreen({ navigation }) {
           </View>
         </View>
       </View>
+
+      {/* Transaction History Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showHistoryModal}
+        onRequestClose={() => setShowHistoryModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💎 Transaction History</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowHistoryModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            {/* History Summary */}
+            <View style={styles.historySummary}>
+              <View style={styles.summaryCard}>
+                <Text style={styles.summaryLabel}>Total Transactions</Text>
+                <Text style={styles.summaryValue}>{allTransactions.length}</Text>
+              </View>
+              <View style={styles.summaryCard}>
+                <Text style={styles.summaryLabel}>This Month</Text>
+                <Text style={styles.summaryValue}>
+                  {allTransactions.filter(t => t.date.includes('2024-12')).length}
+                </Text>
+              </View>
+              <View style={styles.summaryCard}>
+                <Text style={styles.summaryLabel}>Net Flow</Text>
+                <Text style={styles.summaryValue}>
+                  💎 {(allTransactions
+                    .filter(t => t.type === 'received')
+                    .reduce((sum, t) => sum + t.amount, 0) - 
+                  allTransactions
+                    .filter(t => t.type === 'sent')
+                    .reduce((sum, t) => sum + t.amount, 0)).toFixed(2)}
+                </Text>
+              </View>
+            </View>
+            
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* All Transactions List */}
+              <View style={styles.historySection}>
+                <Text style={styles.historySectionTitle}>All Transactions</Text>
+                
+                {allTransactions.map((transaction) => (
+                  <TouchableOpacity 
+                    key={transaction.id}
+                    style={styles.historyTransactionItem}
+                    onPress={() => handleTransactionDetailPress(transaction)}
+                  >
+                    <View style={[styles.historyTransactionIcon, { backgroundColor: transaction.color }]}>
+                      <Ionicons name={transaction.icon} size={20} color="#FFFFFF" />
+                    </View>
+                    
+                    <View style={styles.historyTransactionDetails}>
+                      <Text style={styles.historyTransactionTitle}>{transaction.title}</Text>
+                      <Text style={styles.historyTransactionSubtitle}>{transaction.subtitle}</Text>
+                      <Text style={styles.historyTransactionId}>ID: {transaction.transactionId}</Text>
+                    </View>
+                    
+                    <View style={styles.historyTransactionAmount}>
+                      <Text style={[
+                        styles.historyTransactionAmountText,
+                        { color: transaction.type === 'received' ? '#10B981' : '#EF4444' }
+                      ]}>
+                        {transaction.type === 'received' ? '+' : '-'}💎 {transaction.amount.toFixed(2)}
+                      </Text>
+                      <Text style={styles.historyTransactionTime}>{transaction.time}</Text>
+                      <Text style={styles.historyTransactionDate}>{transaction.date}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Monthly Breakdown */}
+              <View style={styles.historySection}>
+                <Text style={styles.historySectionTitle}>Monthly Breakdown</Text>
+                
+                <View style={styles.monthlyBreakdown}>
+                  <View style={styles.monthlyBreakdownItem}>
+                    <Text style={styles.monthlyBreakdownLabel}>December 2024</Text>
+                    <View style={styles.monthlyBreakdownAmounts}>
+                      <Text style={styles.monthlyReceived}>
+                        +💎 {allTransactions
+                          .filter(t => t.date.includes('2024-12') && t.type === 'received')
+                          .reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                      </Text>
+                      <Text style={styles.monthlySent}>
+                        -💎 {allTransactions
+                          .filter(t => t.date.includes('2024-12') && t.type === 'sent')
+                          .reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.monthlyBreakdownItem}>
+                    <Text style={styles.monthlyBreakdownLabel}>November 2024</Text>
+                    <View style={styles.monthlyBreakdownAmounts}>
+                      <Text style={styles.monthlyReceived}>
+                        +💎 {allTransactions
+                          .filter(t => t.date.includes('2024-11') && t.type === 'received')
+                          .reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                      </Text>
+                      <Text style={styles.monthlySent}>
+                        -💎 {allTransactions
+                          .filter(t => t.date.includes('2024-11') && t.type === 'sent')
+                          .reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Action Buttons */}
+            <View style={styles.historyActions}>
+              <TouchableOpacity 
+                style={styles.exportButton}
+                onPress={handleExportTransactionHistory}
+              >
+                <Ionicons name="download" size={20} color="#FFFFFF" />
+                <Text style={styles.exportButtonText}>Export History</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.filterButton}
+                onPress={() => Alert.alert('Filter', 'Transaction filtering coming soon!')}
+              >
+                <Ionicons name="filter" size={20} color="#6B7280" />
+                <Text style={styles.filterButtonText}>Filter</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
+
+const handleTransactionDetailPress = (transaction) => {
+  Alert.alert(
+    '💎 Transaction Details',
+    `Transaction ID: ${transaction.transactionId}\n\nTitle: ${transaction.title}\nDescription: ${transaction.subtitle}\nAmount: ${transaction.type === 'received' ? '+' : '-'}💎 ${transaction.amount.toFixed(2)} TLB\nDate: ${transaction.date}\nStatus: ${transaction.status}\nType: ${transaction.type === 'received' ? 'Credit' : 'Debit'}`,
+    [
+      { text: 'Copy ID', onPress: () => Alert.alert('Copied', 'Transaction ID copied to clipboard') },
+      { text: 'Close', style: 'cancel' }
+    ]
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -497,5 +693,239 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 14,
     color: '#8B4513',
+  },
+
+  // History Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    maxHeight: '90%',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    backgroundColor: '#F5E6A3',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 175, 55, 0.3)',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2C1810',
+    letterSpacing: 0.5,
+  },
+  modalCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.6)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  modalContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+  },
+  historySummary: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    backgroundColor: '#FAFAFA',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(229, 231, 235, 0.6)',
+  },
+  summaryCard: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  summaryLabel: {
+    fontSize: 12,
+    color: '#8B4513',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  summaryValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2C1810',
+    textAlign: 'center',
+  },
+  historySection: {
+    marginBottom: 24,
+  },
+  historySectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 16,
+  },
+  historyTransactionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  historyTransactionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  historyTransactionDetails: {
+    flex: 1,
+  },
+  historyTransactionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  historyTransactionSubtitle: {
+    fontSize: 13,
+    color: '#8B4513',
+    marginBottom: 2,
+  },
+  historyTransactionId: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    fontFamily: 'monospace',
+  },
+  historyTransactionAmount: {
+    alignItems: 'flex-end',
+  },
+  historyTransactionAmountText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  historyTransactionTime: {
+    fontSize: 11,
+    color: '#8B4513',
+    marginBottom: 1,
+  },
+  historyTransactionDate: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    fontFamily: 'monospace',
+  },
+  monthlyBreakdown: {
+    gap: 12,
+  },
+  monthlyBreakdownItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  monthlyBreakdownLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 8,
+  },
+  monthlyBreakdownAmounts: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  monthlyReceived: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#10B981',
+  },
+  monthlySent: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#EF4444',
+  },
+  historyActions: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(229, 231, 235, 0.6)',
+    backgroundColor: '#FAFAFA',
+  },
+  exportButton: {
+    flex: 1.5,
+    backgroundColor: '#D4AF37',
+    borderRadius: 14,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#B8860B',
+    shadowColor: 'rgba(212, 175, 55, 0.4)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  exportButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
+    letterSpacing: 0.4,
+  },
+  filterButton: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 14,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  filterButtonText: {
+    color: '#6B7280',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });

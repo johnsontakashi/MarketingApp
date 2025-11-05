@@ -6,6 +6,9 @@ const { width } = Dimensions.get('window');
 
 export default function CommunityScreen() {
   const [showTreeModal, setShowTreeModal] = useState(false);
+  const [expandedGenerations, setExpandedGenerations] = useState({});
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [showMemberDetail, setShowMemberDetail] = useState(false);
   const [availableBonuses] = useState([
     {
       id: 1,
@@ -64,43 +67,310 @@ export default function CommunityScreen() {
     Alert.alert('Share Referral', 'Your referral code: JOHN2024\n\nShare this code with friends!');
   };
 
-  const fullTreeData = [
+  const [fullTreeData] = useState([
     {
       generation: 1,
+      totalEarnings: 25.00,
+      commissionRate: 50,
       referrals: [
-        { name: 'Sarah M.', joined: '2024-01-15', earnings: '💎 8.50', status: 'Active' },
-        { name: 'Mike K.', joined: '2024-01-20', earnings: '💎 5.20', status: 'Active' },
-        { name: 'Emma L.', joined: '2024-02-03', earnings: '💎 6.80', status: 'Active' },
-        { name: 'David R.', joined: '2024-02-10', earnings: '💎 2.40', status: 'New' },
-        { name: 'Lisa P.', joined: '2024-02-15', earnings: '💎 2.10', status: 'New' }
+        { 
+          id: 1,
+          name: 'Sarah M.', 
+          joined: '2024-01-15', 
+          earnings: 8.50, 
+          status: 'Active',
+          avatar: '👩',
+          totalPurchases: 3,
+          totalSpent: 285.00,
+          lastActivity: '2 hours ago',
+          referredBy: 'You',
+          location: 'New York, USA',
+          memberSince: '8 months'
+        },
+        { 
+          id: 2,
+          name: 'Mike K.', 
+          joined: '2024-01-20', 
+          earnings: 5.20, 
+          status: 'Active',
+          avatar: '👨',
+          totalPurchases: 2,
+          totalSpent: 180.00,
+          lastActivity: '1 day ago',
+          referredBy: 'You',
+          location: 'California, USA',
+          memberSince: '7 months'
+        },
+        { 
+          id: 3,
+          name: 'Emma L.', 
+          joined: '2024-02-03', 
+          earnings: 6.80, 
+          status: 'Active',
+          avatar: '👩',
+          totalPurchases: 4,
+          totalSpent: 320.00,
+          lastActivity: '3 hours ago',
+          referredBy: 'You',
+          location: 'Texas, USA',
+          memberSince: '6 months'
+        },
+        { 
+          id: 4,
+          name: 'David R.', 
+          joined: '2024-02-10', 
+          earnings: 2.40, 
+          status: 'New',
+          avatar: '👨',
+          totalPurchases: 1,
+          totalSpent: 75.00,
+          lastActivity: '1 week ago',
+          referredBy: 'You',
+          location: 'Florida, USA',
+          memberSince: '3 months'
+        },
+        { 
+          id: 5,
+          name: 'Lisa P.', 
+          joined: '2024-02-15', 
+          earnings: 2.10, 
+          status: 'New',
+          avatar: '👩',
+          totalPurchases: 1,
+          totalSpent: 65.00,
+          lastActivity: '3 days ago',
+          referredBy: 'You',
+          location: 'Illinois, USA',
+          memberSince: '3 months'
+        }
       ]
     },
     {
       generation: 2,
+      totalEarnings: 15.00,
+      commissionRate: 25,
       referrals: [
-        { name: 'Alex T.', joined: '2024-01-25', earnings: '💎 3.20', status: 'Active' },
-        { name: 'Nina S.', joined: '2024-02-01', earnings: '💎 2.80', status: 'Active' },
-        { name: 'James W.', joined: '2024-02-05', earnings: '💎 2.10', status: 'Active' },
-        { name: 'Maria G.', joined: '2024-02-12', earnings: '💎 1.90', status: 'New' },
-        { name: 'Tom H.', joined: '2024-02-18', earnings: '💎 1.50', status: 'New' },
-        { name: 'Kate B.', joined: '2024-02-20', earnings: '💎 1.20', status: 'New' },
-        { name: 'Ryan C.', joined: '2024-02-22', earnings: '💎 1.30', status: 'New' }
+        { 
+          id: 6,
+          name: 'Alex T.', 
+          joined: '2024-01-25', 
+          earnings: 3.20, 
+          status: 'Active',
+          avatar: '👨',
+          totalPurchases: 2,
+          totalSpent: 150.00,
+          lastActivity: '5 hours ago',
+          referredBy: 'Sarah M.',
+          location: 'Nevada, USA',
+          memberSince: '6 months'
+        },
+        { 
+          id: 7,
+          name: 'Nina S.', 
+          joined: '2024-02-01', 
+          earnings: 2.80, 
+          status: 'Active',
+          avatar: '👩',
+          totalPurchases: 3,
+          totalSpent: 210.00,
+          lastActivity: '1 day ago',
+          referredBy: 'Mike K.',
+          location: 'Washington, USA',
+          memberSince: '5 months'
+        },
+        { 
+          id: 8,
+          name: 'James W.', 
+          joined: '2024-02-05', 
+          earnings: 2.10, 
+          status: 'Active',
+          avatar: '👨',
+          totalPurchases: 1,
+          totalSpent: 95.00,
+          lastActivity: '2 days ago',
+          referredBy: 'Emma L.',
+          location: 'Oregon, USA',
+          memberSince: '5 months'
+        },
+        { 
+          id: 9,
+          name: 'Maria G.', 
+          joined: '2024-02-12', 
+          earnings: 1.90, 
+          status: 'New',
+          avatar: '👩',
+          totalPurchases: 1,
+          totalSpent: 85.00,
+          lastActivity: '4 days ago',
+          referredBy: 'David R.',
+          location: 'Arizona, USA',
+          memberSince: '4 months'
+        },
+        { 
+          id: 10,
+          name: 'Tom H.', 
+          joined: '2024-02-18', 
+          earnings: 1.50, 
+          status: 'New',
+          avatar: '👨',
+          totalPurchases: 1,
+          totalSpent: 55.00,
+          lastActivity: '1 week ago',
+          referredBy: 'Lisa P.',
+          location: 'Colorado, USA',
+          memberSince: '3 months'
+        },
+        { 
+          id: 11,
+          name: 'Kate B.', 
+          joined: '2024-02-20', 
+          earnings: 1.20, 
+          status: 'New',
+          avatar: '👩',
+          totalPurchases: 1,
+          totalSpent: 45.00,
+          lastActivity: '5 days ago',
+          referredBy: 'Sarah M.',
+          location: 'Utah, USA',
+          memberSince: '3 months'
+        },
+        { 
+          id: 12,
+          name: 'Ryan C.', 
+          joined: '2024-02-22', 
+          earnings: 1.30, 
+          status: 'New',
+          avatar: '👨',
+          totalPurchases: 1,
+          totalSpent: 60.00,
+          lastActivity: '2 weeks ago',
+          referredBy: 'Mike K.',
+          location: 'Georgia, USA',
+          memberSince: '2 months'
+        }
+      ]
+    },
+    {
+      generation: 3,
+      totalEarnings: 5.00,
+      commissionRate: 12.5,
+      referrals: [
+        { 
+          id: 13,
+          name: 'Jessica R.', 
+          joined: '2024-03-01', 
+          earnings: 1.80, 
+          status: 'Active',
+          avatar: '👩',
+          totalPurchases: 2,
+          totalSpent: 125.00,
+          lastActivity: '1 day ago',
+          referredBy: 'Alex T.',
+          location: 'Michigan, USA',
+          memberSince: '2 months'
+        },
+        { 
+          id: 14,
+          name: 'Carlos M.', 
+          joined: '2024-03-05', 
+          earnings: 1.20, 
+          status: 'New',
+          avatar: '👨',
+          totalPurchases: 1,
+          totalSpent: 75.00,
+          lastActivity: '3 days ago',
+          referredBy: 'Nina S.',
+          location: 'Pennsylvania, USA',
+          memberSince: '2 months'
+        },
+        { 
+          id: 15,
+          name: 'Sophie L.', 
+          joined: '2024-03-10', 
+          earnings: 2.00, 
+          status: 'Active',
+          avatar: '👩',
+          totalPurchases: 2,
+          totalSpent: 140.00,
+          lastActivity: '6 hours ago',
+          referredBy: 'James W.',
+          location: 'Ohio, USA',
+          memberSince: '1 month'
+        }
       ]
     }
-  ];
+  ]);
 
   const handleViewFullTree = () => {
     setShowTreeModal(true);
+    // Initialize all generations as expanded
+    const initialExpanded = {};
+    fullTreeData.forEach(gen => {
+      initialExpanded[gen.generation] = true;
+    });
+    setExpandedGenerations(initialExpanded);
+  };
+
+  const toggleGeneration = (generation) => {
+    setExpandedGenerations(prev => ({
+      ...prev,
+      [generation]: !prev[generation]
+    }));
+  };
+
+  const handleMemberPress = (member) => {
+    setSelectedMember(member);
+    setShowMemberDetail(true);
   };
 
   const handleShareNetwork = () => {
-    setShowTreeModal(false);
-    Alert.alert('Share Network', 'Network sharing feature coming soon!');
+    const totalMembers = fullTreeData.reduce((sum, gen) => sum + gen.referrals.length, 0);
+    const totalEarnings = fullTreeData.reduce((sum, gen) => sum + gen.totalEarnings, 0);
+    
+    Alert.alert(
+      '🌐 Share Your Network',
+      `Share your amazing referral network!\n\n📊 Network Stats:\n• ${totalMembers} total members\n• 💎 ${totalEarnings.toFixed(2)} TLB earned\n• ${fullTreeData.length} generations deep\n\nYour referral code: JOHN2024`,
+      [
+        { text: 'Copy Link', onPress: () => Alert.alert('✅ Copied', 'Network link copied to clipboard!') },
+        { text: 'Share', onPress: () => Alert.alert('📤 Shared', 'Network shared successfully!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
   };
 
   const handleExportData = () => {
-    setShowTreeModal(false);
-    Alert.alert('Export Data', 'Network data export feature coming soon!');
+    const totalMembers = fullTreeData.reduce((sum, gen) => sum + gen.referrals.length, 0);
+    const totalEarnings = fullTreeData.reduce((sum, gen) => sum + gen.totalEarnings, 0);
+    
+    Alert.alert(
+      '📊 Export Network Data',
+      'Choose your export format:',
+      [
+        { 
+          text: 'PDF Report', 
+          onPress: () => {
+            setTimeout(() => {
+              Alert.alert(
+                '✅ Export Complete!',
+                `Network report exported successfully!\n\n📄 Format: PDF\n👥 Members: ${totalMembers}\n💎 Total Earnings: ${totalEarnings.toFixed(2)} TLB\n📅 Export Date: ${new Date().toLocaleDateString()}\n\nFile saved to Downloads folder.`
+              );
+            }, 1000);
+          }
+        },
+        { 
+          text: 'CSV Data', 
+          onPress: () => {
+            setTimeout(() => {
+              Alert.alert(
+                '✅ Export Complete!',
+                `Network data exported successfully!\n\n📄 Format: CSV\n👥 Members: ${totalMembers}\n💎 Total Earnings: ${totalEarnings.toFixed(2)} TLB\n📅 Export Date: ${new Date().toLocaleDateString()}\n\nFile saved to Downloads folder.`
+              );
+            }, 1000);
+          }
+        },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
   };
 
   return (
@@ -225,18 +495,42 @@ export default function CommunityScreen() {
 
       {/* Full Tree Modal */}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={showTreeModal}
         onRequestClose={() => setShowTreeModal(false)}
+        statusBarTranslucent={true}
       >
         <View style={styles.treeModalOverlay}>
           <View style={styles.treeModalContainer}>
             <View style={styles.treeModalHeader}>
               <Text style={styles.treeModalTitle}>🌳 Full Referral Tree</Text>
-              <TouchableOpacity onPress={() => setShowTreeModal(false)}>
+              <TouchableOpacity 
+                style={styles.treeModalCloseButton}
+                onPress={() => setShowTreeModal(false)}
+              >
                 <Ionicons name="close" size={24} color="#8B4513" />
               </TouchableOpacity>
+            </View>
+
+            {/* Tree Summary */}
+            <View style={styles.treeQuickStats}>
+              <View style={styles.quickStatItem}>
+                <Text style={styles.quickStatNumber}>
+                  {fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0)}
+                </Text>
+                <Text style={styles.quickStatLabel}>Total Members</Text>
+              </View>
+              <View style={styles.quickStatItem}>
+                <Text style={styles.quickStatNumber}>
+                  💎 {fullTreeData.reduce((sum, gen) => sum + gen.totalEarnings, 0).toFixed(2)}
+                </Text>
+                <Text style={styles.quickStatLabel}>Total Earnings</Text>
+              </View>
+              <View style={styles.quickStatItem}>
+                <Text style={styles.quickStatNumber}>{fullTreeData.length}</Text>
+                <Text style={styles.quickStatLabel}>Generations</Text>
+              </View>
             </View>
 
             <ScrollView 
@@ -244,76 +538,106 @@ export default function CommunityScreen() {
               contentContainerStyle={styles.treeModalContentContainer}
               showsVerticalScrollIndicator={false}
             >
-              <Text style={styles.treeDescription}>
-                Your complete referral network
-              </Text>
-              
               {fullTreeData.map((generation, genIndex) => (
                 <View key={genIndex} style={styles.generationContainer}>
-                  <View style={styles.generationHeader}>
-                    <Text style={styles.generationTitle}>
-                      Generation {generation.generation}
-                    </Text>
-                    <Text style={styles.generationCount}>
-                      {generation.referrals.length} people
-                    </Text>
-                  </View>
-                  
-                  {generation.referrals.map((referral, refIndex) => (
-                    <View key={refIndex} style={styles.referralCard}>
-                      <View style={styles.referralInfo}>
-                        <View style={styles.referralHeader}>
-                          <Text style={styles.referralName}>{referral.name}</Text>
-                          <View style={[
-                            styles.statusBadge,
-                            referral.status === 'Active' ? styles.activeBadge : styles.newBadge
-                          ]}>
-                            <Text style={[
-                              styles.statusText,
-                              referral.status === 'Active' ? styles.activeText : styles.newText
-                            ]}>
-                              {referral.status}
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.referralDetails}>
-                          <Text style={styles.referralEarnings}>{referral.earnings} TLB</Text>
-                          <Text style={styles.referralJoined}>Joined: {referral.joined}</Text>
-                        </View>
-                      </View>
+                  <TouchableOpacity 
+                    style={styles.generationHeader}
+                    onPress={() => toggleGeneration(generation.generation)}
+                  >
+                    <View style={styles.generationInfo}>
+                      <Text style={styles.generationTitle}>
+                        🏆 Generation {generation.generation}
+                      </Text>
+                      <Text style={styles.generationSubtitle}>
+                        {generation.referrals.length} members • {generation.commissionRate}% commission • 💎 {generation.totalEarnings.toFixed(2)} TLB
+                      </Text>
                     </View>
-                  ))}
+                    <Ionicons 
+                      name={expandedGenerations[generation.generation] ? "chevron-up" : "chevron-down"} 
+                      size={20} 
+                      color="#8B4513" 
+                    />
+                  </TouchableOpacity>
+                  
+                  {expandedGenerations[generation.generation] && (
+                    <View style={styles.generationMembers}>
+                      {generation.referrals.map((referral, refIndex) => (
+                        <TouchableOpacity 
+                          key={refIndex} 
+                          style={styles.referralCard}
+                          onPress={() => handleMemberPress(referral)}
+                        >
+                          <View style={styles.referralAvatar}>
+                            <Text style={styles.avatarEmoji}>{referral.avatar}</Text>
+                          </View>
+                          
+                          <View style={styles.referralInfo}>
+                            <View style={styles.referralHeader}>
+                              <Text style={styles.referralName}>{referral.name}</Text>
+                              <View style={[
+                                styles.statusBadge,
+                                referral.status === 'Active' ? styles.activeBadge : styles.newBadge
+                              ]}>
+                                <Text style={[
+                                  styles.statusText,
+                                  referral.status === 'Active' ? styles.activeText : styles.newText
+                                ]}>
+                                  {referral.status}
+                                </Text>
+                              </View>
+                            </View>
+                            <View style={styles.referralDetails}>
+                              <Text style={styles.referralEarnings}>💎 {referral.earnings.toFixed(2)} TLB</Text>
+                              <Text style={styles.referralActivity}>{referral.lastActivity}</Text>
+                            </View>
+                            <View style={styles.referralMeta}>
+                              <Text style={styles.referralLocation}>📍 {referral.location}</Text>
+                              <Text style={styles.referralPurchases}>🛒 {referral.totalPurchases} purchases</Text>
+                            </View>
+                          </View>
+                          
+                          <View style={styles.referralActions}>
+                            <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
                 </View>
               ))}
               
-              {/* Summary Section */}
+              {/* Enhanced Summary Section */}
               <View style={styles.treeSummarySection}>
-                <Text style={styles.treeSummaryTitle}>📊 Network Summary</Text>
+                <Text style={styles.treeSummaryTitle}>📊 Network Analytics</Text>
                 
-                <View style={styles.treeSummaryGrid}>
-                  <View style={styles.treeSummaryCard}>
-                    <Text style={styles.treeSummaryNumber}>
-                      {fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0)}
-                    </Text>
-                    <Text style={styles.treeSummaryLabel}>Total People</Text>
-                  </View>
-                  
-                  <View style={styles.treeSummaryCard}>
-                    <Text style={styles.treeSummaryNumber}>💎 {referralStats.totalEarnings}</Text>
-                    <Text style={styles.treeSummaryLabel}>Total Earnings</Text>
-                  </View>
-                  
-                  <View style={styles.treeSummaryCard}>
-                    <Text style={styles.treeSummaryNumber}>{fullTreeData.length}</Text>
-                    <Text style={styles.treeSummaryLabel}>Generations</Text>
-                  </View>
+                <View style={styles.analyticsGrid}>
+                  {fullTreeData.map((gen, index) => (
+                    <View key={index} style={styles.analyticsCard}>
+                      <Text style={styles.analyticsGeneration}>Gen {gen.generation}</Text>
+                      <Text style={styles.analyticsMembers}>{gen.referrals.length} members</Text>
+                      <Text style={styles.analyticsEarnings}>💎 {gen.totalEarnings.toFixed(2)}</Text>
+                      <Text style={styles.analyticsRate}>{gen.commissionRate}% rate</Text>
+                    </View>
+                  ))}
                 </View>
-                
-                <View style={styles.commissionInfo}>
-                  <Text style={styles.commissionTitle}>💰 Commission Rates</Text>
-                  <View style={styles.commissionRow}>
-                    <Text style={styles.commissionText}>• Generation 1: 50%</Text>
-                    <Text style={styles.commissionText}>• Generation 2: 25%</Text>
+
+                <View style={styles.performanceStats}>
+                  <Text style={styles.performanceTitle}>🎯 Performance Insights</Text>
+                  <View style={styles.performanceItem}>
+                    <Text style={styles.performanceLabel}>Most Active Generation:</Text>
+                    <Text style={styles.performanceValue}>
+                      Generation {fullTreeData.find(gen => 
+                        gen.referrals.filter(r => r.status === 'Active').length === 
+                        Math.max(...fullTreeData.map(g => g.referrals.filter(r => r.status === 'Active').length))
+                      )?.generation || 1}
+                    </Text>
+                  </View>
+                  <View style={styles.performanceItem}>
+                    <Text style={styles.performanceLabel}>Average Earnings per Member:</Text>
+                    <Text style={styles.performanceValue}>
+                      💎 {(fullTreeData.reduce((sum, gen) => sum + gen.totalEarnings, 0) / 
+                        fullTreeData.reduce((sum, gen) => sum + gen.referrals.length, 0)).toFixed(2)}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -324,7 +648,7 @@ export default function CommunityScreen() {
                 style={styles.treeActionButton}
                 onPress={handleShareNetwork}
               >
-                <Ionicons name="share" size={16} color="#FFFFFF" />
+                <Ionicons name="share" size={18} color="#FFFFFF" />
                 <Text style={styles.treeActionText}>Share Network</Text>
               </TouchableOpacity>
               
@@ -332,10 +656,120 @@ export default function CommunityScreen() {
                 style={[styles.treeActionButton, styles.exportButton]}
                 onPress={handleExportData}
               >
-                <Ionicons name="download" size={16} color="#FFFFFF" />
+                <Ionicons name="download" size={18} color="#FFFFFF" />
                 <Text style={styles.treeActionText}>Export Data</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Member Detail Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showMemberDetail}
+        onRequestClose={() => setShowMemberDetail(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.memberModalOverlay}>
+          <View style={styles.memberModalContainer}>
+            <View style={styles.memberModalHeader}>
+              <Text style={styles.memberModalTitle}>👤 Member Details</Text>
+              <TouchableOpacity 
+                style={styles.memberModalCloseButton}
+                onPress={() => setShowMemberDetail(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            {selectedMember && (
+              <ScrollView style={styles.memberModalContent} showsVerticalScrollIndicator={false}>
+                <View style={styles.memberProfile}>
+                  <Text style={styles.memberAvatar}>{selectedMember.avatar}</Text>
+                  <Text style={styles.memberName}>{selectedMember.name}</Text>
+                  <View style={[
+                    styles.memberStatusBadge,
+                    selectedMember.status === 'Active' ? styles.activeBadge : styles.newBadge
+                  ]}>
+                    <Text style={[
+                      styles.memberStatusText,
+                      selectedMember.status === 'Active' ? styles.activeText : styles.newText
+                    ]}>
+                      {selectedMember.status}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.memberStats}>
+                  <View style={styles.memberStatCard}>
+                    <Text style={styles.memberStatNumber}>💎 {selectedMember.earnings.toFixed(2)}</Text>
+                    <Text style={styles.memberStatLabel}>Earnings Generated</Text>
+                  </View>
+                  <View style={styles.memberStatCard}>
+                    <Text style={styles.memberStatNumber}>{selectedMember.totalPurchases}</Text>
+                    <Text style={styles.memberStatLabel}>Total Purchases</Text>
+                  </View>
+                  <View style={styles.memberStatCard}>
+                    <Text style={styles.memberStatNumber}>${selectedMember.totalSpent.toFixed(2)}</Text>
+                    <Text style={styles.memberStatLabel}>Total Spent</Text>
+                  </View>
+                </View>
+
+                <View style={styles.memberDetails}>
+                  <View style={styles.memberDetailItem}>
+                    <Ionicons name="calendar" size={16} color="#8B4513" />
+                    <Text style={styles.memberDetailLabel}>Member Since:</Text>
+                    <Text style={styles.memberDetailValue}>{selectedMember.memberSince}</Text>
+                  </View>
+                  <View style={styles.memberDetailItem}>
+                    <Ionicons name="time" size={16} color="#8B4513" />
+                    <Text style={styles.memberDetailLabel}>Last Activity:</Text>
+                    <Text style={styles.memberDetailValue}>{selectedMember.lastActivity}</Text>
+                  </View>
+                  <View style={styles.memberDetailItem}>
+                    <Ionicons name="location" size={16} color="#8B4513" />
+                    <Text style={styles.memberDetailLabel}>Location:</Text>
+                    <Text style={styles.memberDetailValue}>{selectedMember.location}</Text>
+                  </View>
+                  <View style={styles.memberDetailItem}>
+                    <Ionicons name="person" size={16} color="#8B4513" />
+                    <Text style={styles.memberDetailLabel}>Referred By:</Text>
+                    <Text style={styles.memberDetailValue}>{selectedMember.referredBy}</Text>
+                  </View>
+                  <View style={styles.memberDetailItem}>
+                    <Ionicons name="bag" size={16} color="#8B4513" />
+                    <Text style={styles.memberDetailLabel}>Joined:</Text>
+                    <Text style={styles.memberDetailValue}>{selectedMember.joined}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.memberActions}>
+                  <TouchableOpacity 
+                    style={styles.memberActionButton}
+                    onPress={() => {
+                      setShowMemberDetail(false);
+                      Alert.alert('📞 Contact', `Contact ${selectedMember.name} feature coming soon!`);
+                    }}
+                  >
+                    <Ionicons name="chatbubble" size={16} color="#FFFFFF" />
+                    <Text style={styles.memberActionText}>Contact</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={[styles.memberActionButton, styles.giftActionButton]}
+                    onPress={() => {
+                      setShowMemberDetail(false);
+                      Alert.alert('🎁 Send Gift', `Send a gift to ${selectedMember.name} feature coming soon!`);
+                    }}
+                  >
+                    <Ionicons name="gift" size={16} color="#FFFFFF" />
+                    <Text style={styles.memberActionText}>Send Gift</Text>
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            )}
           </View>
         </View>
       </Modal>
@@ -575,30 +1009,77 @@ const styles = StyleSheet.create({
   // Tree Modal Styles
   treeModalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   treeModalContainer: {
-    width: width * 0.95,
-    maxHeight: '90%',
-    backgroundColor: '#FFF8E7',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    maxHeight: '92%',
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
   },
   treeModalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    paddingBottom: 15,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    backgroundColor: '#F5E6A3',
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   treeModalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '700',
     color: '#2C1810',
+    letterSpacing: 0.5,
+  },
+  treeModalCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.6)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  treeQuickStats: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    backgroundColor: '#FAFAFA',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(229, 231, 235, 0.6)',
+  },
+  quickStatItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  quickStatNumber: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#D4AF37',
+    marginBottom: 4,
+  },
+  quickStatLabel: {
+    fontSize: 11,
+    color: '#8B4513',
+    textAlign: 'center',
   },
   treeModalContent: {
     flex: 1,
@@ -621,30 +1102,63 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#F5E6A3',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 10,
-    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1.5,
     borderColor: '#D4AF37',
+    shadowColor: 'rgba(212, 175, 55, 0.2)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  generationInfo: {
+    flex: 1,
   },
   generationTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#2C1810',
+    marginBottom: 4,
   },
-  generationCount: {
-    fontSize: 14,
+  generationSubtitle: {
+    fontSize: 13,
     color: '#8B4513',
-    fontWeight: '600',
+    fontWeight: '500',
+  },
+  generationMembers: {
+    paddingLeft: 16,
+    marginBottom: 16,
+  },
+  referralAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  avatarEmoji: {
+    fontSize: 20,
   },
   referralCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
-    marginLeft: 15,
+    borderColor: '#E5E7EB',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   referralInfo: {
     flex: 1,
@@ -694,6 +1208,28 @@ const styles = StyleSheet.create({
   referralJoined: {
     fontSize: 12,
     color: '#8B4513',
+  },
+  referralActivity: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  referralMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  referralLocation: {
+    fontSize: 11,
+    color: '#9CA3AF',
+  },
+  referralPurchases: {
+    fontSize: 11,
+    color: '#9CA3AF',
+  },
+  referralActions: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
   },
   treeSummarySection: {
     marginTop: 20,
@@ -781,8 +1317,225 @@ const styles = StyleSheet.create({
   },
   treeActionText: {
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 8,
+    fontSize: 16,
+    letterSpacing: 0.4,
+  },
+
+  // Analytics Styles
+  analyticsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  analyticsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
+    width: '30%',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    marginBottom: 8,
+  },
+  analyticsGeneration: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#D4AF37',
+    marginBottom: 4,
+  },
+  analyticsMembers: {
+    fontSize: 11,
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  analyticsEarnings: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#10B981',
+    marginBottom: 2,
+  },
+  analyticsRate: {
+    fontSize: 10,
+    color: '#8B4513',
+  },
+  performanceStats: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  performanceTitle: {
     fontSize: 14,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  performanceItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  performanceLabel: {
+    fontSize: 12,
+    color: '#8B4513',
+    flex: 1,
+  },
+  performanceValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#D4AF37',
+  },
+
+  // Member Detail Modal Styles
+  memberModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  memberModalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '85%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    overflow: 'hidden',
+  },
+  memberModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#F5E6A3',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 175, 55, 0.3)',
+  },
+  memberModalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2C1810',
+  },
+  memberModalCloseButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.6)',
+  },
+  memberModalContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  memberProfile: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  memberAvatar: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
+  memberName: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 8,
+  },
+  memberStatusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+  },
+  memberStatusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  memberStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  memberStatCard: {
+    backgroundColor: '#F5E6A3',
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  memberStatNumber: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  memberStatLabel: {
+    fontSize: 10,
+    color: '#8B4513',
+    textAlign: 'center',
+  },
+  memberDetails: {
+    marginBottom: 20,
+  },
+  memberDetailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  memberDetailLabel: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginLeft: 8,
+    flex: 1,
+  },
+  memberDetailValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C1810',
+  },
+  memberActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  memberActionButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  giftActionButton: {
+    backgroundColor: '#10B981',
+    borderColor: '#059669',
+  },
+  memberActionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
   },
 });
