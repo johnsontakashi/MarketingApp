@@ -34,6 +34,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
   const [currentStage, setCurrentStage] = useState(BLOCKING_STAGES.NONE);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const [showNetworkBlockedModal, setShowNetworkBlockedModal] = useState(false);
   const [blockedApps, setBlockedApps] = useState([]);
   const [networkBlocked, setNetworkBlocked] = useState(false);
   const [appStateVisible, setAppStateVisible] = useState(AppState.currentState);
@@ -159,15 +160,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
     networkManager.setNetworkRestriction('restricted');
     setNetworkBlocked(true);
     setTimeRemaining(GRACE_PERIODS.NETWORK_BLOCKED);
-    
-    Alert.alert(
-      '🌐 Network Access Restricted',
-      'Internet access has been limited to essential services only.\n\nOnly TLB Diamond payment services and emergency contacts are available.',
-      [
-        { text: 'Pay Now', onPress: () => onPaymentRequired?.() },
-        { text: 'Emergency', onPress: () => showEmergencyOptions() }
-      ]
-    );
+    setShowNetworkBlockedModal(true);
 
     // Timer for final escalation
     stageTimerRef.current = setTimeout(() => {
@@ -252,6 +245,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
     clearTimers();
     setCurrentStage(BLOCKING_STAGES.NONE);
     setShowWarningModal(false);
+    setShowNetworkBlockedModal(false);
     setBlockedApps([]);
     setNetworkBlocked(false);
     
@@ -311,6 +305,104 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
                 onPress={() => setShowWarningModal(false)}
               >
                 <Text style={styles.laterButtonText}>Remind Later</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Network Blocked Modal */}
+      <Modal
+        visible={showNetworkBlockedModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => {/* Prevent closing */}}
+      >
+        <View style={styles.networkBlockedOverlay}>
+          <View style={styles.networkBlockedContent}>
+            {/* Header Icon */}
+            <View style={styles.networkIconContainer}>
+              <Ionicons name="wifi-outline" size={60} color="#EF4444" />
+              <View style={styles.blockedIndicator}>
+                <Ionicons name="close" size={24} color="#FFFFFF" />
+              </View>
+            </View>
+            
+            <Text style={styles.networkBlockedTitle}>🌐 Network Access Restricted</Text>
+            
+            <Text style={styles.networkBlockedMessage}>
+              Internet access has been limited to essential services only due to overdue payment.
+            </Text>
+            
+            {/* Available Services */}
+            <View style={styles.availableServicesContainer}>
+              <Text style={styles.availableServicesTitle}>✅ Available Services:</Text>
+              <View style={styles.serviceItem}>
+                <Ionicons name="card" size={20} color="#10B981" />
+                <Text style={styles.serviceText}>TLB Diamond Payment Portal</Text>
+              </View>
+              <View style={styles.serviceItem}>
+                <Ionicons name="call" size={20} color="#10B981" />
+                <Text style={styles.serviceText}>Emergency Services (911)</Text>
+              </View>
+              <View style={styles.serviceItem}>
+                <Ionicons name="help-circle" size={20} color="#10B981" />
+                <Text style={styles.serviceText}>Customer Support</Text>
+              </View>
+            </View>
+            
+            {/* Blocked Services */}
+            <View style={styles.blockedServicesContainer}>
+              <Text style={styles.blockedServicesTitle}>❌ Blocked Services:</Text>
+              <View style={styles.serviceItem}>
+                <Ionicons name="globe" size={20} color="#EF4444" />
+                <Text style={[styles.serviceText, styles.blockedText]}>General Internet Browsing</Text>
+              </View>
+              <View style={styles.serviceItem}>
+                <Ionicons name="logo-instagram" size={20} color="#EF4444" />
+                <Text style={[styles.serviceText, styles.blockedText]}>Social Media Apps</Text>
+              </View>
+              <View style={styles.serviceItem}>
+                <Ionicons name="play" size={20} color="#EF4444" />
+                <Text style={[styles.serviceText, styles.blockedText]}>Streaming Services</Text>
+              </View>
+            </View>
+            
+            {/* Time Remaining */}
+            <View style={styles.timeRemainingContainer}>
+              <Text style={styles.timeRemainingLabel}>Full device lock in:</Text>
+              <Text style={styles.timeRemainingValue}>{formatTime(timeRemaining)}</Text>
+            </View>
+            
+            {/* Action Buttons */}
+            <View style={styles.networkBlockedButtons}>
+              <TouchableOpacity 
+                style={styles.networkPayButton} 
+                onPress={() => {
+                  setShowNetworkBlockedModal(false);
+                  onPaymentRequired?.();
+                }}
+              >
+                <Ionicons name="card" size={20} color="#FFFFFF" />
+                <Text style={styles.networkPayButtonText}>Make Payment</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.networkEmergencyButton} 
+                onPress={() => {
+                  setShowNetworkBlockedModal(false);
+                  showEmergencyOptions();
+                }}
+              >
+                <Ionicons name="call" size={20} color="#EF4444" />
+                <Text style={styles.networkEmergencyButtonText}>Emergency Contact</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.networkCloseButton} 
+                onPress={() => setShowNetworkBlockedModal(false)}
+              >
+                <Text style={styles.networkCloseButtonText}>Continue with Limited Access</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -431,6 +523,176 @@ const styles = {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  // Network Blocked Modal Styles
+  networkBlockedOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  networkBlockedContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 30,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#EF4444',
+    maxWidth: 380,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
+  },
+  networkIconContainer: {
+    position: 'relative',
+    marginBottom: 20,
+  },
+  blockedIndicator: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#EF4444',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  networkBlockedTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  networkBlockedMessage: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    marginBottom: 25,
+    lineHeight: 22,
+  },
+  availableServicesContainer: {
+    width: '100%',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#10B981',
+  },
+  availableServicesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#065F46',
+    marginBottom: 12,
+  },
+  blockedServicesContainer: {
+    width: '100%',
+    backgroundColor: '#FEF2F2',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#EF4444',
+  },
+  blockedServicesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#991B1B',
+    marginBottom: 12,
+  },
+  serviceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  serviceText: {
+    fontSize: 14,
+    color: '#065F46',
+    marginLeft: 10,
+    flex: 1,
+  },
+  blockedText: {
+    color: '#991B1B',
+  },
+  timeRemainingContainer: {
+    alignItems: 'center',
+    backgroundColor: '#FFF7ED',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+    width: '100%',
+  },
+  timeRemainingLabel: {
+    fontSize: 14,
+    color: '#92400E',
+    marginBottom: 5,
+  },
+  timeRemainingValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#F59E0B',
+  },
+  networkBlockedButtons: {
+    width: '100%',
+    gap: 12,
+  },
+  networkPayButton: {
+    backgroundColor: '#10B981',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  networkPayButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  networkEmergencyButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#EF4444',
+  },
+  networkEmergencyButtonText: {
+    color: '#EF4444',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  networkCloseButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  networkCloseButtonText: {
+    color: '#8B4513',
+    fontSize: 14,
+    fontWeight: '500',
+    textDecorationLine: 'underline',
   },
 };
 

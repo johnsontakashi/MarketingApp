@@ -522,7 +522,11 @@ export default function DeviceStatusScreen({ navigation }) {
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.modalContent} 
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContentContainer}
+            >
               {/* Contact Methods */}
               <View style={styles.helpSection}>
                 <Text style={styles.helpSectionTitle}>Contact Support</Text>
@@ -583,10 +587,18 @@ export default function DeviceStatusScreen({ navigation }) {
 
               {/* Emergency Actions */}
               <View style={styles.emergencySection}>
-                <Text style={styles.emergencySectionTitle}>Emergency Support</Text>
-                <TouchableOpacity style={styles.emergencyButton} onPress={handleEmergencyUnlock}>
-                  <Ionicons name="alert-circle" size={20} color="#FFFFFF" />
-                  <Text style={styles.emergencyButtonText}>Request Emergency Unlock</Text>
+                <Text style={styles.emergencySectionTitle}>🚨 Emergency Support</Text>
+                <Text style={styles.emergencyDescription}>
+                  If you're experiencing an urgent issue that requires immediate device access, use the emergency unlock feature below. This will notify our support team immediately.
+                </Text>
+                <TouchableOpacity 
+                  style={styles.emergencyUnlockButton} 
+                  onPress={handleEmergencyUnlock}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="alert-circle" size={24} color="#FFFFFF" />
+                  <Text style={styles.emergencyUnlockButtonText}>Request Emergency Unlock</Text>
+                  <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -877,6 +889,7 @@ const styles = StyleSheet.create({
   modalContent: {
     paddingHorizontal: 24,
     paddingVertical: 20,
+    paddingBottom: 40,
   },
 
   // Wallet Modal Styles
@@ -1173,34 +1186,50 @@ const styles = StyleSheet.create({
     color: '#8B4513',
     lineHeight: 22,
   },
+  scrollContentContainer: {
+    paddingBottom: 30,
+  },
   emergencySection: {
     marginTop: 8,
+    marginBottom: 20,
   },
   emergencySectionTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: '#2C1810',
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  emergencyButton: {
+  emergencyDescription: {
+    fontSize: 15,
+    color: '#8B4513',
+    lineHeight: 22,
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  emergencyUnlockButton: {
     backgroundColor: '#EF4444',
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
+    justifyContent: 'space-between',
+    borderWidth: 2,
     borderColor: '#DC2626',
-    shadowColor: 'rgba(239, 68, 68, 0.3)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: 'rgba(239, 68, 68, 0.4)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+    marginBottom: 10,
   },
-  emergencyButtonText: {
+  emergencyUnlockButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
-    marginLeft: 8,
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 12,
+    textAlign: 'center',
   },
 });
