@@ -7,7 +7,9 @@ import {
   Alert, 
   StyleSheet,
   Dimensions,
-  Image
+  Image,
+  Modal,
+  FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -21,6 +23,7 @@ export default function HomeScreen({ navigation }) {
   const [pendingPayments, setPendingPayments] = useState(50.00);
   const [availableBonuses, setAvailableBonuses] = useState(3);
   const [referralEarnings, setReferralEarnings] = useState(25.00);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   // Featured products data
   const featuredProducts = [
@@ -82,17 +85,123 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('DeviceStatus');
   };
 
+  // Notification data with state
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'payment',
+      icon: 'card-outline',
+      title: 'Payment Reminder',
+      message: 'Next payment due in 3 days',
+      time: '2 hours ago',
+      color: '#F59E0B',
+      unread: true
+    },
+    {
+      id: 2,
+      type: 'security',
+      icon: 'shield-checkmark-outline',
+      title: 'Security Update',
+      message: 'Device successfully secured with MDM Lock',
+      time: '5 hours ago',
+      color: '#10B981',
+      unread: true
+    },
+    {
+      id: 3,
+      type: 'bonus',
+      icon: 'gift-outline',
+      title: 'Daily Bonus Available',
+      message: 'Claim your daily login bonus now!',
+      time: '1 day ago',
+      color: '#8B5CF6',
+      unread: true
+    },
+    {
+      id: 4,
+      type: 'order',
+      icon: 'cube-outline',
+      title: 'Order Update',
+      message: 'Your order #12345 has been shipped',
+      time: '2 days ago',
+      color: '#06B6D4',
+      unread: false
+    },
+    {
+      id: 5,
+      type: 'referral',
+      icon: 'people-outline',
+      title: 'New Referral',
+      message: 'Sarah joined your network. Earn 💎 25 TLB bonus!',
+      time: '3 days ago',
+      color: '#D4AF37',
+      unread: false
+    },
+    {
+      id: 6,
+      type: 'promotion',
+      icon: 'pricetag-outline',
+      title: 'Special Promotion',
+      message: '50% off on premium headphones - Limited time offer',
+      time: '4 days ago',
+      color: '#EF4444',
+      unread: false
+    }
+  ]);
+
   const handleNotifications = () => {
-    Alert.alert(
-      '🔔 Notifications',
-      'Recent notifications:\n\n• Payment reminder: Next payment due in 3 days\n• Security update: Device successfully secured\n• Bonus available: Daily login bonus ready to claim\n\nWould you like to view all notifications?',
-      [
-        { text: 'Mark as Read', onPress: () => setAvailableBonuses(0) },
-        { text: 'View All', onPress: () => navigation.navigate('Profile') },
-        { text: 'Close', style: 'cancel' }
-      ]
-    );
+    setShowNotificationModal(true);
   };
+
+  const handleMarkAsRead = (notificationId) => {
+    // Mark specific notification as read
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, unread: false }
+          : notification
+      )
+    );
+    
+    // Update available bonuses counter
+    if (availableBonuses > 0) {
+      setAvailableBonuses(prev => Math.max(0, prev - 1));
+    }
+  };
+
+  const handleMarkAllAsRead = () => {
+    // Mark all notifications as read
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notification => ({ 
+        ...notification, 
+        unread: false 
+      }))
+    );
+    
+    // Reset available bonuses counter
+    setAvailableBonuses(0);
+  };
+
+  const renderNotificationItem = ({ item }) => (
+    <TouchableOpacity 
+      style={[styles.notificationItem, item.unread && styles.unreadNotification]}
+      onPress={() => handleMarkAsRead(item.id)}
+    >
+      <View style={[styles.notificationIcon, { backgroundColor: item.color }]}>
+        <Ionicons name={item.icon} size={20} color="#FFFFFF" />
+      </View>
+      
+      <View style={styles.notificationContent}>
+        <View style={styles.notificationHeader}>
+          <Text style={styles.notificationTitle}>{item.title}</Text>
+          <Text style={styles.notificationTime}>{item.time}</Text>
+        </View>
+        <Text style={styles.notificationMessage}>{item.message}</Text>
+      </View>
+      
+      {item.unread && <View style={styles.unreadDot} />}
+    </TouchableOpacity>
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -248,6 +357,75 @@ export default function HomeScreen({ navigation }) {
           </View>
         </ScrollView>
       </View>
+
+      {/* Notification Modal */}
+      <Modal
+        visible={showNotificationModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowNotificationModal(false)}
+      >
+        <View style={styles.notificationModalContainer}>
+          {/* Modal Header */}
+          <View style={styles.notificationModalHeader}>
+            <View style={styles.notificationModalTitleContainer}>
+              <Ionicons name="notifications" size={24} color="#D4AF37" />
+              <Text style={styles.notificationModalTitle}>Notifications</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setShowNotificationModal(false)}
+            >
+              <Ionicons name="close" size={24} color="#8B4513" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.notificationActions}>
+            <TouchableOpacity 
+              style={[
+                styles.markAllReadButton,
+                notifications.every(n => !n.unread) && styles.markAllReadButtonDisabled
+              ]}
+              onPress={handleMarkAllAsRead}
+              disabled={notifications.every(n => !n.unread)}
+            >
+              <Ionicons 
+                name="checkmark-done" 
+                size={18} 
+                color={notifications.every(n => !n.unread) ? "#8B4513" : "#FFFFFF"} 
+              />
+              <Text style={[
+                styles.markAllReadText,
+                notifications.every(n => !n.unread) && styles.markAllReadTextDisabled
+              ]}>
+                {notifications.every(n => !n.unread) ? 'All Read' : 'Mark All Read'}
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.settingsButton}
+              onPress={() => {
+                setShowNotificationModal(false);
+                navigation.navigate('Profile');
+              }}
+            >
+              <Ionicons name="settings-outline" size={18} color="#D4AF37" />
+              <Text style={styles.settingsButtonText}>Settings</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Notifications List */}
+          <FlatList
+            data={notifications}
+            renderItem={renderNotificationItem}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.notificationsList}
+            ItemSeparatorComponent={() => <View style={styles.notificationSeparator} />}
+          />
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -491,5 +669,169 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     overflow: 'hidden',
+  },
+  // Notification Modal Styles
+  notificationModalContainer: {
+    flex: 1,
+    backgroundColor: '#FFF8E7',
+  },
+  notificationModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0E5B8',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  notificationModalTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notificationModalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  notificationActions: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    gap: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0E5B8',
+  },
+  markAllReadButton: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#10B981',
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  markAllReadText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  markAllReadButtonDisabled: {
+    backgroundColor: '#F5E6A3',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  markAllReadTextDisabled: {
+    color: '#8B4513',
+  },
+  settingsButton: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    gap: 8,
+  },
+  settingsButtonText: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  notificationsList: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  notificationItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F0E5B8',
+  },
+  unreadNotification: {
+    backgroundColor: '#FFFEF7',
+    borderColor: '#D4AF37',
+    borderLeftWidth: 4,
+    borderLeftColor: '#D4AF37',
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    flex: 1,
+    marginRight: 8,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontWeight: '500',
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: '#5D4E37',
+    lineHeight: 20,
+    marginTop: 2,
+  },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#EF4444',
+    marginLeft: 8,
+    marginTop: 6,
+  },
+  notificationSeparator: {
+    height: 12,
   },
 });
