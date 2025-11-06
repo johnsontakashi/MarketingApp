@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import CustomAlert from '../components/ui/CustomAlert';
+import { useCustomAlert } from '../hooks/useCustomAlert';
 
 export default function ProfileScreen({ navigation }) {
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showFullSettingsModal, setShowFullSettingsModal] = useState(false);
@@ -57,35 +61,37 @@ export default function ProfileScreen({ navigation }) {
 
   // Full Settings handler functions
   const handleChangePinLength = () => {
-    Alert.alert(
-      'Change PIN Code Length',
-      'Select new PIN code length:',
-      [
+    showAlert({
+      title: 'Change PIN Code Length',
+      message: 'Select new PIN code length:',
+      type: 'info',
+      buttons: [
         { text: '4 digits', onPress: () => setPinCodeLength(4) },
         { text: '6 digits', onPress: () => setPinCodeLength(6) },
         { text: '8 digits', onPress: () => setPinCodeLength(8) },
         { text: 'Cancel', style: 'cancel' }
       ]
-    );
+    });
   };
 
   const handleConfigureSessionTimeout = () => {
-    Alert.alert(
-      'Configure Session Timeout',
-      'Select auto-logout duration:',
-      [
+    showAlert({
+      title: 'Configure Session Timeout',
+      message: 'Select auto-logout duration:',
+      type: 'info',
+      buttons: [
         { text: '1 minute', onPress: () => setSessionTimeout(1) },
         { text: '5 minutes', onPress: () => setSessionTimeout(5) },
         { text: '15 minutes', onPress: () => setSessionTimeout(15) },
         { text: '30 minutes', onPress: () => setSessionTimeout(30) },
         { text: 'Cancel', style: 'cancel' }
       ]
-    );
+    });
   };
 
   const handleToggleDeviceBinding = () => {
     setDeviceBindingEnabled(!deviceBindingEnabled);
-    Alert.alert(
+    showSuccess(
       'Device Binding',
       deviceBindingEnabled 
         ? 'Device binding has been disabled. Your account can now be accessed from other devices.'
@@ -94,7 +100,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleDataExport = () => {
-    Alert.alert(
+    showSuccess(
       'Data Export',
       'Your data export is being prepared. You will receive an email with download links within 24 hours.',
       [
@@ -108,7 +114,7 @@ export default function ProfileScreen({ navigation }) {
 
   const handleToggleAnalyticsOptOut = () => {
     setAnalyticsOptOut(!analyticsOptOut);
-    Alert.alert(
+    showInfo(
       'Analytics Settings',
       analyticsOptOut 
         ? 'Analytics tracking has been enabled. Anonymous usage data will be collected to improve the app.'
@@ -118,7 +124,7 @@ export default function ProfileScreen({ navigation }) {
 
   const handleToggleDeveloperMode = () => {
     if (!developerModeEnabled) {
-      Alert.alert(
+      showWarning(
         'Enable Developer Mode',
         'This will enable advanced debugging features and may affect app performance. Continue?',
         [
@@ -126,7 +132,7 @@ export default function ProfileScreen({ navigation }) {
             text: 'Enable',
             onPress: () => {
               setDeveloperModeEnabled(true);
-              Alert.alert('Developer Mode Enabled', 'Debug features are now available.');
+              showSuccess('Developer Mode Enabled', 'Debug features are now available.');
             }
           },
           { text: 'Cancel', style: 'cancel' }
@@ -134,13 +140,13 @@ export default function ProfileScreen({ navigation }) {
       );
     } else {
       setDeveloperModeEnabled(false);
-      Alert.alert('Developer Mode Disabled', 'Debug features have been disabled.');
+      showSuccess('Developer Mode Disabled', 'Debug features have been disabled.');
     }
   };
 
   const handleToggleBetaFeatures = () => {
     if (!betaFeaturesEnabled) {
-      Alert.alert(
+      showWarning(
         'Enable Beta Features',
         'Beta features are experimental and may be unstable. Enable at your own risk.',
         [
@@ -148,7 +154,7 @@ export default function ProfileScreen({ navigation }) {
             text: 'Enable',
             onPress: () => {
               setBetaFeaturesEnabled(true);
-              Alert.alert('Beta Features Enabled', 'Experimental features are now available.');
+              showSuccess('Beta Features Enabled', 'Experimental features are now available.');
             }
           },
           { text: 'Cancel', style: 'cancel' }
@@ -156,7 +162,7 @@ export default function ProfileScreen({ navigation }) {
       );
     } else {
       setBetaFeaturesEnabled(false);
-      Alert.alert('Beta Features Disabled', 'Experimental features have been disabled.');
+      showSuccess('Beta Features Disabled', 'Experimental features have been disabled.');
     }
   };
 
@@ -179,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
   const handleSaveProfile = () => {
     setProfileData({ ...editData });
     setShowEditModal(false);
-    Alert.alert('Profile Updated', 'Your profile has been successfully updated!');
+    showSuccess('Profile Updated', 'Your profile has been successfully updated!');
   };
 
   const handleCancelEdit = () => {
@@ -213,13 +219,13 @@ export default function ProfileScreen({ navigation }) {
   const selectDemoAvatar = (avatarUri) => {
     setProfileData({ ...profileData, avatar: avatarUri });
     setEditData({ ...editData, avatar: avatarUri });
-    Alert.alert("✅ Success", "Profile picture updated successfully!");
+    showSuccess("Success", "Profile picture updated successfully!");
   };
 
   const removeAvatar = () => {
     setProfileData({ ...profileData, avatar: null });
     setEditData({ ...editData, avatar: null });
-    Alert.alert("✅ Success", "Profile picture removed successfully!");
+    showSuccess("Success", "Profile picture removed successfully!");
   };
 
   const handleMyOrders = () => {
@@ -3068,7 +3074,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.fullSettingsSaveButton}
                 onPress={() => {
                   setShowFullSettingsModal(false);
-                  Alert.alert('Settings Saved', 'Your preferences have been updated successfully.');
+                  showSuccess('Settings Saved', 'Your preferences have been updated successfully.');
                 }}
               >
                 <Text style={styles.fullSettingsSaveText}>Save Changes</Text>
@@ -3132,7 +3138,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.resetConfirmResetButton}
                 onPress={() => {
                   setShowResetConfirmModal(false);
-                  Alert.alert(
+                  showSuccess(
                     'Settings Reset Complete', 
                     'All settings have been restored to their default values. Please restart the app for changes to take full effect.',
                     [
@@ -3157,6 +3163,17 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </ScrollView>
   );
 }
