@@ -27,6 +27,8 @@ export default function DeviceStatusScreen({ navigation }) {
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showEmergencyUnlockModal, setShowEmergencyUnlockModal] = useState(false);
 
   // Update SIM status periodically
   useEffect(() => {
@@ -50,17 +52,15 @@ export default function DeviceStatusScreen({ navigation }) {
   ];
 
   const handleEmergencyUnlock = () => {
+    setShowEmergencyUnlockModal(true);
+  };
+
+  const handleSendEmergencyRequest = () => {
+    setShowEmergencyUnlockModal(false);
     Alert.alert(
-      'Emergency Unlock Request',
-      'This will send a request to administrators for emergency device unlock. Use only in genuine emergencies.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Send Request', 
-          style: 'destructive',
-          onPress: () => Alert.alert('Request Sent', 'Emergency unlock request has been submitted.')
-        }
-      ]
+      '✅ Request Sent Successfully',
+      'Your emergency unlock request has been submitted to our support team. You will receive a response within 15 minutes during business hours.',
+      [{ text: 'OK' }]
     );
   };
 
@@ -405,25 +405,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 <TouchableOpacity 
                   style={[styles.walletActionButton, styles.secondaryButton]}
                   onPress={() => {
-                    Alert.alert(
-                      '💸 Transfer TLB Diamonds',
-                      'Transfer TLB Diamonds to another user or wallet:',
-                      [
-                        {
-                          text: 'To TLB User',
-                          onPress: () => Alert.alert('User Transfer', 'Enter recipient\'s TLB Diamond ID to continue.')
-                        },
-                        {
-                          text: 'To External Wallet',
-                          onPress: () => Alert.alert('External Transfer', 'Enter wallet address and amount to transfer.')
-                        },
-                        {
-                          text: 'Send as Gift',
-                          onPress: () => Alert.alert('Gift Transfer', 'Send TLB Diamonds as a gift with a personal message.')
-                        },
-                        { text: 'Cancel', style: 'cancel' }
-                      ]
-                    );
+                    setShowTransferModal(true);
                   }}
                 >
                   <Ionicons name="send" size={20} color="#6B7280" />
@@ -748,6 +730,185 @@ export default function DeviceStatusScreen({ navigation }) {
             >
               <Text style={styles.addFundsCancelText}>Cancel</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Transfer Modal */}
+      <Modal
+        visible={showTransferModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowTransferModal(false)}
+      >
+        <View style={styles.transferOverlay}>
+          <View style={styles.transferContent}>
+            {/* Header */}
+            <View style={styles.transferHeader}>
+              <View style={styles.transferIconContainer}>
+                <Ionicons name="send" size={32} color="#3B82F6" />
+              </View>
+              <Text style={styles.transferTitle}>💸 Transfer TLB Diamonds</Text>
+              <Text style={styles.transferSubtitle}>
+                Send TLB Diamonds to another user or external wallet
+              </Text>
+              <TouchableOpacity 
+                style={styles.transferCloseButton}
+                onPress={() => setShowTransferModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Transfer Methods */}
+            <View style={styles.transferMethodsContainer}>
+              <TouchableOpacity 
+                style={styles.transferMethodCard}
+                onPress={() => {
+                  setShowTransferModal(false);
+                  Alert.alert('User Transfer', 'Enter recipient\'s TLB Diamond ID to continue.');
+                }}
+              >
+                <View style={[styles.transferMethodIcon, { backgroundColor: '#10B981' }]}>
+                  <Ionicons name="people" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.transferMethodInfo}>
+                  <Text style={styles.transferMethodTitle}>To TLB User</Text>
+                  <Text style={styles.transferMethodDescription}>Transfer to another TLB Diamond user by ID</Text>
+                  <Text style={styles.transferMethodFee}>Fee: Free</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.transferMethodCard}
+                onPress={() => {
+                  setShowTransferModal(false);
+                  Alert.alert('External Transfer', 'Enter wallet address and amount to transfer.');
+                }}
+              >
+                <View style={[styles.transferMethodIcon, { backgroundColor: '#3B82F6' }]}>
+                  <Ionicons name="wallet" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.transferMethodInfo}>
+                  <Text style={styles.transferMethodTitle}>To External Wallet</Text>
+                  <Text style={styles.transferMethodDescription}>Transfer to external cryptocurrency wallet</Text>
+                  <Text style={styles.transferMethodFee}>Fee: 0.5% + Gas fees</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.transferMethodCard}
+                onPress={() => {
+                  setShowTransferModal(false);
+                  Alert.alert('Gift Transfer', 'Send TLB Diamonds as a gift with a personal message.');
+                }}
+              >
+                <View style={[styles.transferMethodIcon, { backgroundColor: '#EF4444' }]}>
+                  <Ionicons name="gift" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.transferMethodInfo}>
+                  <Text style={styles.transferMethodTitle}>Send as Gift</Text>
+                  <Text style={styles.transferMethodDescription}>Send with personal message and gift wrapping</Text>
+                  <Text style={styles.transferMethodFee}>Fee: Free</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Current Balance */}
+            <View style={styles.balanceInfo}>
+              <Ionicons name="diamond" size={20} color="#D4AF37" />
+              <Text style={styles.balanceText}>
+                Available Balance: 💎 2,485.75 TLB
+              </Text>
+            </View>
+
+            {/* Security Note */}
+            <View style={styles.transferSecurityNote}>
+              <Ionicons name="information-circle" size={20} color="#3B82F6" />
+              <Text style={styles.transferSecurityText}>
+                All transfers are final and cannot be reversed. Please verify recipient details carefully.
+              </Text>
+            </View>
+
+            {/* Cancel Button */}
+            <TouchableOpacity 
+              style={styles.transferCancelButton}
+              onPress={() => setShowTransferModal(false)}
+            >
+              <Text style={styles.transferCancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Emergency Unlock Modal */}
+      <Modal
+        visible={showEmergencyUnlockModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowEmergencyUnlockModal(false)}
+      >
+        <View style={styles.emergencyModalOverlay}>
+          <View style={styles.emergencyModalContent}>
+            {/* Header */}
+            <View style={styles.emergencyModalHeader}>
+              <View style={styles.emergencyModalIconContainer}>
+                <Ionicons name="alert-circle" size={40} color="#EF4444" />
+              </View>
+              <Text style={styles.emergencyModalTitle}>🆘 Emergency Unlock Request</Text>
+              <Text style={styles.emergencyModalSubtitle}>
+                This will send an urgent request to administrators for immediate device unlock
+              </Text>
+            </View>
+
+            {/* Warning Section */}
+            <View style={styles.emergencyWarningSection}>
+              <Text style={styles.emergencyWarningTitle}>⚠️ Important Notice:</Text>
+              <Text style={styles.emergencyWarningText}>
+                • Use only for genuine emergencies{"\n"}
+                • Request will be logged and reviewed{"\n"}
+                • Misuse may result in account restrictions{"\n"}
+                • Expected response time: 15 minutes during business hours
+              </Text>
+            </View>
+
+            {/* Emergency Contact Info */}
+            <View style={styles.emergencyContactSection}>
+              <Text style={styles.emergencyContactTitle}>📞 Alternative Emergency Contacts:</Text>
+              <View style={styles.emergencyContactItem}>
+                <Ionicons name="call" size={16} color="#EF4444" />
+                <Text style={styles.emergencyContactText}>911 - Emergency Services</Text>
+              </View>
+              <View style={styles.emergencyContactItem}>
+                <Ionicons name="call" size={16} color="#EF4444" />
+                <Text style={styles.emergencyContactText}>1-800-TLB-HELP - 24/7 Support</Text>
+              </View>
+              <View style={styles.emergencyContactItem}>
+                <Ionicons name="mail" size={16} color="#EF4444" />
+                <Text style={styles.emergencyContactText}>emergency@tlbdiamond.com</Text>
+              </View>
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.emergencyModalButtons}>
+              <TouchableOpacity 
+                style={styles.emergencySendButton} 
+                onPress={handleSendEmergencyRequest}
+              >
+                <Ionicons name="send" size={20} color="#FFFFFF" />
+                <Text style={styles.emergencySendButtonText}>Send Emergency Request</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.emergencyModalCancelButton} 
+                onPress={() => setShowEmergencyUnlockModal(false)}
+              >
+                <Text style={styles.emergencyModalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -1518,6 +1679,297 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addFundsCancelText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8B4513',
+  },
+  // Transfer Modal Styles
+  transferOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'flex-end',
+  },
+  transferContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingBottom: 40,
+    maxHeight: '85%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 20,
+  },
+  transferHeader: {
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0E5B8',
+    position: 'relative',
+  },
+  transferIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#EBF4FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#3B82F6',
+  },
+  transferTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  transferSubtitle: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  transferCloseButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  transferMethodsContainer: {
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    gap: 16,
+  },
+  transferMethodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#F0E5B8',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  transferMethodIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  transferMethodInfo: {
+    flex: 1,
+  },
+  transferMethodTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  transferMethodDescription: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 4,
+    lineHeight: 18,
+  },
+  transferMethodFee: {
+    fontSize: 12,
+    color: '#D4AF37',
+    fontWeight: '600',
+  },
+  balanceInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    marginHorizontal: 24,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    marginBottom: 12,
+  },
+  balanceText: {
+    fontSize: 16,
+    color: '#92400E',
+    marginLeft: 12,
+    flex: 1,
+    fontWeight: '600',
+  },
+  transferSecurityNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBF4FF',
+    marginHorizontal: 24,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#3B82F6',
+    marginBottom: 20,
+  },
+  transferSecurityText: {
+    fontSize: 14,
+    color: '#1E40AF',
+    marginLeft: 12,
+    flex: 1,
+    lineHeight: 18,
+  },
+  transferCancelButton: {
+    marginHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 12,
+    backgroundColor: '#F5E6A3',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    alignItems: 'center',
+  },
+  transferCancelText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8B4513',
+  },
+  // Emergency Unlock Modal Styles
+  emergencyModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emergencyModalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    borderWidth: 3,
+    borderColor: '#EF4444',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  emergencyModalHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  emergencyModalIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#FEF2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 3,
+    borderColor: '#EF4444',
+  },
+  emergencyModalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emergencyModalSubtitle: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  emergencyWarningSection: {
+    backgroundColor: '#FEF2F2',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#EF4444',
+  },
+  emergencyWarningTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#991B1B',
+    marginBottom: 8,
+  },
+  emergencyWarningText: {
+    fontSize: 14,
+    color: '#991B1B',
+    lineHeight: 20,
+  },
+  emergencyContactSection: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  emergencyContactTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 12,
+  },
+  emergencyContactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  emergencyContactText: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginLeft: 8,
+    flex: 1,
+  },
+  emergencyModalButtons: {
+    gap: 12,
+  },
+  emergencySendButton: {
+    backgroundColor: '#EF4444',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  emergencySendButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  emergencyModalCancelButton: {
+    backgroundColor: '#F5E6A3',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    alignItems: 'center',
+  },
+  emergencyModalCancelText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#8B4513',
