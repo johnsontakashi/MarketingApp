@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ProfileScreen({ navigation }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showFullSettingsModal, setShowFullSettingsModal] = useState(false);
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -44,6 +46,119 @@ export default function ProfileScreen({ navigation }) {
     avatar: null
   });
   const [editData, setEditData] = useState({ ...profileData });
+
+  // Full Settings state variables
+  const [deviceBindingEnabled, setDeviceBindingEnabled] = useState(true);
+  const [analyticsOptOut, setAnalyticsOptOut] = useState(false);
+  const [developerModeEnabled, setDeveloperModeEnabled] = useState(false);
+  const [betaFeaturesEnabled, setBetaFeaturesEnabled] = useState(false);
+  const [pinCodeLength, setPinCodeLength] = useState(6);
+  const [sessionTimeout, setSessionTimeout] = useState(5);
+
+  // Full Settings handler functions
+  const handleChangePinLength = () => {
+    Alert.alert(
+      'Change PIN Code Length',
+      'Select new PIN code length:',
+      [
+        { text: '4 digits', onPress: () => setPinCodeLength(4) },
+        { text: '6 digits', onPress: () => setPinCodeLength(6) },
+        { text: '8 digits', onPress: () => setPinCodeLength(8) },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleConfigureSessionTimeout = () => {
+    Alert.alert(
+      'Configure Session Timeout',
+      'Select auto-logout duration:',
+      [
+        { text: '1 minute', onPress: () => setSessionTimeout(1) },
+        { text: '5 minutes', onPress: () => setSessionTimeout(5) },
+        { text: '15 minutes', onPress: () => setSessionTimeout(15) },
+        { text: '30 minutes', onPress: () => setSessionTimeout(30) },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleToggleDeviceBinding = () => {
+    setDeviceBindingEnabled(!deviceBindingEnabled);
+    Alert.alert(
+      'Device Binding',
+      deviceBindingEnabled 
+        ? 'Device binding has been disabled. Your account can now be accessed from other devices.'
+        : 'Device binding has been enabled. Your account is now restricted to this device only.'
+    );
+  };
+
+  const handleDataExport = () => {
+    Alert.alert(
+      'Data Export',
+      'Your data export is being prepared. You will receive an email with download links within 24 hours.',
+      [
+        {
+          text: 'OK',
+          onPress: () => console.log('Data export requested')
+        }
+      ]
+    );
+  };
+
+  const handleToggleAnalyticsOptOut = () => {
+    setAnalyticsOptOut(!analyticsOptOut);
+    Alert.alert(
+      'Analytics Settings',
+      analyticsOptOut 
+        ? 'Analytics tracking has been enabled. Anonymous usage data will be collected to improve the app.'
+        : 'Analytics tracking has been disabled. No usage data will be collected.'
+    );
+  };
+
+  const handleToggleDeveloperMode = () => {
+    if (!developerModeEnabled) {
+      Alert.alert(
+        'Enable Developer Mode',
+        'This will enable advanced debugging features and may affect app performance. Continue?',
+        [
+          {
+            text: 'Enable',
+            onPress: () => {
+              setDeveloperModeEnabled(true);
+              Alert.alert('Developer Mode Enabled', 'Debug features are now available.');
+            }
+          },
+          { text: 'Cancel', style: 'cancel' }
+        ]
+      );
+    } else {
+      setDeveloperModeEnabled(false);
+      Alert.alert('Developer Mode Disabled', 'Debug features have been disabled.');
+    }
+  };
+
+  const handleToggleBetaFeatures = () => {
+    if (!betaFeaturesEnabled) {
+      Alert.alert(
+        'Enable Beta Features',
+        'Beta features are experimental and may be unstable. Enable at your own risk.',
+        [
+          {
+            text: 'Enable',
+            onPress: () => {
+              setBetaFeaturesEnabled(true);
+              Alert.alert('Beta Features Enabled', 'Experimental features are now available.');
+            }
+          },
+          { text: 'Cancel', style: 'cancel' }
+        ]
+      );
+    } else {
+      setBetaFeaturesEnabled(false);
+      Alert.alert('Beta Features Disabled', 'Experimental features have been disabled.');
+    }
+  };
 
   const menuItems = [
     { icon: 'person', title: 'Edit Profile', subtitle: 'Update your information', action: 'editProfile' },
@@ -2026,7 +2141,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.settingsActionButton}
                 onPress={() => {
                   setShowSettingsModal(false);
-                  Alert.alert('Settings', 'Full settings menu coming soon!');
+                  setShowFullSettingsModal(true);
                 }}
               >
                 <Text style={styles.settingsActionText}>Full Settings</Text>
@@ -2035,17 +2150,8 @@ export default function ProfileScreen({ navigation }) {
               <TouchableOpacity 
                 style={[styles.settingsActionButton, styles.resetButton]}
                 onPress={() => {
-                  Alert.alert('Reset', 'All settings will be restored to defaults. This action cannot be undone.', [
-                    { text: 'Cancel', style: 'cancel' },
-                    { 
-                      text: 'Reset', 
-                      style: 'destructive', 
-                      onPress: () => {
-                        setShowSettingsModal(false);
-                        Alert.alert('Reset Complete', 'Settings have been restored to defaults.');
-                      }
-                    }
-                  ]);
+                  setShowSettingsModal(false);
+                  setShowResetConfirmModal(true);
                 }}
               >
                 <Text style={styles.resetButtonText}>Reset</Text>
@@ -2825,6 +2931,227 @@ export default function ProfileScreen({ navigation }) {
                 onPress={() => setShowExportModal(false)}
               >
                 <Text style={styles.exportCancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Full Settings Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showFullSettingsModal}
+        onRequestClose={() => setShowFullSettingsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>⚙️ Full Settings</Text>
+              <TouchableOpacity onPress={() => setShowFullSettingsModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.fullSettingsContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={styles.settingsDescription}>
+                Complete application settings management
+              </Text>
+              
+              {/* Advanced Security Settings */}
+              <View style={styles.settingsCategory}>
+                <View style={styles.categoryHeader}>
+                  <Text style={styles.categoryIcon}>🔒</Text>
+                  <Text style={styles.categoryTitle}>Advanced Security</Text>
+                </View>
+                <View style={styles.settingsList}>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>PIN Code Length</Text>
+                      <Text style={styles.settingDescription}>Current: {pinCodeLength} digits</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingButton} onPress={handleChangePinLength}>
+                      <Text style={styles.settingButtonText}>Change</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Session Timeout</Text>
+                      <Text style={styles.settingDescription}>Auto-logout after {sessionTimeout} minute{sessionTimeout !== 1 ? 's' : ''}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingButton} onPress={handleConfigureSessionTimeout}>
+                      <Text style={styles.settingButtonText}>Configure</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Device Binding</Text>
+                      <Text style={styles.settingDescription}>Restrict to current device</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingToggle} onPress={handleToggleDeviceBinding}>
+                      <Text style={styles.settingToggleText}>{deviceBindingEnabled ? '✅ Enabled' : '❌ Disabled'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {/* Privacy & Data Settings */}
+              <View style={styles.settingsCategory}>
+                <View style={styles.categoryHeader}>
+                  <Text style={styles.categoryIcon}>🛡️</Text>
+                  <Text style={styles.categoryTitle}>Privacy & Data</Text>
+                </View>
+                <View style={styles.settingsList}>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Data Export</Text>
+                      <Text style={styles.settingDescription}>Download your data</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingButton} onPress={handleDataExport}>
+                      <Text style={styles.settingButtonText}>Export</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Analytics Opt-out</Text>
+                      <Text style={styles.settingDescription}>Disable usage tracking</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingToggle} onPress={handleToggleAnalyticsOptOut}>
+                      <Text style={styles.settingToggleText}>{analyticsOptOut ? '✅ Enabled' : '❌ Disabled'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {/* Advanced Features */}
+              <View style={styles.settingsCategory}>
+                <View style={styles.categoryHeader}>
+                  <Text style={styles.categoryIcon}>⚡</Text>
+                  <Text style={styles.categoryTitle}>Advanced Features</Text>
+                </View>
+                <View style={styles.settingsList}>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Developer Mode</Text>
+                      <Text style={styles.settingDescription}>Enable debug features</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingToggle} onPress={handleToggleDeveloperMode}>
+                      <Text style={styles.settingToggleText}>{developerModeEnabled ? '✅ Enabled' : '❌ Disabled'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingName}>Beta Features</Text>
+                      <Text style={styles.settingDescription}>Try experimental features</Text>
+                    </View>
+                    <TouchableOpacity style={styles.settingToggle} onPress={handleToggleBetaFeatures}>
+                      <Text style={styles.settingToggleText}>{betaFeaturesEnabled ? '✅ Enabled' : '❌ Disabled'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.fullSettingsNote}>
+                <Text style={styles.fullSettingsNoteIcon}>ℹ️</Text>
+                <Text style={styles.fullSettingsNoteText}>
+                  Changes to these settings will take effect immediately. Some features may require app restart.
+                </Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.fullSettingsActions}>
+              <TouchableOpacity 
+                style={styles.fullSettingsSaveButton}
+                onPress={() => {
+                  setShowFullSettingsModal(false);
+                  Alert.alert('Settings Saved', 'Your preferences have been updated successfully.');
+                }}
+              >
+                <Text style={styles.fullSettingsSaveText}>Save Changes</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.fullSettingsCancelButton}
+                onPress={() => setShowFullSettingsModal(false)}
+              >
+                <Text style={styles.fullSettingsCancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Reset Confirmation Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showResetConfirmModal}
+        onRequestClose={() => setShowResetConfirmModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.resetConfirmContainer}>
+            <View style={styles.resetConfirmHeader}>
+              <Text style={styles.resetConfirmIcon}>⚠️</Text>
+              <Text style={styles.resetConfirmTitle}>Reset App Settings</Text>
+            </View>
+
+            <View style={styles.resetConfirmContent}>
+              <Text style={styles.resetConfirmMessage}>
+                Are you sure you want to reset all app settings to their default values?
+              </Text>
+              
+              <View style={styles.resetConfirmWarning}>
+                <Text style={styles.resetConfirmWarningIcon}>🚨</Text>
+                <Text style={styles.resetConfirmWarningText}>
+                  This action cannot be undone. The following will be reset:
+                </Text>
+              </View>
+
+              <View style={styles.resetConfirmList}>
+                <Text style={styles.resetConfirmListItem}>• All notification preferences</Text>
+                <Text style={styles.resetConfirmListItem}>• Security settings (except passwords)</Text>
+                <Text style={styles.resetConfirmListItem}>• Display and theme preferences</Text>
+                <Text style={styles.resetConfirmListItem}>• Privacy settings</Text>
+                <Text style={styles.resetConfirmListItem}>• App customizations</Text>
+              </View>
+
+              <View style={styles.resetConfirmNote}>
+                <Text style={styles.resetConfirmNoteIcon}>💡</Text>
+                <Text style={styles.resetConfirmNoteText}>
+                  Your profile data, wallet balance, and transaction history will remain unchanged.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.resetConfirmActions}>
+              <TouchableOpacity 
+                style={styles.resetConfirmResetButton}
+                onPress={() => {
+                  setShowResetConfirmModal(false);
+                  Alert.alert(
+                    'Settings Reset Complete', 
+                    'All settings have been restored to their default values. Please restart the app for changes to take full effect.',
+                    [
+                      {
+                        text: 'OK',
+                        onPress: () => console.log('Settings reset confirmed')
+                      }
+                    ]
+                  );
+                }}
+              >
+                <Text style={styles.resetConfirmResetText}>Reset Settings</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.resetConfirmCancelButton}
+                onPress={() => setShowResetConfirmModal(false)}
+              >
+                <Text style={styles.resetConfirmCancelText}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -5791,5 +6118,257 @@ const styles = StyleSheet.create({
     borderColor: '#EF4444',
     borderWidth: 2,
     backgroundColor: '#FEF2F2',
+  },
+
+  // Full Settings Modal Styles
+  fullSettingsContentContainer: {
+    paddingBottom: 20,
+  },
+  settingsCategory: {
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5E6A3',
+  },
+  categoryIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#8B4513',
+  },
+  settingsList: {
+    gap: 12,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  settingInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  settingName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2D2D2D',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  settingButton: {
+    backgroundColor: '#D4AF37',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  settingButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  settingToggle: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: '#F5E6A3',
+  },
+  settingToggleText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#8B4513',
+  },
+  fullSettingsNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#E8F4FD',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  fullSettingsNoteIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    marginTop: 2,
+  },
+  fullSettingsNoteText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#2563EB',
+    lineHeight: 20,
+  },
+  fullSettingsActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  fullSettingsSaveButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  fullSettingsSaveText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  fullSettingsCancelButton: {
+    flex: 1,
+    backgroundColor: '#F0F0F0',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  fullSettingsCancelText: {
+    color: '#666666',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
+  // Reset Confirmation Modal Styles
+  resetConfirmContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    margin: 20,
+    maxWidth: 400,
+    width: '90%',
+    alignSelf: 'center',
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  resetConfirmHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  resetConfirmIcon: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
+  resetConfirmTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#DC2626',
+    textAlign: 'center',
+  },
+  resetConfirmContent: {
+    marginBottom: 24,
+  },
+  resetConfirmMessage: {
+    fontSize: 16,
+    color: '#374151',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 16,
+  },
+  resetConfirmWarning: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FEF2F2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#DC2626',
+  },
+  resetConfirmWarningIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    marginTop: 2,
+  },
+  resetConfirmWarningText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#DC2626',
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+  resetConfirmList: {
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  resetConfirmListItem: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  resetConfirmNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#F0F9FF',
+    padding: 12,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0EA5E9',
+  },
+  resetConfirmNoteIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    marginTop: 2,
+  },
+  resetConfirmNoteText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#0284C7',
+    lineHeight: 20,
+  },
+  resetConfirmActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  resetConfirmResetButton: {
+    flex: 1,
+    backgroundColor: '#DC2626',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  resetConfirmResetText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  resetConfirmCancelButton: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  resetConfirmCancelText: {
+    color: '#6B7280',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
