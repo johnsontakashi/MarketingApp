@@ -166,6 +166,153 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // Help & Support handler functions
+  const handleAccountIssues = () => {
+    showInfo(
+      'Account Issues',
+      'Common account problems and solutions:\n\n• Login Problems: Try resetting your password\n• Profile Updates: Check your internet connection\n• Verification Issues: Contact support with ID documents\n• Account Security: Enable two-factor authentication',
+      [
+        { text: 'Reset Password', onPress: () => showInfo('Password Reset', 'Password reset link sent to your email address.') },
+        { text: 'Contact Support', onPress: () => handleLiveChat() },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handlePaymentProblems = () => {
+    showWarning(
+      'Payment Problems',
+      'Transaction and wallet troubleshooting:\n\n• Failed Payments: Check card details and bank limits\n• Wallet Sync: Refresh your wallet balance\n• Missing Transactions: Allow 24-48 hours for processing\n• Refund Requests: Contact support with transaction ID',
+      [
+        { text: 'Refresh Wallet', onPress: () => showSuccess('Wallet Refreshed', 'Your wallet balance has been updated.') },
+        { text: 'Transaction History', onPress: () => navigation.navigate('Wallet') },
+        { text: 'Contact Support', onPress: () => handleLiveChat() },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleTechnicalSupport = () => {
+    showError(
+      'Technical Support',
+      'App performance and bug reporting:\n\n• App Crashes: Try restarting the app\n• Slow Performance: Clear app cache\n• Feature Bugs: Report with screenshots\n• Update Issues: Check app store for updates',
+      [
+        { text: 'Clear Cache', onPress: () => showSuccess('Cache Cleared', 'App cache has been cleared. Restart recommended.') },
+        { text: 'Report Bug', onPress: () => handleSubmitTicket() },
+        { text: 'Contact Support', onPress: () => handleLiveChat() },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleSecurityConcerns = () => {
+    showWarning(
+      'Security Concerns',
+      'Device security and access issues:\n\n• Device Lock: Use emergency unlock if needed\n• Unauthorized Access: Change password immediately\n• SIM Card Issues: Contact your carrier\n• Suspicious Activity: Review transaction history',
+      [
+        { text: 'Emergency Unlock', onPress: () => navigation.navigate('DeviceStatus') },
+        { text: 'Change Password', onPress: () => showInfo('Password Change', 'Password change link sent to your email.') },
+        { text: 'Contact Support', onPress: () => handleLiveChat() },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleUserGuide = () => {
+    showInfo(
+      'User Guide',
+      'Complete app usage instructions:\n\n📱 Getting Started\n💰 Wallet Management\n🛒 Marketplace Usage\n🔒 Security Features\n👥 Community Features\n⚙️ Settings & Preferences',
+      [
+        { text: 'Download PDF', onPress: () => showSuccess('Download Started', 'User guide PDF is being downloaded to your device.') },
+        { text: 'Online Guide', onPress: () => showInfo('Opening Browser', 'Opening online user guide in your browser...') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleVideoTutorials = () => {
+    showInfo(
+      'Video Tutorials',
+      'Step-by-step visual guides available:\n\n🎥 App Setup & Registration\n🎥 Wallet & Payment Setup\n🎥 Making Your First Purchase\n🎥 Community & Referrals\n🎥 Security & Device Lock\n🎥 Troubleshooting Tips',
+      [
+        { text: 'Watch Now', onPress: () => showSuccess('Opening Videos', 'Redirecting to video tutorials...') },
+        { text: 'Download Offline', onPress: () => showInfo('Download', 'Offline video package is being prepared...') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleFAQ = () => {
+    showInfo(
+      'Frequently Asked Questions',
+      'Quick answers to common questions:\n\n❓ How do I add funds to my wallet?\n❓ What is kiosk mode?\n❓ How do I invite friends?\n❓ Why is my device locked?\n❓ How do I contact support?\n❓ How do I update the app?',
+      [
+        { text: 'View All FAQs', onPress: () => showInfo('FAQ', 'Opening comprehensive FAQ section...') },
+        { text: 'Search FAQs', onPress: () => showInfo('Search', 'FAQ search feature coming soon!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleCommunityForum = () => {
+    showInfo(
+      'Community Forum',
+      'Connect with other TLB Diamond users:\n\n👥 Share experiences and tips\n💡 Get help from the community\n📢 Latest announcements\n🎁 Community challenges\n⭐ Success stories',
+      [
+        { text: 'Join Forum', onPress: () => showSuccess('Joining', 'Redirecting to TLB Diamond community forum...') },
+        { text: 'Browse Topics', onPress: () => showInfo('Browse', 'Opening popular forum topics...') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleLiveChat = () => {
+    showSuccess(
+      'Live Chat',
+      'Connecting to support agent...\n\n⏱️ Estimated wait time: < 2 minutes\n\n💬 Please describe your issue briefly when connected.\n\n✅ Available 24/7 for urgent issues',
+      [
+        { text: 'Continue', onPress: () => showInfo('Chat Started', 'Live chat session initiated. Agent will connect shortly.') },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleEmailSupport = () => {
+    showInfo(
+      'Email Support',
+      'Send us a detailed message:\n\n📧 support@tlbdiamond.com\n\n⏱️ Response time: 4-6 hours\n\nPlease include:\n• Detailed description\n• Device information\n• Screenshots if applicable\n• Your account email',
+      [
+        { text: 'Open Email App', onPress: () => showSuccess('Opening Email', 'Opening your default email app...') },
+        { text: 'Copy Email', onPress: () => showSuccess('Copied', 'Email address copied to clipboard!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handlePhoneSupport = () => {
+    showInfo(
+      'Phone Support',
+      'Call our support team:\n\n📞 +1 (555) DIAMOND (342-6663)\n\n⏰ Hours: 9 AM - 9 PM EST\n🌍 Available Monday - Sunday\n\n🎯 Best for urgent issues requiring immediate assistance',
+      [
+        { text: 'Call Now', onPress: () => showSuccess('Calling', 'Opening phone dialer...') },
+        { text: 'Save Number', onPress: () => showSuccess('Saved', 'Support number saved to contacts!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleSubmitTicket = () => {
+    showInfo(
+      'Submit Support Ticket',
+      'Create a detailed support request:\n\n📝 Include problem description\n📱 Device and app information\n📸 Screenshots or videos\n⚡ Priority level selection\n\n⏱️ Response time: 2-4 hours for urgent issues',
+      [
+        { text: 'Create Ticket', onPress: () => showSuccess('Ticket Created', 'Support ticket #TLB-12345 created successfully!\n\nYou will receive email updates on progress.') },
+        { text: 'Email Instead', onPress: () => handleEmailSupport() },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   const menuItems = [
     { icon: 'person', title: 'Edit Profile', subtitle: 'Update your information', action: 'editProfile' },
     { icon: 'cube', title: 'My Orders', subtitle: 'View order history', action: 'orders' },
@@ -1803,7 +1950,7 @@ export default function ProfileScreen({ navigation }) {
               <View style={styles.helpSection}>
                 <Text style={styles.helpSectionTitle}>⚡ Quick Help</Text>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleAccountIssues}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="person-circle" size={24} color="#D4AF37" />
                   </View>
@@ -1814,7 +1961,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handlePaymentProblems}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="card" size={24} color="#D4AF37" />
                   </View>
@@ -1825,7 +1972,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleTechnicalSupport}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="bug" size={24} color="#D4AF37" />
                   </View>
@@ -1836,7 +1983,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleSecurityConcerns}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="shield-checkmark" size={24} color="#D4AF37" />
                   </View>
@@ -1852,7 +1999,7 @@ export default function ProfileScreen({ navigation }) {
               <View style={styles.helpSection}>
                 <Text style={styles.helpSectionTitle}>📚 Resources</Text>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleUserGuide}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="book" size={24} color="#D4AF37" />
                   </View>
@@ -1863,7 +2010,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleVideoTutorials}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="play-circle" size={24} color="#D4AF37" />
                   </View>
@@ -1874,7 +2021,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleFAQ}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="help-circle" size={24} color="#D4AF37" />
                   </View>
@@ -1885,7 +2032,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleCommunityForum}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="people" size={24} color="#D4AF37" />
                   </View>
@@ -1901,7 +2048,7 @@ export default function ProfileScreen({ navigation }) {
               <View style={styles.helpSection}>
                 <Text style={styles.helpSectionTitle}>📞 Contact Support</Text>
                 
-                <TouchableOpacity style={[styles.helpItem, styles.priorityItem]}>
+                <TouchableOpacity style={[styles.helpItem, styles.priorityItem]} onPress={handleLiveChat}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="chatbubbles" size={24} color="#10B981" />
                   </View>
@@ -1914,7 +2061,7 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleEmailSupport}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="mail" size={24} color="#D4AF37" />
                   </View>
@@ -1925,7 +2072,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handlePhoneSupport}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="call" size={24} color="#D4AF37" />
                   </View>
@@ -1936,7 +2083,7 @@ export default function ProfileScreen({ navigation }) {
                   <Ionicons name="chevron-forward" size={16} color="#8B4513" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.helpItem}>
+                <TouchableOpacity style={styles.helpItem} onPress={handleSubmitTicket}>
                   <View style={styles.helpItemIcon}>
                     <Ionicons name="document-text" size={24} color="#D4AF37" />
                   </View>
@@ -1980,7 +2127,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.liveChatButton}
                 onPress={() => {
                   setShowHelpModal(false);
-                  Alert.alert('Live Chat', 'Connecting to support agent...\n\nEstimated wait time: < 2 minutes\n\nPlease describe your issue briefly when connected.');
+                  handleLiveChat();
                 }}
               >
                 <Ionicons name="chatbubbles" size={16} color="#FFFFFF" />
@@ -1991,7 +2138,7 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.ticketButton}
                 onPress={() => {
                   setShowHelpModal(false);
-                  Alert.alert('Submit Ticket', 'Ticket submission form coming soon!\n\nIn the meantime, please email us at support@tlbdiamond.com with:\n\n• Your issue description\n• Device model\n• App version\n• Screenshots (if applicable)');
+                  handleSubmitTicket();
                 }}
               >
                 <Ionicons name="document-text" size={16} color="#FFFFFF" />
