@@ -26,6 +26,7 @@ export default function DeviceStatusScreen({ navigation }) {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
 
   // Update SIM status periodically
   useEffect(() => {
@@ -391,12 +392,40 @@ export default function DeviceStatusScreen({ navigation }) {
 
               {/* Quick Actions */}
               <View style={styles.walletActions}>
-                <TouchableOpacity style={styles.walletActionButton}>
+                <TouchableOpacity 
+                  style={styles.walletActionButton}
+                  onPress={() => {
+                    setShowAddFundsModal(true);
+                  }}
+                >
                   <Ionicons name="add-circle" size={20} color="#FFFFFF" />
                   <Text style={styles.walletActionText}>Add Funds</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={[styles.walletActionButton, styles.secondaryButton]}>
+                <TouchableOpacity 
+                  style={[styles.walletActionButton, styles.secondaryButton]}
+                  onPress={() => {
+                    Alert.alert(
+                      '💸 Transfer TLB Diamonds',
+                      'Transfer TLB Diamonds to another user or wallet:',
+                      [
+                        {
+                          text: 'To TLB User',
+                          onPress: () => Alert.alert('User Transfer', 'Enter recipient\'s TLB Diamond ID to continue.')
+                        },
+                        {
+                          text: 'To External Wallet',
+                          onPress: () => Alert.alert('External Transfer', 'Enter wallet address and amount to transfer.')
+                        },
+                        {
+                          text: 'Send as Gift',
+                          onPress: () => Alert.alert('Gift Transfer', 'Send TLB Diamonds as a gift with a personal message.')
+                        },
+                        { text: 'Cancel', style: 'cancel' }
+                      ]
+                    );
+                  }}
+                >
                   <Ionicons name="send" size={20} color="#6B7280" />
                   <Text style={[styles.walletActionText, styles.secondaryText]}>Transfer</Text>
                 </TouchableOpacity>
@@ -617,6 +646,108 @@ export default function DeviceStatusScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
             </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Funds Modal */}
+      <Modal
+        visible={showAddFundsModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowAddFundsModal(false)}
+      >
+        <View style={styles.addFundsOverlay}>
+          <View style={styles.addFundsContent}>
+            {/* Header */}
+            <View style={styles.addFundsHeader}>
+              <View style={styles.addFundsIconContainer}>
+                <Ionicons name="wallet" size={32} color="#D4AF37" />
+              </View>
+              <Text style={styles.addFundsTitle}>💰 Add Funds to Wallet</Text>
+              <Text style={styles.addFundsSubtitle}>
+                Choose your preferred method to add TLB Diamonds to your wallet
+              </Text>
+              <TouchableOpacity 
+                style={styles.addFundsCloseButton}
+                onPress={() => setShowAddFundsModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Payment Methods */}
+            <View style={styles.paymentMethodsContainer}>
+              <TouchableOpacity 
+                style={styles.paymentMethodCard}
+                onPress={() => {
+                  setShowAddFundsModal(false);
+                  Alert.alert('Card Payment', 'Redirecting to secure payment portal...');
+                }}
+              >
+                <View style={[styles.paymentMethodIcon, { backgroundColor: '#10B981' }]}>
+                  <Ionicons name="card" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.paymentMethodInfo}>
+                  <Text style={styles.paymentMethodTitle}>Credit/Debit Card</Text>
+                  <Text style={styles.paymentMethodDescription}>Instant deposit via secure payment gateway</Text>
+                  <Text style={styles.paymentMethodFee}>Fee: 2.5% + $0.30</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.paymentMethodCard}
+                onPress={() => {
+                  setShowAddFundsModal(false);
+                  Alert.alert('Bank Transfer', 'Bank transfer details will be provided via email.');
+                }}
+              >
+                <View style={[styles.paymentMethodIcon, { backgroundColor: '#3B82F6' }]}>
+                  <Ionicons name="business" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.paymentMethodInfo}>
+                  <Text style={styles.paymentMethodTitle}>Bank Transfer</Text>
+                  <Text style={styles.paymentMethodDescription}>Direct bank transfer (ACH) - 1-3 business days</Text>
+                  <Text style={styles.paymentMethodFee}>Fee: $1.00</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.paymentMethodCard}
+                onPress={() => {
+                  setShowAddFundsModal(false);
+                  Alert.alert('Crypto Payment', 'Bitcoin and Ethereum accepted. Wallet address will be provided.');
+                }}
+              >
+                <View style={[styles.paymentMethodIcon, { backgroundColor: '#F59E0B' }]}>
+                  <Ionicons name="logo-bitcoin" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.paymentMethodInfo}>
+                  <Text style={styles.paymentMethodTitle}>Crypto Payment</Text>
+                  <Text style={styles.paymentMethodDescription}>Bitcoin, Ethereum & other cryptocurrencies</Text>
+                  <Text style={styles.paymentMethodFee}>Fee: Network fees apply</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Security Note */}
+            <View style={styles.securityNote}>
+              <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+              <Text style={styles.securityText}>
+                All transactions are secured with 256-bit SSL encryption
+              </Text>
+            </View>
+
+            {/* Cancel Button */}
+            <TouchableOpacity 
+              style={styles.addFundsCancelButton}
+              onPress={() => setShowAddFundsModal(false)}
+            >
+              <Text style={styles.addFundsCancelText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1247,5 +1378,148 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     marginRight: 12,
     textAlign: 'center',
+  },
+  // Add Funds Modal Styles
+  addFundsOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'flex-end',
+  },
+  addFundsContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingBottom: 40,
+    maxHeight: '85%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 20,
+  },
+  addFundsHeader: {
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0E5B8',
+    position: 'relative',
+  },
+  addFundsIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  addFundsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  addFundsSubtitle: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  addFundsCloseButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  paymentMethodsContainer: {
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    gap: 16,
+  },
+  paymentMethodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#F0E5B8',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  paymentMethodIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  paymentMethodInfo: {
+    flex: 1,
+  },
+  paymentMethodTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 4,
+  },
+  paymentMethodDescription: {
+    fontSize: 14,
+    color: '#8B4513',
+    marginBottom: 4,
+    lineHeight: 18,
+  },
+  paymentMethodFee: {
+    fontSize: 12,
+    color: '#D4AF37',
+    fontWeight: '600',
+  },
+  securityNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    marginHorizontal: 24,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#10B981',
+    marginBottom: 20,
+  },
+  securityText: {
+    fontSize: 14,
+    color: '#065F46',
+    marginLeft: 12,
+    flex: 1,
+    lineHeight: 18,
+  },
+  addFundsCancelButton: {
+    marginHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 12,
+    backgroundColor: '#F5E6A3',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    alignItems: 'center',
+  },
+  addFundsCancelText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8B4513',
   },
 });
