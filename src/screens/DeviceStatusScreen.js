@@ -426,7 +426,11 @@ export default function DeviceStatusScreen({ navigation }) {
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.modalContent} 
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContentContainer}
+            >
               {/* Order Summary */}
               <View style={styles.orderSummaryCard}>
                 <Text style={styles.orderSummaryTitle}>Order Summary</Text>
@@ -487,12 +491,23 @@ export default function DeviceStatusScreen({ navigation }) {
 
               {/* Quick Actions */}
               <View style={styles.orderActions}>
-                <TouchableOpacity style={styles.orderActionButton}>
+                <TouchableOpacity 
+                  style={styles.orderActionButton}
+                  onPress={() => {
+                    setShowOrdersModal(false);
+                    navigation.navigate('Marketplace');
+                  }}
+                >
                   <Ionicons name="storefront" size={20} color="#FFFFFF" />
                   <Text style={styles.orderActionText}>Shop Now</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={[styles.orderActionButton, styles.secondaryButton]}>
+                <TouchableOpacity 
+                  style={[styles.orderActionButton, styles.secondaryButton]}
+                  onPress={() => {
+                    Alert.alert('Order Tracking', 'Order tracking feature coming soon! You can check order status in your account.');
+                  }}
+                >
                   <Ionicons name="refresh" size={20} color="#6B7280" />
                   <Text style={[styles.orderActionText, styles.secondaryText]}>Track Orders</Text>
                 </TouchableOpacity>
@@ -1095,6 +1110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginTop: 8,
+    marginBottom: 20,
   },
   orderActionButton: {
     flex: 1,
