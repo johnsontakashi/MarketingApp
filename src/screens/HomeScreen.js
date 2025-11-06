@@ -13,10 +13,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import CustomAlert from '../components/ui/CustomAlert';
+import { useCustomAlert } from '../hooks/useCustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
   const [userBalance, setUserBalance] = useState(1250.00);
   const [deviceStatus, setDeviceStatus] = useState('secure');
   const [activeOrders, setActiveOrders] = useState(2);
@@ -68,7 +72,7 @@ export default function HomeScreen({ navigation }) {
   const handleQuickAction = (screenOrAction) => {
     if (screenOrAction === 'lock') {
       // Trigger the lock screen modal - this will be handled by LockManager
-      Alert.alert(
+      showWarning(
         'Activate Kiosk Mode',
         'This will lock your device for demonstration purposes. You can unlock it from the lock screen.',
         [
@@ -426,6 +430,17 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
       </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </ScrollView>
   );
 }
