@@ -59,6 +59,68 @@ export default function ProfileScreen({ navigation }) {
   const [pinCodeLength, setPinCodeLength] = useState(6);
   const [sessionTimeout, setSessionTimeout] = useState(5);
 
+  // Notification state management
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: 'Payment Reminder',
+      message: 'Next payment due in 3 days for your Wireless Headphones order',
+      fullMessage: 'Your next payment of 💎 125.00 TLB is due in 3 days for your Premium Wireless Headphones order #ORD-001.\n\nOrder Details:\n• Product: Premium Wireless Headphones\n• Payment Plan: 3 of 4 payments\n• Amount Due: 💎 125.00 TLB\n• Due Date: Nov 9, 2025\n\nYou can make early payments anytime in your Wallet.',
+      emoji: '💳',
+      time: '2 hours ago',
+      isRead: false,
+      priority: 'high',
+      category: 'payment'
+    },
+    {
+      id: 2,
+      title: 'Daily Login Bonus Available',
+      message: 'Claim your 7-day streak bonus: 💎 5.00 TLB',
+      fullMessage: 'Congratulations on your 7-day login streak! 🎉\n\nYour consistency is paying off:\n• Streak Days: 7 days\n• Bonus Amount: 💎 5.00 TLB\n• Streak Multiplier: 1.4x\n• Next Milestone: 14 days (2x multiplier)\n\nClaim your bonus now to continue your streak and unlock even bigger rewards!',
+      emoji: '🎁',
+      time: '4 hours ago',
+      isRead: false,
+      priority: 'medium',
+      category: 'bonus'
+    },
+    {
+      id: 3,
+      title: 'Security Update Complete',
+      message: 'Your device has been successfully secured with latest updates',
+      fullMessage: 'Security Update Completed Successfully ✅\n\nYour device security has been enhanced with:\n• Latest security patches installed\n• Device encryption strengthened\n• Biometric authentication updated\n• Kiosk mode protocols reinforced\n\nYour device is now fully protected and compliant with TLB Diamond security standards.',
+      emoji: '🔒',
+      time: '1 day ago',
+      isRead: true,
+      priority: 'low',
+      category: 'security'
+    },
+    {
+      id: 4,
+      title: 'Order Shipped',
+      message: 'Your Gaming Mouse Pro has been shipped! Track: #TLB123456',
+      fullMessage: 'Your Order Has Been Shipped! 📦\n\nOrder #ORD-002 Details:\n• Product: Gaming Mouse Pro\n• Shipping Carrier: TLB Express\n• Tracking Number: #TLB123456\n• Estimated Delivery: Nov 8-10, 2025\n• Shipping Address: 123 Main Street, City, State 12345\n\nYou can track your package in real-time using the tracking number.',
+      emoji: '🚚',
+      time: '2 days ago',
+      isRead: true,
+      priority: 'medium',
+      category: 'order'
+    },
+    {
+      id: 5,
+      title: 'New Referral Bonus',
+      message: 'Sarah M. joined using your referral code. You earned 💎 2.50 TLB',
+      fullMessage: 'New Referral Success! 👥💰\n\nCongratulations! Sarah M. has joined TLB Diamond using your referral code.\n\nReferral Details:\n• Referral Code Used: JOHN2024\n• New User: Sarah M.\n• Your Bonus: 💎 2.50 TLB\n• Their Welcome Bonus: 💎 10.00 TLB\n• Total Referrals: 12 users\n\nKeep sharing your code to earn more bonuses!',
+      emoji: '👥',
+      time: '3 days ago',
+      isRead: true,
+      priority: 'low',
+      category: 'referral'
+    }
+  ]);
+  
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [showNotificationDetailModal, setShowNotificationDetailModal] = useState(false);
+
   // Full Settings handler functions
   const handleChangePinLength = () => {
     showAlert({
@@ -311,6 +373,80 @@ export default function ProfileScreen({ navigation }) {
         { text: 'Close', style: 'cancel' }
       ]
     );
+  };
+
+  // Notification handler functions
+  const handleNotificationPress = (notification) => {
+    // Mark as read when opened
+    setNotifications(prev => prev.map(n => 
+      n.id === notification.id ? { ...n, isRead: true } : n
+    ));
+    
+    setSelectedNotification(notification);
+    setShowNotificationDetailModal(true);
+  };
+
+  const handleDismissNotification = (notificationId, event) => {
+    event.stopPropagation(); // Prevent opening detail modal
+    
+    showConfirm(
+      'Dismiss Notification',
+      'Are you sure you want to remove this notification? This action cannot be undone.',
+      () => {
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+        showSuccess('Notification Dismissed', 'The notification has been removed.');
+      }
+    );
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    setShowNotificationsModal(false);
+    showSuccess('Marked as Read', 'All notifications have been marked as read!');
+  };
+
+  const handleNotificationSettings = () => {
+    setShowNotificationsModal(false);
+    showInfo(
+      'Notification Settings',
+      'Notification preferences can be customized:\n\n🔔 Push Notifications\n⏰ Custom notification times\n📊 Priority filtering\n🔊 Sound preferences\n😴 Do not disturb schedules\n\nFull customization coming soon!'
+    );
+  };
+
+  const handleNotificationAction = (notification) => {
+    switch (notification.category) {
+      case 'payment':
+        setShowNotificationDetailModal(false);
+        setShowNotificationsModal(false);
+        navigation.navigate('Wallet');
+        showInfo('Redirecting', 'Opening wallet for payment...');
+        break;
+      case 'bonus':
+        setShowNotificationDetailModal(false);
+        setShowNotificationsModal(false);
+        showSuccess('Bonus Claimed', 'Daily bonus of 💎 5.00 TLB has been added to your wallet!');
+        break;
+      case 'order':
+        setShowNotificationDetailModal(false);
+        setShowNotificationsModal(false);
+        showInfo('Order Tracking', 'Opening order tracking for #TLB123456...');
+        break;
+      default:
+        showInfo('Action', 'This action is not yet implemented.');
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high': return '#EF4444';
+      case 'medium': return '#F59E0B';
+      case 'low': return '#10B981';
+      default: return '#6B7280';
+    }
+  };
+
+  const getUnreadCount = () => {
+    return notifications.filter(n => !n.isRead).length;
   };
 
   const menuItems = [
@@ -1746,15 +1882,15 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.summaryTitle}>📊 Summary</Text>
                 <View style={styles.summaryStatsGrid}>
                   <View style={styles.summaryStatCard}>
-                    <Text style={styles.summaryStatNumber}>5</Text>
+                    <Text style={styles.summaryStatNumber}>{notifications.length}</Text>
                     <Text style={styles.summaryStatLabel}>Total</Text>
                   </View>
                   <View style={styles.summaryStatCard}>
-                    <Text style={styles.summaryStatNumber}>2</Text>
+                    <Text style={styles.summaryStatNumber}>{getUnreadCount()}</Text>
                     <Text style={styles.summaryStatLabel}>Unread</Text>
                   </View>
                   <View style={styles.summaryStatCard}>
-                    <Text style={styles.summaryStatNumber}>3</Text>
+                    <Text style={styles.summaryStatNumber}>{notifications.length - getUnreadCount()}</Text>
                     <Text style={styles.summaryStatLabel}>Read</Text>
                   </View>
                 </View>
@@ -1764,80 +1900,47 @@ export default function ProfileScreen({ navigation }) {
               <View style={styles.notificationSection}>
                 <Text style={styles.notificationSectionTitle}>🔔 Recent Notifications</Text>
                 
-                <TouchableOpacity style={[styles.notificationItem, styles.unreadNotification]}>
-                  <View style={styles.notificationIcon}>
-                    <Text style={styles.notificationEmoji}>💳</Text>
-                  </View>
-                  <View style={styles.notificationContent}>
-                    <Text style={styles.notificationTitle}>Payment Reminder</Text>
-                    <Text style={styles.notificationMessage}>Next payment due in 3 days for your Wireless Headphones order</Text>
-                    <Text style={styles.notificationTime}>2 hours ago</Text>
-                  </View>
-                  <View style={styles.notificationStatus}>
-                    <View style={[styles.priorityDot, { backgroundColor: '#EF4444' }]} />
-                    <View style={styles.unreadDot} />
-                  </View>
-                </TouchableOpacity>
+                {notifications.map((notification) => (
+                  <TouchableOpacity 
+                    key={notification.id}
+                    style={[
+                      styles.notificationItem, 
+                      !notification.isRead && styles.unreadNotification
+                    ]}
+                    onPress={() => handleNotificationPress(notification)}
+                  >
+                    <View style={styles.notificationIcon}>
+                      <Text style={styles.notificationEmoji}>{notification.emoji}</Text>
+                    </View>
+                    <View style={styles.notificationContent}>
+                      <Text style={styles.notificationTitle}>{notification.title}</Text>
+                      <Text style={styles.notificationMessage}>{notification.message}</Text>
+                      <Text style={styles.notificationTime}>{notification.time}</Text>
+                    </View>
+                    <View style={styles.notificationStatus}>
+                      <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(notification.priority) }]} />
+                      {notification.isRead ? (
+                        <Ionicons name="checkmark" size={12} color="#10B981" />
+                      ) : (
+                        <View style={styles.unreadDot} />
+                      )}
+                      <TouchableOpacity 
+                        style={styles.dismissButton}
+                        onPress={(e) => handleDismissNotification(notification.id, e)}
+                      >
+                        <Ionicons name="close" size={16} color="#8B4513" />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                ))}
                 
-                <TouchableOpacity style={[styles.notificationItem, styles.unreadNotification]}>
-                  <View style={styles.notificationIcon}>
-                    <Text style={styles.notificationEmoji}>🎁</Text>
+                {notifications.length === 0 && (
+                  <View style={styles.emptyNotifications}>
+                    <Text style={styles.emptyNotificationsIcon}>🔔</Text>
+                    <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
+                    <Text style={styles.emptyNotificationsSubtext}>You'll see important updates here</Text>
                   </View>
-                  <View style={styles.notificationContent}>
-                    <Text style={styles.notificationTitle}>Daily Login Bonus Available</Text>
-                    <Text style={styles.notificationMessage}>Claim your 7-day streak bonus: 📎 5.00 TLB</Text>
-                    <Text style={styles.notificationTime}>4 hours ago</Text>
-                  </View>
-                  <View style={styles.notificationStatus}>
-                    <View style={[styles.priorityDot, { backgroundColor: '#F59E0B' }]} />
-                    <View style={styles.unreadDot} />
-                  </View>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.notificationItem}>
-                  <View style={styles.notificationIcon}>
-                    <Text style={styles.notificationEmoji}>🔒</Text>
-                  </View>
-                  <View style={styles.notificationContent}>
-                    <Text style={styles.notificationTitle}>Security Update Complete</Text>
-                    <Text style={styles.notificationMessage}>Your device has been successfully secured with latest updates</Text>
-                    <Text style={styles.notificationTime}>1 day ago</Text>
-                  </View>
-                  <View style={styles.notificationStatus}>
-                    <View style={[styles.priorityDot, { backgroundColor: '#10B981' }]} />
-                    <Ionicons name="checkmark" size={12} color="#10B981" />
-                  </View>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.notificationItem}>
-                  <View style={styles.notificationIcon}>
-                    <Text style={styles.notificationEmoji}>🚚</Text>
-                  </View>
-                  <View style={styles.notificationContent}>
-                    <Text style={styles.notificationTitle}>Order Shipped</Text>
-                    <Text style={styles.notificationMessage}>Your Gaming Mouse Pro has been shipped! Track: #TLB123456</Text>
-                    <Text style={styles.notificationTime}>2 days ago</Text>
-                  </View>
-                  <View style={styles.notificationStatus}>
-                    <View style={[styles.priorityDot, { backgroundColor: '#F59E0B' }]} />
-                    <Ionicons name="checkmark" size={12} color="#10B981" />
-                  </View>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.notificationItem}>
-                  <View style={styles.notificationIcon}>
-                    <Text style={styles.notificationEmoji}>👥</Text>
-                  </View>
-                  <View style={styles.notificationContent}>
-                    <Text style={styles.notificationTitle}>New Referral Bonus</Text>
-                    <Text style={styles.notificationMessage}>Sarah M. joined using your referral code. You earned 📎 2.50 TLB</Text>
-                    <Text style={styles.notificationTime}>3 days ago</Text>
-                  </View>
-                  <View style={styles.notificationStatus}>
-                    <View style={[styles.priorityDot, { backgroundColor: '#10B981' }]} />
-                    <Ionicons name="checkmark" size={12} color="#10B981" />
-                  </View>
-                </TouchableOpacity>
+                )}
               </View>
               
               {/* Notification Settings */}
@@ -1897,10 +2000,7 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.notificationActions}>
               <TouchableOpacity 
                 style={styles.markReadButton}
-                onPress={() => {
-                  setShowNotificationsModal(false);
-                  Alert.alert('Marked as Read', 'All notifications have been marked as read!');
-                }}
+                onPress={handleMarkAllAsRead}
               >
                 <Ionicons name="checkmark-done" size={16} color="#FFFFFF" />
                 <Text style={styles.markReadText}>Mark All Read</Text>
@@ -1908,13 +2008,130 @@ export default function ProfileScreen({ navigation }) {
               
               <TouchableOpacity 
                 style={styles.manageButton}
-                onPress={() => {
-                  setShowNotificationsModal(false);
-                  Alert.alert('Notification Settings', 'Notification preferences can be customized in the full settings menu.\n\nComing features:\n• Custom notification times\n• Priority filtering\n• Sound preferences\n• Do not disturb schedules');
-                }}
+                onPress={handleNotificationSettings}
               >
                 <Ionicons name="settings" size={16} color="#FFFFFF" />
                 <Text style={styles.manageText}>Manage Settings</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Notification Detail Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showNotificationDetailModal}
+        onRequestClose={() => setShowNotificationDetailModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {selectedNotification?.emoji} {selectedNotification?.title}
+              </Text>
+              <TouchableOpacity onPress={() => setShowNotificationDetailModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView 
+              style={styles.modalContent}
+              contentContainerStyle={styles.notificationDetailContentContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              {selectedNotification && (
+                <>
+                  {/* Notification Info */}
+                  <View style={styles.notificationDetailHeader}>
+                    <View style={styles.notificationDetailIcon}>
+                      <Text style={styles.notificationDetailEmoji}>{selectedNotification.emoji}</Text>
+                    </View>
+                    <View style={styles.notificationDetailInfo}>
+                      <Text style={styles.notificationDetailTitle}>{selectedNotification.title}</Text>
+                      <Text style={styles.notificationDetailTime}>{selectedNotification.time}</Text>
+                      <View style={styles.notificationDetailMeta}>
+                        <View style={[styles.notificationDetailPriority, { backgroundColor: getPriorityColor(selectedNotification.priority) }]}>
+                          <Text style={styles.notificationDetailPriorityText}>
+                            {selectedNotification.priority.toUpperCase()} PRIORITY
+                          </Text>
+                        </View>
+                        <View style={styles.notificationDetailCategory}>
+                          <Text style={styles.notificationDetailCategoryText}>
+                            {selectedNotification.category.toUpperCase()}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Full Message */}
+                  <View style={styles.notificationDetailContent}>
+                    <Text style={styles.notificationDetailMessage}>
+                      {selectedNotification.fullMessage}
+                    </Text>
+                  </View>
+
+                  {/* Quick Actions */}
+                  {(selectedNotification.category === 'payment' || selectedNotification.category === 'bonus' || selectedNotification.category === 'order') && (
+                    <View style={styles.notificationDetailActions}>
+                      <Text style={styles.notificationDetailActionsTitle}>Quick Actions</Text>
+                      
+                      {selectedNotification.category === 'payment' && (
+                        <TouchableOpacity 
+                          style={styles.notificationActionButton}
+                          onPress={() => handleNotificationAction(selectedNotification)}
+                        >
+                          <Ionicons name="card" size={20} color="#FFFFFF" />
+                          <Text style={styles.notificationActionText}>Go to Wallet</Text>
+                        </TouchableOpacity>
+                      )}
+                      
+                      {selectedNotification.category === 'bonus' && (
+                        <TouchableOpacity 
+                          style={[styles.notificationActionButton, { backgroundColor: '#10B981' }]}
+                          onPress={() => handleNotificationAction(selectedNotification)}
+                        >
+                          <Ionicons name="gift" size={20} color="#FFFFFF" />
+                          <Text style={styles.notificationActionText}>Claim Bonus</Text>
+                        </TouchableOpacity>
+                      )}
+                      
+                      {selectedNotification.category === 'order' && (
+                        <TouchableOpacity 
+                          style={[styles.notificationActionButton, { backgroundColor: '#F59E0B' }]}
+                          onPress={() => handleNotificationAction(selectedNotification)}
+                        >
+                          <Ionicons name="location" size={20} color="#FFFFFF" />
+                          <Text style={styles.notificationActionText}>Track Order</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
+                </>
+              )}
+            </ScrollView>
+
+            <View style={styles.notificationDetailFooter}>
+              <TouchableOpacity 
+                style={styles.notificationDismissButton}
+                onPress={() => {
+                  if (selectedNotification) {
+                    handleDismissNotification(selectedNotification.id, { stopPropagation: () => {} });
+                    setShowNotificationDetailModal(false);
+                  }
+                }}
+              >
+                <Ionicons name="trash" size={16} color="#FFFFFF" />
+                <Text style={styles.notificationDismissText}>Dismiss</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.notificationCloseButton}
+                onPress={() => setShowNotificationDetailModal(false)}
+              >
+                <Text style={styles.notificationCloseText}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -6534,5 +6751,179 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 16,
     fontWeight: '500',
+  },
+
+  // Notification Modal Styles
+  dismissButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  emptyNotifications: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  emptyNotificationsIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+    opacity: 0.5,
+  },
+  emptyNotificationsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#8B4513',
+    marginBottom: 8,
+  },
+  emptyNotificationsSubtext: {
+    fontSize: 14,
+    color: '#A0A0A0',
+    textAlign: 'center',
+  },
+
+  // Notification Detail Modal Styles
+  notificationDetailContentContainer: {
+    paddingBottom: 20,
+  },
+  notificationDetailHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    backgroundColor: '#F8F9FA',
+    padding: 16,
+    borderRadius: 12,
+  },
+  notificationDetailIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  notificationDetailEmoji: {
+    fontSize: 24,
+  },
+  notificationDetailInfo: {
+    flex: 1,
+  },
+  notificationDetailTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  notificationDetailTime: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 12,
+  },
+  notificationDetailMeta: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  notificationDetailPriority: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  notificationDetailPriorityText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  notificationDetailCategory: {
+    backgroundColor: '#E5E7EB',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  notificationDetailCategoryText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  notificationDetailContent: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  notificationDetailMessage: {
+    fontSize: 16,
+    color: '#374151',
+    lineHeight: 24,
+  },
+  notificationDetailActions: {
+    marginBottom: 20,
+  },
+  notificationDetailActionsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 12,
+  },
+  notificationActionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D4AF37',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  notificationActionText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  notificationDetailFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  notificationDismissButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EF4444',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  notificationDismissText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  notificationCloseButton: {
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    flex: 1,
+    alignItems: 'center',
+  },
+  notificationCloseText: {
+    color: '#6B7280',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
