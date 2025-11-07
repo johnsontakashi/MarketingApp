@@ -227,15 +227,28 @@ export default function WalletScreen({ navigation }) {
       return;
     }
 
-    showConfirm(
-      'Confirm Transfer',
-      `Send 💎 ${amount.toFixed(2)} TLB to ${sendForm.recipient}?\n\n${sendForm.message ? `Message: "${sendForm.message}"` : 'No message included.'}`,
-      () => {
-        setShowSendModal(false);
-        setSendForm({ recipient: '', amount: '', message: '' });
-        showSuccess('Transfer Sent!', `💎 ${amount.toFixed(2)} TLB sent successfully to ${sendForm.recipient}.`);
-      }
-    );
+    showAlert({
+      title: 'Confirm Transfer',
+      message: `Send 💎 ${amount.toFixed(2)} TLB to ${sendForm.recipient}?\n\n${sendForm.message ? `Message: "${sendForm.message}"` : 'No message included.'}`,
+      type: 'warning',
+      icon: 'send',
+      buttons: [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => {}
+        },
+        {
+          text: 'Send TLB',
+          style: 'default',
+          onPress: () => {
+            setShowSendModal(false);
+            setSendForm({ recipient: '', amount: '', message: '' });
+            showSuccess('Transfer Sent!', `💎 ${amount.toFixed(2)} TLB sent successfully to ${sendForm.recipient}.`);
+          }
+        }
+      ]
+    });
   };
 
   const handleRequestTLB = () => {
@@ -250,15 +263,28 @@ export default function WalletScreen({ navigation }) {
       return;
     }
 
-    showConfirm(
-      'Send Request',
-      `Request 💎 ${amount.toFixed(2)} TLB from ${requestForm.requester}?\n\n${requestForm.message ? `Message: "${requestForm.message}"` : 'No message included.'}`,
-      () => {
-        setShowRequestModal(false);
-        setRequestForm({ requester: '', amount: '', message: '' });
-        showSuccess('Request Sent!', `Request for 💎 ${amount.toFixed(2)} TLB sent to ${requestForm.requester}.`);
-      }
-    );
+    showAlert({
+      title: 'Send Request',
+      message: `Request 💎 ${amount.toFixed(2)} TLB from ${requestForm.requester}?\n\n${requestForm.message ? `Message: "${requestForm.message}"` : 'No message included.'}`,
+      type: 'info',
+      icon: 'download',
+      buttons: [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => {}
+        },
+        {
+          text: 'Send Request',
+          style: 'default',
+          onPress: () => {
+            setShowRequestModal(false);
+            setRequestForm({ requester: '', amount: '', message: '' });
+            showSuccess('Request Sent!', `Request for 💎 ${amount.toFixed(2)} TLB sent to ${requestForm.requester}.`);
+          }
+        }
+      ]
+    });
   };
 
   const handleTopUpOption = (method) => {
@@ -632,7 +658,11 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.walletModalContent} 
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.walletModalContentContainer}
+            >
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Recipient</Text>
                 <TextInput
@@ -699,8 +729,8 @@ export default function WalletScreen({ navigation }) {
         onRequestClose={() => setShowRequestModal(false)}
         statusBarTranslucent={true}
       >
-        <View style={styles.walletModalOverlay}>
-          <View style={styles.walletActionContainer}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>💎 Request TLB Diamonds</Text>
               <TouchableOpacity 
@@ -711,7 +741,10 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.modalContent} 
+              showsVerticalScrollIndicator={false}
+            >
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Request From</Text>
                 <TextInput
@@ -745,24 +778,25 @@ export default function WalletScreen({ navigation }) {
                   numberOfLines={3}
                 />
               </View>
-            </ScrollView>
 
-            <View style={styles.walletActionButtons}>
-              <TouchableOpacity 
-                style={styles.cancelButton}
-                onPress={() => setShowRequestModal(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={styles.primaryButton}
-                onPress={handleRequestTLB}
-              >
-                <Ionicons name="download" size={20} color="#FFFFFF" />
-                <Text style={styles.primaryButtonText}>Send Request</Text>
-              </TouchableOpacity>
-            </View>
+              {/* Action Buttons */}
+              <View style={styles.historyActions}>
+                <TouchableOpacity 
+                  style={[styles.cancelButton, { marginRight: 6 }]}
+                  onPress={() => setShowRequestModal(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={[styles.primaryButton, { marginLeft: 6 }]}
+                  onPress={handleRequestTLB}
+                >
+                  <Ionicons name="download" size={20} color="#FFFFFF" />
+                  <Text style={styles.primaryButtonText}>Send Request</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -787,7 +821,11 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.walletModalContent} 
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.walletModalContentContainer}
+            >
               <Text style={styles.topUpSubtitle}>
                 Choose a payment method to add TLB Diamonds to your wallet:
               </Text>
@@ -1112,7 +1150,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingVertical: 16,
     backgroundColor: '#F5E6A3',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
@@ -1267,7 +1305,7 @@ const styles = StyleSheet.create({
   },
   historyActions: {
     flexDirection: 'row',
-    gap: 12,
+    justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingVertical: 20,
     borderTopWidth: 1,
@@ -1327,6 +1365,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
   },
   walletActionContainer: {
     backgroundColor: '#FFFFFF',
@@ -1343,11 +1388,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#D4AF37',
     overflow: 'hidden',
+    flexDirection: 'column',
   },
   walletModalContent: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  walletModalContentContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   walletFormSection: {
     marginBottom: 20,
@@ -1379,7 +1430,7 @@ const styles = StyleSheet.create({
   walletActionButtons: {
     flexDirection: 'row',
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingVertical: 16,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
     justifyContent: 'space-between',
@@ -1467,3 +1518,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+export default WalletScreen;

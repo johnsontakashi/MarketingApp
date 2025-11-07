@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useCustomAlert } from '../hooks/useCustomAlert';
+import CustomAlert from '../components/ui/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function CommunityScreen() {
+  const { alertConfig, showAlert, hideAlert, showInfo, showSuccess } = useCustomAlert();
   const [showTreeModal, setShowTreeModal] = useState(false);
   const [expandedGenerations, setExpandedGenerations] = useState({});
   const [selectedMember, setSelectedMember] = useState(null);
@@ -64,7 +67,27 @@ export default function CommunityScreen() {
   };
 
   const handleShareReferral = () => {
-    Alert.alert('Share Referral', 'Your referral code: JOHN2024\n\nShare this code with friends!');
+    showAlert({
+      title: '🎯 Share Referral Code',
+      message: 'Your referral code: JOHN2024\n\nShare this code with friends and earn rewards!',
+      type: 'info',
+      icon: 'share',
+      buttons: [
+        { 
+          text: 'Copy Code', 
+          onPress: () => {
+            showSuccess('✅ Copied!', 'Referral code copied to clipboard');
+          }
+        },
+        { 
+          text: 'Share', 
+          onPress: () => {
+            showSuccess('📤 Shared!', 'Referral code shared successfully');
+          }
+        },
+        { text: 'Close', style: 'cancel' }
+      ]
+    });
   };
 
   const [fullTreeData] = useState([
@@ -773,6 +796,17 @@ export default function CommunityScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </ScrollView>
   );
 }
@@ -907,7 +941,7 @@ const styles = StyleSheet.create({
   },
   bonusActions: {
     flexDirection: 'row',
-    gap: 10,
+    justifyContent: 'space-between',
   },
   claimButton: {
     backgroundColor: '#D4AF37',
@@ -1300,7 +1334,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderTopWidth: 1,
     borderTopColor: '#D4AF37',
-    gap: 10,
   },
   treeActionButton: {
     backgroundColor: '#D4AF37',
@@ -1311,6 +1344,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    marginHorizontal: 5,
   },
   exportButton: {
     backgroundColor: '#8B4513',
@@ -1515,7 +1549,7 @@ const styles = StyleSheet.create({
   },
   memberActions: {
     flexDirection: 'row',
-    gap: 12,
+    justifyContent: 'space-between',
   },
   memberActionButton: {
     flex: 1,
@@ -1527,6 +1561,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#B8860B',
+    marginHorizontal: 6,
   },
   giftActionButton: {
     backgroundColor: '#10B981',
