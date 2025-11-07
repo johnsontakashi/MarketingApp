@@ -15,6 +15,7 @@ export default function ProfileScreen({ navigation }) {
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [showAddMethodOptionsModal, setShowAddMethodOptionsModal] = useState(false);
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [showTrackModal, setShowTrackModal] = useState(false);
   const [trackingData, setTrackingData] = useState(null);
@@ -515,37 +516,24 @@ export default function ProfileScreen({ navigation }) {
     setShowOrdersModal(true);
   };
 
+  const handleManagePaymentMethods = () => {
+    showInfo(
+      'Manage Payment Methods',
+      'Advanced payment method management:\n\n🔧 Edit payment details\n🗑️ Remove payment methods\n⭐ Set default payment method\n🔒 Security settings\n📊 Usage analytics\n\n💳 Available Actions:\n• Update card information\n• Change billing addresses\n• Set spending limits\n• View transaction history\n\nFull management interface coming soon!',
+      [
+        { text: 'Edit Methods', onPress: () => showInfo('Edit Mode', 'Payment method editing interface opening soon...') },
+        { text: 'Security Settings', onPress: () => showWarning('Security', 'Payment security settings:\n\n🔐 Two-factor authentication\n🔔 Transaction notifications\n🚫 Spending limits\n\nFeatures coming soon!') },
+        { text: 'Close', style: 'cancel' }
+      ]
+    );
+  };
+
   const handlePaymentMethods = () => {
     setShowPaymentModal(true);
   };
 
   const handleShowAddMethodOptions = () => {
-    Alert.alert(
-      '💳 Add Payment Method',
-      'Choose the type of payment method you want to add:',
-      [
-        {
-          text: '💳 Credit/Debit Card',
-          onPress: () => handleAddPaymentMethod('credit')
-        },
-        {
-          text: '🏦 Bank Account',
-          onPress: () => handleAddPaymentMethod('bank')
-        },
-        {
-          text: '📱 PayPal',
-          onPress: () => handleAddPaymentMethod('paypal')
-        },
-        {
-          text: '🎁 Gift Card',
-          onPress: () => handleAddPaymentMethod('gift')
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        }
-      ]
-    );
+    setShowAddMethodOptionsModal(true);
   };
 
   const handleAddPaymentMethod = (type) => {
@@ -562,6 +550,7 @@ export default function ProfileScreen({ navigation }) {
       giftCardNumber: '',
       giftCardPin: ''
     });
+    setShowAddMethodOptionsModal(false);
     setShowPaymentModal(false);
     setShowAddPaymentModal(true);
   };
@@ -602,9 +591,9 @@ export default function ProfileScreen({ navigation }) {
     if (isValid) {
       setShowAddPaymentModal(false);
       setShowPaymentModal(true);
-      Alert.alert('Payment Method Added', message);
+      showSuccess('Payment Method Added', message);
     } else {
-      Alert.alert('Incomplete Information', message);
+      showError('Incomplete Information', message);
     }
   };
 
@@ -1264,11 +1253,133 @@ export default function ProfileScreen({ navigation }) {
                 style={styles.manageMethodsButton}
                 onPress={() => {
                   setShowPaymentModal(false);
-                  Alert.alert('Manage', 'Payment method management coming soon!');
+                  handleManagePaymentMethods();
                 }}
               >
                 <Ionicons name="settings" size={20} color="#6B7280" />
                 <Text style={styles.manageMethodsText}>Manage Methods</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Payment Method Options Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showAddMethodOptionsModal}
+        onRequestClose={() => setShowAddMethodOptionsModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.paymentOptionsContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💳 Add Payment Method</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowAddMethodOptionsModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.paymentOptionsScrollView} showsVerticalScrollIndicator={false}>
+              <Text style={styles.paymentOptionsSubtitle}>
+                Choose the type of payment method you want to add:
+              </Text>
+
+              {/* Credit/Debit Card Option */}
+              <TouchableOpacity 
+                style={styles.paymentOptionCard}
+                onPress={() => handleAddPaymentMethod('credit')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.paymentOptionIcon}>
+                  <Ionicons name="card" size={28} color="#D4AF37" />
+                </View>
+                <View style={styles.paymentOptionContent}>
+                  <Text style={styles.paymentOptionTitle}>Credit/Debit Card</Text>
+                  <Text style={styles.paymentOptionDescription}>
+                    Visa, Mastercard, American Express
+                  </Text>
+                  <View style={styles.paymentOptionBadge}>
+                    <Text style={styles.paymentOptionBadgeText}>💳 Most Popular</Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* Bank Account Option */}
+              <TouchableOpacity 
+                style={styles.paymentOptionCard}
+                onPress={() => handleAddPaymentMethod('bank')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.paymentOptionIcon}>
+                  <Ionicons name="business" size={28} color="#10B981" />
+                </View>
+                <View style={styles.paymentOptionContent}>
+                  <Text style={styles.paymentOptionTitle}>Bank Account</Text>
+                  <Text style={styles.paymentOptionDescription}>
+                    Direct bank transfer (ACH)
+                  </Text>
+                  <View style={styles.secureBadge}>
+                    <Text style={styles.secureBadgeText}>🏦 Secure</Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* PayPal Option */}
+              <TouchableOpacity 
+                style={styles.paymentOptionCard}
+                onPress={() => handleAddPaymentMethod('paypal')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.paymentOptionIcon}>
+                  <Ionicons name="logo-paypal" size={28} color="#0070BA" />
+                </View>
+                <View style={styles.paymentOptionContent}>
+                  <Text style={styles.paymentOptionTitle}>PayPal</Text>
+                  <Text style={styles.paymentOptionDescription}>
+                    Use your PayPal account
+                  </Text>
+                  <View style={styles.fastBadge}>
+                    <Text style={styles.fastBadgeText}>📱 Fast</Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* Gift Card Option */}
+              <TouchableOpacity 
+                style={styles.paymentOptionCard}
+                onPress={() => handleAddPaymentMethod('gift')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.paymentOptionIcon}>
+                  <Ionicons name="gift" size={28} color="#EC4899" />
+                </View>
+                <View style={styles.paymentOptionContent}>
+                  <Text style={styles.paymentOptionTitle}>Gift Card</Text>
+                  <Text style={styles.paymentOptionDescription}>
+                    TLB Diamond gift cards
+                  </Text>
+                  <View style={styles.giftBadge}>
+                    <Text style={styles.giftBadgeText}>🎁 Special</Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+            </ScrollView>
+
+            <View style={styles.paymentOptionsFooter}>
+              <TouchableOpacity 
+                style={styles.cancelOptionsButton}
+                onPress={() => setShowAddMethodOptionsModal(false)}
+              >
+                <Text style={styles.cancelOptionsText}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -6925,5 +7036,137 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
     fontWeight: '600',
+  },
+
+  // Payment Options Modal Styles
+  paymentOptionsContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    width: '90%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    shadowColor: 'rgba(0, 0, 0, 0.25)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 16,
+  },
+  paymentOptionsScrollView: {
+    maxHeight: 400,
+  },
+  paymentOptionsSubtitle: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  paymentOptionCard: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 12,
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  paymentOptionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  paymentOptionContent: {
+    flex: 1,
+  },
+  paymentOptionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  paymentOptionDescription: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 6,
+  },
+  paymentOptionBadge: {
+    backgroundColor: '#FEF3C7',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  paymentOptionBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#92400E',
+  },
+  secureBadge: {
+    backgroundColor: '#ECFDF5',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  secureBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#065F46',
+  },
+  fastBadge: {
+    backgroundColor: '#DBEAFE',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  fastBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#1E40AF',
+  },
+  giftBadge: {
+    backgroundColor: '#FCE7F3',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  giftBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#BE185D',
+  },
+  paymentOptionsFooter: {
+    marginTop: 16,
+    alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  cancelOptionsButton: {
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  cancelOptionsText: {
+    color: '#6B7280',
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
