@@ -7,15 +7,37 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
-  Modal
+  Modal,
+  TextInput
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import CustomAlert from '../components/ui/CustomAlert';
+import { useCustomAlert } from '../hooks/useCustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function WalletScreen({ navigation }) {
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  
+  // Send form state
+  const [sendForm, setSendForm] = useState({
+    recipient: '',
+    amount: '',
+    message: ''
+  });
+  
+  // Request form state
+  const [requestForm, setRequestForm] = useState({
+    requester: '',
+    amount: '',
+    message: ''
+  });
   const [walletData] = useState({
     available: 1200.00,
     locked: 50.00,
@@ -170,15 +192,111 @@ export default function WalletScreen({ navigation }) {
   ];
 
   const handleQuickAction = (action) => {
-    if (action === 'History') {
-      setShowHistoryModal(true);
-    } else {
-      Alert.alert('Coming Soon', `${action} functionality will be available soon!`);
+    switch (action) {
+      case 'Send':
+        setShowSendModal(true);
+        break;
+      case 'Request':
+        setShowRequestModal(true);
+        break;
+      case 'History':
+        setShowHistoryModal(true);
+        break;
+      case 'Top Up':
+        setShowTopUpModal(true);
+        break;
+      default:
+        showInfo('Coming Soon', `${action} functionality will be available soon!`);
+    }
+  };
+
+  const handleSendTLB = () => {
+    if (!sendForm.recipient || !sendForm.amount) {
+      showError('Incomplete Form', 'Please fill in both recipient and amount fields.');
+      return;
+    }
+
+    const amount = parseFloat(sendForm.amount);
+    if (isNaN(amount) || amount <= 0) {
+      showError('Invalid Amount', 'Please enter a valid amount greater than 0.');
+      return;
+    }
+
+    if (amount > walletData.available) {
+      showError('Insufficient Balance', `You only have 💎 ${walletData.available.toFixed(2)} TLB available.`);
+      return;
+    }
+
+    showConfirm(
+      'Confirm Transfer',
+      `Send 💎 ${amount.toFixed(2)} TLB to ${sendForm.recipient}?\n\n${sendForm.message ? `Message: "${sendForm.message}"` : 'No message included.'}`,
+      () => {
+        setShowSendModal(false);
+        setSendForm({ recipient: '', amount: '', message: '' });
+        showSuccess('Transfer Sent!', `💎 ${amount.toFixed(2)} TLB sent successfully to ${sendForm.recipient}.`);
+      }
+    );
+  };
+
+  const handleRequestTLB = () => {
+    if (!requestForm.requester || !requestForm.amount) {
+      showError('Incomplete Form', 'Please fill in both requester and amount fields.');
+      return;
+    }
+
+    const amount = parseFloat(requestForm.amount);
+    if (isNaN(amount) || amount <= 0) {
+      showError('Invalid Amount', 'Please enter a valid amount greater than 0.');
+      return;
+    }
+
+    showConfirm(
+      'Send Request',
+      `Request 💎 ${amount.toFixed(2)} TLB from ${requestForm.requester}?\n\n${requestForm.message ? `Message: "${requestForm.message}"` : 'No message included.'}`,
+      () => {
+        setShowRequestModal(false);
+        setRequestForm({ requester: '', amount: '', message: '' });
+        showSuccess('Request Sent!', `Request for 💎 ${amount.toFixed(2)} TLB sent to ${requestForm.requester}.`);
+      }
+    );
+  };
+
+  const handleTopUpOption = (method) => {
+    setShowTopUpModal(false);
+    
+    switch (method) {
+      case 'card':
+        showInfo(
+          'Credit/Debit Card Top Up',
+          'Add funds using your credit or debit card:\n\n💳 Instant processing\n💎 Min: 10.00 TLB\n💎 Max: 5,000.00 TLB\n💰 Fee: 2.9% + $0.30\n\nFeature coming soon!'
+        );
+        break;
+      case 'bank':
+        showInfo(
+          'Bank Transfer Top Up',
+          'Add funds via bank transfer:\n\n🏦 3-5 business days\n💎 Min: 25.00 TLB\n💎 Max: 10,000.00 TLB\n💰 Fee: $5.00 flat rate\n\nFeature coming soon!'
+        );
+        break;
+      case 'crypto':
+        showInfo(
+          'Cryptocurrency Top Up',
+          'Add funds using cryptocurrency:\n\n₿ Bitcoin, Ethereum supported\n💎 Min: 50.00 TLB equivalent\n💎 Max: 25,000.00 TLB equivalent\n💰 Fee: 1.5%\n\nFeature coming soon!'
+        );
+        break;
+      case 'gift':
+        showInfo(
+          'Gift Card Redemption',
+          'Redeem TLB Diamond gift cards:\n\n🎁 Instant processing\n💎 Variable amounts\n💰 No fees\n\nFeature coming soon!'
+        );
+        break;
     }
   };
 
   const handleTransactionPress = (transaction) => {
-    Alert.alert('Transaction Details', `${transaction.title}\nAmount: 💎 ${transaction.amount} TLB`);
+    showInfo(
+      'Transaction Details',
+      `${transaction.title}\n\nAmount: 💎 ${transaction.amount.toFixed(2)} TLB\nStatus: ${transaction.status}\nDate: ${transaction.time}\nID: ${transaction.transactionId}`
+    );
   };
 
   const handleViewAllTransactions = () => {
@@ -493,11 +611,284 @@ export default function WalletScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Send TLB Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showSendModal}
+        onRequestClose={() => setShowSendModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.walletModalOverlay}>
+          <View style={styles.walletActionContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💎 Send TLB Diamonds</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowSendModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Recipient</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Enter username or email"
+                  value={sendForm.recipient}
+                  onChangeText={(text) => setSendForm({...sendForm, recipient: text})}
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Amount (TLB)</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="0.00"
+                  value={sendForm.amount}
+                  onChangeText={(text) => setSendForm({...sendForm, amount: text})}
+                  keyboardType="decimal-pad"
+                />
+                <Text style={styles.formHelper}>
+                  Available: 💎 {walletData.available.toFixed(2)} TLB
+                </Text>
+              </View>
+
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Message (Optional)</Text>
+                <TextInput
+                  style={[styles.formInput, styles.messageInput]}
+                  placeholder="Add a note..."
+                  value={sendForm.message}
+                  onChangeText={(text) => setSendForm({...sendForm, message: text})}
+                  multiline={true}
+                  numberOfLines={3}
+                />
+              </View>
+            </ScrollView>
+
+            <View style={styles.walletActionButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowSendModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.primaryButton}
+                onPress={handleSendTLB}
+              >
+                <Ionicons name="send" size={20} color="#FFFFFF" />
+                <Text style={styles.primaryButtonText}>Send TLB</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Request TLB Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showRequestModal}
+        onRequestClose={() => setShowRequestModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.walletModalOverlay}>
+          <View style={styles.walletActionContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💎 Request TLB Diamonds</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowRequestModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Request From</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Enter username or email"
+                  value={requestForm.requester}
+                  onChangeText={(text) => setRequestForm({...requestForm, requester: text})}
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Amount (TLB)</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="0.00"
+                  value={requestForm.amount}
+                  onChangeText={(text) => setRequestForm({...requestForm, amount: text})}
+                  keyboardType="decimal-pad"
+                />
+              </View>
+
+              <View style={styles.walletFormSection}>
+                <Text style={styles.formLabel}>Message (Optional)</Text>
+                <TextInput
+                  style={[styles.formInput, styles.messageInput]}
+                  placeholder="Reason for request..."
+                  value={requestForm.message}
+                  onChangeText={(text) => setRequestForm({...requestForm, message: text})}
+                  multiline={true}
+                  numberOfLines={3}
+                />
+              </View>
+            </ScrollView>
+
+            <View style={styles.walletActionButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowRequestModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.primaryButton}
+                onPress={handleRequestTLB}
+              >
+                <Ionicons name="download" size={20} color="#FFFFFF" />
+                <Text style={styles.primaryButtonText}>Send Request</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Top Up Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showTopUpModal}
+        onRequestClose={() => setShowTopUpModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.walletModalOverlay}>
+          <View style={styles.walletActionContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💳 Top Up Wallet</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowTopUpModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.walletModalContent} showsVerticalScrollIndicator={false}>
+              <Text style={styles.topUpSubtitle}>
+                Choose a payment method to add TLB Diamonds to your wallet:
+              </Text>
+
+              {/* Credit/Debit Card */}
+              <TouchableOpacity 
+                style={styles.topUpOptionCard}
+                onPress={() => handleTopUpOption('card')}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.topUpOptionIcon, { backgroundColor: '#D4AF37' }]}>
+                  <Ionicons name="card" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.topUpOptionContent}>
+                  <Text style={styles.topUpOptionTitle}>Credit/Debit Card</Text>
+                  <Text style={styles.topUpOptionDescription}>Instant • 2.9% + $0.30 fee</Text>
+                  <Text style={styles.topUpOptionLimits}>💎 10.00 - 5,000.00 TLB</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* Bank Transfer */}
+              <TouchableOpacity 
+                style={styles.topUpOptionCard}
+                onPress={() => handleTopUpOption('bank')}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.topUpOptionIcon, { backgroundColor: '#10B981' }]}>
+                  <Ionicons name="business" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.topUpOptionContent}>
+                  <Text style={styles.topUpOptionTitle}>Bank Transfer</Text>
+                  <Text style={styles.topUpOptionDescription}>3-5 days • $5.00 flat fee</Text>
+                  <Text style={styles.topUpOptionLimits}>💎 25.00 - 10,000.00 TLB</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* Cryptocurrency */}
+              <TouchableOpacity 
+                style={styles.topUpOptionCard}
+                onPress={() => handleTopUpOption('crypto')}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.topUpOptionIcon, { backgroundColor: '#F59E0B' }]}>
+                  <Ionicons name="logo-bitcoin" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.topUpOptionContent}>
+                  <Text style={styles.topUpOptionTitle}>Cryptocurrency</Text>
+                  <Text style={styles.topUpOptionDescription}>1-2 hours • 1.5% fee</Text>
+                  <Text style={styles.topUpOptionLimits}>💎 50.00 - 25,000.00 TLB</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+
+              {/* Gift Card */}
+              <TouchableOpacity 
+                style={styles.topUpOptionCard}
+                onPress={() => handleTopUpOption('gift')}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.topUpOptionIcon, { backgroundColor: '#EC4899' }]}>
+                  <Ionicons name="gift" size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.topUpOptionContent}>
+                  <Text style={styles.topUpOptionTitle}>Gift Card</Text>
+                  <Text style={styles.topUpOptionDescription}>Instant • No fees</Text>
+                  <Text style={styles.topUpOptionLimits}>💎 Variable amounts</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+              </TouchableOpacity>
+            </ScrollView>
+
+            <View style={styles.walletActionButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowTopUpModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert 
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </ScrollView>
   );
 }
 
 const handleTransactionDetailPress = (transaction) => {
+  // This function will be enhanced in the future to use custom alerts
   Alert.alert(
     '💎 Transaction Details',
     `Transaction ID: ${transaction.transactionId}\n\nTitle: ${transaction.title}\nDescription: ${transaction.subtitle}\nAmount: ${transaction.type === 'received' ? '+' : '-'}💎 ${transaction.amount.toFixed(2)} TLB\nDate: ${transaction.date}\nStatus: ${transaction.status}\nType: ${transaction.type === 'received' ? 'Credit' : 'Debit'}`,
@@ -927,5 +1318,152 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+
+  // Wallet Action Modal Styles
+  walletModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  walletActionContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 0,
+    width: '100%',
+    maxWidth: 420,
+    maxHeight: '90%',
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    overflow: 'hidden',
+  },
+  walletModalContent: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  walletFormSection: {
+    marginBottom: 20,
+  },
+  formLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 8,
+  },
+  formInput: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: '#2C1810',
+  },
+  messageInput: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  formHelper: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 6,
+  },
+  walletActionButtons: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    justifyContent: 'space-between',
+    backgroundColor: '#FAFAFA',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginRight: 6,
+  },
+  cancelButtonText: {
+    color: '#6B7280',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: '#D4AF37',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  // Top Up Modal Styles
+  topUpSubtitle: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  topUpOptionCard: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 12,
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  topUpOptionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  topUpOptionContent: {
+    flex: 1,
+  },
+  topUpOptionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  topUpOptionDescription: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 2,
+  },
+  topUpOptionLimits: {
+    fontSize: 12,
+    color: '#8B4513',
+    fontWeight: '500',
   },
 });
