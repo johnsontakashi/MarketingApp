@@ -1379,7 +1379,8 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     maxWidth: 420,
-    maxHeight: '90%',
+    maxHeight: '85%',
+    minHeight: 400,
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
@@ -1395,6 +1396,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 8,
+    maxHeight: 300,
   },
   walletModalContentContainer: {
     flexGrow: 1,
@@ -1518,5 +1520,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-
-export default WalletScreen;

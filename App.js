@@ -11,3 +11,4 @@ export default function App() {
       </GlobalModalProvider>
     </SafeAreaProvider>
   );
+}
