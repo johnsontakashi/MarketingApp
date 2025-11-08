@@ -111,6 +111,7 @@ export default function ChatScreen({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          <Text style={styles.backText}>Return</Text>
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Live Support Chat</Text>
@@ -167,9 +168,15 @@ export default function ChatScreen({ navigation }) {
             <Ionicons name="send" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.helperText}>
-          💎 Need urgent help? Call: 1-800-TLB-HELP
-        </Text>
+        <View style={styles.bottomActions}>
+          <TouchableOpacity style={styles.returnButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={16} color="#3B82F6" />
+            <Text style={styles.returnButtonText}>Return to Lock Screen</Text>
+          </TouchableOpacity>
+          <Text style={styles.helperText}>
+            💎 Emergency: 1-800-TLB-HELP
+          </Text>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -194,8 +201,18 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 12,
     padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  backText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 6,
   },
   headerInfo: {
     flex: 1,
@@ -368,9 +385,31 @@ const styles = StyleSheet.create({
   sendButtonActive: {
     backgroundColor: '#3B82F6',
   },
+  bottomActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  returnButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#3B82F6',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+  },
+  returnButtonText: {
+    fontSize: 14,
+    color: '#3B82F6',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
   helperText: {
     fontSize: 12,
     color: '#6B7280',
-    textAlign: 'center',
+    flex: 1,
+    textAlign: 'right',
   },
 });
