@@ -658,11 +658,7 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView 
-              style={styles.walletModalContent} 
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.walletModalContentContainer}
-            >
+            <View style={styles.walletModalContent}>
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Recipient</Text>
                 <TextInput
@@ -691,15 +687,15 @@ export default function WalletScreen({ navigation }) {
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Message (Optional)</Text>
                 <TextInput
-                  style={[styles.formInput, styles.messageInput]}
+                  style={[styles.formInput, styles.compactMessageInput]}
                   placeholder="Add a note..."
                   value={sendForm.message}
                   onChangeText={(text) => setSendForm({...sendForm, message: text})}
                   multiline={true}
-                  numberOfLines={3}
+                  numberOfLines={2}
                 />
               </View>
-            </ScrollView>
+            </View>
 
             <View style={styles.walletActionButtons}>
               <TouchableOpacity 
@@ -1465,8 +1461,8 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     maxWidth: 420,
-    maxHeight: '85%',
-    minHeight: 400,
+    height: '85%',
+    minHeight: 600,
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
@@ -1480,16 +1476,17 @@ const styles = StyleSheet.create({
   walletModalContent: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 8,
-    maxHeight: 300,
+    paddingTop: 20,
+    paddingBottom: 16,
+    justifyContent: 'flex-start',
+    minHeight: 400,
   },
   walletModalContentContainer: {
     flexGrow: 1,
     paddingBottom: 20,
   },
   walletFormSection: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   formLabel: {
     fontSize: 16,
@@ -1502,11 +1499,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 12,
-    padding: 16,
+    padding: 18,
     fontSize: 16,
     color: '#2C1810',
+    minHeight: 56,
   },
   messageInput: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  compactMessageInput: {
     height: 80,
     textAlignVertical: 'top',
   },
