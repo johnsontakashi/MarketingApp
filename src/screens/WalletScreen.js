@@ -325,6 +325,11 @@ export default function WalletScreen({ navigation }) {
     setShowTransactionDetailsModal(true);
   };
 
+  const handleTransactionDetailPress = (transaction) => {
+    setSelectedTransaction(transaction);
+    setShowTransactionDetailsModal(true);
+  };
+
   const handleViewAllTransactions = () => {
     setShowHistoryModal(true);
   };
@@ -1010,10 +1015,6 @@ export default function WalletScreen({ navigation }) {
   );
 }
 
-const handleTransactionDetailPress = (transaction) => {
-  setSelectedTransaction(transaction);
-  setShowTransactionDetailsModal(true);
-};
 
 const styles = StyleSheet.create({
   container: {
