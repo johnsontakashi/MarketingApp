@@ -12,22 +12,26 @@ import {
   Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 
 const { width } = Dimensions.get('window');
 
+const CHAT_STORAGE_KEY = 'TLBDiamondChatHistory';
+
 export default function ChatScreen({ navigation }) {
-  const [messages, setMessages] = useState([
-    {
-      id: '1',
-      text: 'Hello! I\'m Sarah from TLB Diamond Support. I\'m here to help you with any questions about your locked device or payment issues. How can I assist you today?',
-      sender: 'support',
-      timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-      avatar: '👩‍💼'
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const flatListRef = useRef(null);
+
+  const defaultWelcomeMessage = {
+    id: '1',
+    text: 'Hello! I\'m Sarah from TLB Diamond Support. I\'m here to help you with any questions about your locked device or payment issues. How can I assist you today?',
+    sender: 'support',
+    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+    avatar: '👩‍💼'
+  };
 
   const supportResponses = [
     "I understand your concern. Let me help you with that payment issue.",
@@ -41,14 +45,68 @@ export default function ChatScreen({ navigation }) {
     "Thank you for contacting support. I'll do my best to resolve your issue quickly."
   ];
 
+  // Load chat history from storage
+  const loadChatHistory = async () => {
+    try {
+      const storedMessages = await SecureStore.getItemAsync(CHAT_STORAGE_KEY);
+      if (storedMessages && storedMessages.trim() !== '') {
+        const parsedMessages = JSON.parse(storedMessages);
+        // Validate that we have an array with valid message structure
+        if (Array.isArray(parsedMessages) && parsedMessages.length > 0) {
+          setMessages(parsedMessages);
+        } else {
+          setMessages([defaultWelcomeMessage]);
+        }
+      } else {
+        // If no chat history, start with welcome message
+        setMessages([defaultWelcomeMessage]);
+      }
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+      // Fallback to welcome message if loading fails
+      setMessages([defaultWelcomeMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Save chat history to storage
+  const saveChatHistory = async (newMessages) => {
+    try {
+      // Only save if we have valid messages
+      if (Array.isArray(newMessages) && newMessages.length > 0) {
+        await SecureStore.setItemAsync(CHAT_STORAGE_KEY, JSON.stringify(newMessages));
+      }
+    } catch (error) {
+      console.error('Error saving chat history:', error);
+      // Don't show error to user, just log it
+    }
+  };
+
+  // Clear chat history (for testing or reset)
+  const clearChatHistory = async () => {
+    try {
+      await SecureStore.deleteItemAsync(CHAT_STORAGE_KEY);
+      setMessages([defaultWelcomeMessage]);
+      saveChatHistory([defaultWelcomeMessage]);
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+    }
+  };
+
+  // Load chat history on component mount
   useEffect(() => {
-    // Auto-scroll to bottom when new messages arrive
-    if (messages.length > 1) {
+    loadChatHistory();
+  }, []);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const sendMessage = () => {
     if (inputText.trim() === '') return;
@@ -60,7 +118,9 @@ export default function ChatScreen({ navigation }) {
       timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
+    saveChatHistory(updatedMessages);
     setInputText('');
     
     // Simulate support response
@@ -74,7 +134,9 @@ export default function ChatScreen({ navigation }) {
         timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
         avatar: '👩‍💼'
       };
-      setMessages(prev => [...prev, supportMessage]);
+      const finalMessages = [...updatedMessages, supportMessage];
+      setMessages(finalMessages);
+      saveChatHistory(finalMessages);
       setIsTyping(false);
     }, 1500 + Math.random() * 1000);
   };
@@ -117,22 +179,33 @@ export default function ChatScreen({ navigation }) {
           <Text style={styles.headerTitle}>Live Support Chat</Text>
           <Text style={styles.headerSubtitle}>TLB Diamond Support Team</Text>
         </View>
-        <View style={styles.statusIndicator}>
-          <View style={styles.onlineIndicator} />
-          <Text style={styles.onlineText}>Online</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.clearButton} onPress={clearChatHistory}>
+            <Ionicons name="refresh" size={18} color="#FFFFFF" />
+          </TouchableOpacity>
+          <View style={styles.statusIndicator}>
+            <View style={styles.onlineIndicator} />
+            <Text style={styles.onlineText}>Online</Text>
+          </View>
         </View>
       </View>
 
       {/* Messages */}
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={renderMessage}
-        style={styles.messagesList}
-        contentContainerStyle={styles.messagesContent}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading chat history...</Text>
+        </View>
+      ) : (
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderMessage}
+          style={styles.messagesList}
+          contentContainerStyle={styles.messagesContent}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
       {/* Typing Indicator */}
       {isTyping && (
@@ -227,6 +300,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  clearButton: {
+    padding: 8,
+    marginRight: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
   statusIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -242,6 +325,17 @@ const styles = StyleSheet.create({
     color: '#E5E7EB',
     fontSize: 12,
     fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#6B7280',
+    fontStyle: 'italic',
   },
   messagesList: {
     flex: 1,
