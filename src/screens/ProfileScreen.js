@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
+import * as SecureStore from 'expo-secure-store';
 
 export default function ProfileScreen({ navigation }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -121,6 +125,24 @@ export default function ProfileScreen({ navigation }) {
   
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [showNotificationDetailModal, setShowNotificationDetailModal] = useState(false);
+
+  // Check if current user is admin
+  useEffect(() => {
+    checkUserRole();
+  }, []);
+
+  const checkUserRole = async () => {
+    try {
+      const userData = await SecureStore.getItemAsync('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        setCurrentUser(user);
+        setIsAdmin(user.userType === 'admin' || user.isAdmin === true);
+      }
+    } catch (error) {
+      console.error('Error checking user role:', error);
+    }
+  };
 
   // Full Settings handler functions
   const handleChangePinLength = () => {
@@ -450,7 +472,8 @@ export default function ProfileScreen({ navigation }) {
     return notifications.filter(n => !n.isRead).length;
   };
 
-  const menuItems = [
+  // Base menu items for all users
+  const baseMenuItems = [
     { icon: 'person', title: 'Edit Profile', subtitle: 'Update your information', action: 'editProfile' },
     { icon: 'cube', title: 'My Orders', subtitle: 'View order history', action: 'orders' },
     { icon: 'card', title: 'Payment Methods', subtitle: 'Manage payment options', action: 'payments' },
@@ -458,6 +481,19 @@ export default function ProfileScreen({ navigation }) {
     { icon: 'notifications', title: 'Notifications', subtitle: 'Manage preferences', action: 'notifications' },
     { icon: 'help-circle', title: 'Help & Support', subtitle: 'Get assistance', action: 'support' },
     { icon: 'settings', title: 'Settings', subtitle: 'App preferences', action: 'settings' },
+  ];
+
+  // Admin-only menu items
+  const adminMenuItems = [
+    { icon: 'people', title: 'User Management', subtitle: 'Manage system users', action: 'adminUsers' },
+    { icon: 'analytics', title: 'System Analytics', subtitle: 'View platform statistics', action: 'adminAnalytics' },
+    { icon: 'server', title: 'System Settings', subtitle: 'Configure platform', action: 'adminSettings' },
+  ];
+
+  // Combine menu items based on user role
+  const menuItems = [
+    ...baseMenuItems,
+    ...(isAdmin ? adminMenuItems : []),
     { icon: 'log-out', title: 'Sign Out', subtitle: 'Exit your account', action: 'signOut' },
   ];
 
@@ -979,6 +1015,31 @@ export default function ProfileScreen({ navigation }) {
                 }, 2000);
               }
             }
+          ]
+        );
+        break;
+      case 'adminUsers':
+        navigation.navigate('AdminUserManagement');
+        break;
+      case 'adminAnalytics':
+        Alert.alert(
+          '📊 System Analytics',
+          'Platform analytics dashboard:\n\n• Total Users: 1,247\n• Active Users (24h): 342\n• Total Transactions: 5,892\n• Revenue: 💎 125,430 TLB\n• Growth Rate: +23.5%\n\nFull analytics dashboard coming soon!',
+          [
+            { text: 'View Reports', onPress: () => showInfo('Reports', 'Detailed reports will be available soon.') },
+            { text: 'Export Data', onPress: () => showSuccess('Export Started', 'Analytics data export has been initiated.') },
+            { text: 'Close', style: 'cancel' }
+          ]
+        );
+        break;
+      case 'adminSettings':
+        Alert.alert(
+          '⚙️ System Settings',
+          'Platform configuration options:\n\n🔧 System Configuration\n• Server settings\n• Database management\n• API configurations\n\n👥 User Management\n• Default user roles\n• Registration settings\n• Account restrictions\n\n💰 Payment Settings\n• TLB Diamond rates\n• Payment processing\n• Fee structures\n\n📧 Communication\n• Email templates\n• Notification settings\n• Support channels\n\nAdvanced settings panel coming soon!',
+          [
+            { text: 'User Settings', onPress: () => navigation.navigate('AdminUserManagement') },
+            { text: 'Payment Config', onPress: () => showInfo('Payment Config', 'Payment configuration panel coming soon.') },
+            { text: 'Close', style: 'cancel' }
           ]
         );
         break;
