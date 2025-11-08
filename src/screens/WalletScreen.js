@@ -725,8 +725,8 @@ export default function WalletScreen({ navigation }) {
         onRequestClose={() => setShowRequestModal(false)}
         statusBarTranslucent={true}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <View style={styles.walletModalOverlay}>
+          <View style={styles.walletActionContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>💎 Request TLB Diamonds</Text>
               <TouchableOpacity 
@@ -737,10 +737,7 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView 
-              style={styles.modalContent} 
-              showsVerticalScrollIndicator={false}
-            >
+            <View style={styles.walletModalContent}>
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Request From</Text>
                 <TextInput
@@ -763,36 +760,35 @@ export default function WalletScreen({ navigation }) {
                 />
               </View>
 
-              <View style={styles.walletFormSection}>
+              <View style={[styles.walletFormSection, styles.expandedMessageSection]}>
                 <Text style={styles.formLabel}>Message (Optional)</Text>
                 <TextInput
-                  style={[styles.formInput, styles.messageInput]}
+                  style={[styles.formInput, styles.expandedMessageInput]}
                   placeholder="Reason for request..."
                   value={requestForm.message}
                   onChangeText={(text) => setRequestForm({...requestForm, message: text})}
                   multiline={true}
-                  numberOfLines={3}
+                  numberOfLines={6}
                 />
               </View>
+            </View>
 
-              {/* Action Buttons */}
-              <View style={styles.historyActions}>
-                <TouchableOpacity 
-                  style={[styles.cancelButton, { marginRight: 6 }]}
-                  onPress={() => setShowRequestModal(false)}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={[styles.primaryButton, { marginLeft: 6 }]}
-                  onPress={handleRequestTLB}
-                >
-                  <Ionicons name="download" size={20} color="#FFFFFF" />
-                  <Text style={styles.primaryButtonText}>Send Request</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+            <View style={styles.walletActionButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowRequestModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.primaryButton}
+                onPress={handleRequestTLB}
+              >
+                <Ionicons name="download" size={20} color="#FFFFFF" />
+                <Text style={styles.primaryButtonText}>Send Request</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
