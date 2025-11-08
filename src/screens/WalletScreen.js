@@ -325,6 +325,11 @@ export default function WalletScreen({ navigation }) {
     setShowTransactionDetailsModal(true);
   };
 
+  const handleTransactionDetailPress = (transaction) => {
+    setSelectedTransaction(transaction);
+    setShowTransactionDetailsModal(true);
+  };
+
   const handleViewAllTransactions = () => {
     setShowHistoryModal(true);
   };
@@ -658,11 +663,7 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView 
-              style={styles.walletModalContent} 
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.walletModalContentContainer}
-            >
+            <View style={styles.walletModalContent}>
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Recipient</Text>
                 <TextInput
@@ -688,18 +689,18 @@ export default function WalletScreen({ navigation }) {
                 </Text>
               </View>
 
-              <View style={styles.walletFormSection}>
+              <View style={[styles.walletFormSection, styles.expandedMessageSection]}>
                 <Text style={styles.formLabel}>Message (Optional)</Text>
                 <TextInput
-                  style={[styles.formInput, styles.messageInput]}
+                  style={[styles.formInput, styles.expandedMessageInput]}
                   placeholder="Add a note..."
                   value={sendForm.message}
                   onChangeText={(text) => setSendForm({...sendForm, message: text})}
                   multiline={true}
-                  numberOfLines={3}
+                  numberOfLines={6}
                 />
               </View>
-            </ScrollView>
+            </View>
 
             <View style={styles.walletActionButtons}>
               <TouchableOpacity 
@@ -729,8 +730,8 @@ export default function WalletScreen({ navigation }) {
         onRequestClose={() => setShowRequestModal(false)}
         statusBarTranslucent={true}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <View style={styles.walletModalOverlay}>
+          <View style={styles.walletActionContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>💎 Request TLB Diamonds</Text>
               <TouchableOpacity 
@@ -741,10 +742,7 @@ export default function WalletScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView 
-              style={styles.modalContent} 
-              showsVerticalScrollIndicator={false}
-            >
+            <View style={styles.walletModalContent}>
               <View style={styles.walletFormSection}>
                 <Text style={styles.formLabel}>Request From</Text>
                 <TextInput
@@ -767,36 +765,35 @@ export default function WalletScreen({ navigation }) {
                 />
               </View>
 
-              <View style={styles.walletFormSection}>
+              <View style={[styles.walletFormSection, styles.expandedMessageSection]}>
                 <Text style={styles.formLabel}>Message (Optional)</Text>
                 <TextInput
-                  style={[styles.formInput, styles.messageInput]}
+                  style={[styles.formInput, styles.expandedMessageInput]}
                   placeholder="Reason for request..."
                   value={requestForm.message}
                   onChangeText={(text) => setRequestForm({...requestForm, message: text})}
                   multiline={true}
-                  numberOfLines={3}
+                  numberOfLines={6}
                 />
               </View>
+            </View>
 
-              {/* Action Buttons */}
-              <View style={styles.historyActions}>
-                <TouchableOpacity 
-                  style={[styles.cancelButton, { marginRight: 6 }]}
-                  onPress={() => setShowRequestModal(false)}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={[styles.primaryButton, { marginLeft: 6 }]}
-                  onPress={handleRequestTLB}
-                >
-                  <Ionicons name="download" size={20} color="#FFFFFF" />
-                  <Text style={styles.primaryButtonText}>Send Request</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+            <View style={styles.walletActionButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowRequestModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.primaryButton}
+                onPress={handleRequestTLB}
+              >
+                <Ionicons name="download" size={20} color="#FFFFFF" />
+                <Text style={styles.primaryButtonText}>Send Request</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -1018,10 +1015,6 @@ export default function WalletScreen({ navigation }) {
   );
 }
 
-const handleTransactionDetailPress = (transaction) => {
-  setSelectedTransaction(transaction);
-  setShowTransactionDetailsModal(true);
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -1465,8 +1458,8 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     maxWidth: 420,
-    maxHeight: '85%',
-    minHeight: 400,
+    height: '85%',
+    minHeight: 600,
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
@@ -1480,16 +1473,17 @@ const styles = StyleSheet.create({
   walletModalContent: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 8,
-    maxHeight: 300,
+    paddingTop: 20,
+    paddingBottom: 16,
+    justifyContent: 'flex-start',
+    minHeight: 400,
   },
   walletModalContentContainer: {
     flexGrow: 1,
     paddingBottom: 20,
   },
   walletFormSection: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   formLabel: {
     fontSize: 16,
@@ -1502,12 +1496,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 12,
-    padding: 16,
+    padding: 18,
     fontSize: 16,
     color: '#2C1810',
+    minHeight: 56,
   },
   messageInput: {
     height: 80,
+    textAlignVertical: 'top',
+  },
+  compactMessageInput: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  expandedMessageSection: {
+    flex: 1,
+    marginBottom: 16,
+  },
+  expandedMessageInput: {
+    flex: 1,
+    minHeight: 150,
+    maxHeight: 200,
     textAlignVertical: 'top',
   },
   formHelper: {

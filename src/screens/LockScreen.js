@@ -145,6 +145,22 @@ export default function LockScreen({ navigation }) {
     );
   };
 
+  const handleChat = () => {
+    Alert.alert(
+      '💬 Live Chat Support',
+      'Connect with our support team for immediate assistance.\n\n• Available 24/7\n• Real-time help\n• Payment guidance\n• Technical support\n\nWould you like to start a chat session?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Start Chat', 
+          onPress: () => {
+            Alert.alert('Chat Started', 'Connecting you to our support team...\n\nThis feature will be available in the next update!');
+          }
+        }
+      ]
+    );
+  };
+
   const progressPercentage = (lockInfo.paymentsCompleted / lockInfo.totalPayments) * 100;
 
   return (
@@ -195,20 +211,24 @@ export default function LockScreen({ navigation }) {
 
       {/* Action Buttons */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton} onPress={handleContactSupport}>
-          <Ionicons name="call" size={24} color="#CD853F" />
-          <Text style={styles.actionLabel}>Emergency{'\n'}Support</Text>
+        <TouchableOpacity style={[styles.actionButton, styles.emergencyButton]} onPress={handleContactSupport}>
+          <Ionicons name="medical" size={24} color="#FFFFFF" />
+          <Text style={[styles.actionLabel, styles.emergencyLabel]}>Emergency{'\n'}Support</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton} onPress={() => Alert.alert('Help', 'Payment help and FAQ coming soon!')}>
-          <Ionicons name="help-circle" size={24} color="#CD853F" />
-          <Text style={styles.actionLabel}>Payment{'\n'}Help</Text>
+        <TouchableOpacity style={[styles.actionButton, styles.helpButton]} onPress={() => Alert.alert('Help', 'Payment help and FAQ coming soon!')}>
+          <Ionicons name="card" size={24} color="#FFFFFF" />
+          <Text style={[styles.actionLabel, styles.helpLabel]}>Payment{'\n'}Help</Text>
         </TouchableOpacity>
 
-        {/* Test unlock button for development */}
+        <TouchableOpacity style={[styles.actionButton, styles.chatButton]} onPress={handleChat}>
+          <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
+          <Text style={[styles.actionLabel, styles.chatLabel]}>Chat</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={[styles.actionButton, styles.unlockButton]} onPress={handleUnlockDevice}>
-          <Ionicons name="lock-open" size={24} color="#10B981" />
-          <Text style={[styles.actionLabel, styles.unlockLabel]}>Test{'\n'}Unlock</Text>
+          <Ionicons name="lock-open" size={24} color="#FFFFFF" />
+          <Text style={[styles.actionLabel, styles.unlockLabel]}>Unlock</Text>
         </TouchableOpacity>
       </View>
 
@@ -401,29 +421,55 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     backgroundColor: '#CD853F',
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: 'center',
-    minWidth: 80,
-    shadowColor: '#A0522D',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    minWidth: 70,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 5,
   },
   unlockButton: {
     backgroundColor: '#10B981',
+    borderWidth: 1,
+    borderColor: '#059669',
+  },
+  emergencyButton: {
+    backgroundColor: '#EF4444',
+    borderWidth: 1,
+    borderColor: '#DC2626',
+  },
+  helpButton: {
+    backgroundColor: '#F59E0B',
+    borderWidth: 1,
+    borderColor: '#D97706',
+  },
+  chatButton: {
+    backgroundColor: '#3B82F6',
+    borderWidth: 1,
+    borderColor: '#2563EB',
   },
   actionLabel: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     textAlign: 'center',
     marginTop: 5,
-    lineHeight: 14,
+    lineHeight: 13,
   },
   unlockLabel: {
+    color: '#FFFFFF',
+  },
+  emergencyLabel: {
+    color: '#FFFFFF',
+  },
+  helpLabel: {
+    color: '#FFFFFF',
+  },
+  chatLabel: {
     color: '#FFFFFF',
   },
   footer: {
