@@ -24,6 +24,7 @@ import LockScreen from '../screens/LockScreen';
 import BlockingDemoScreen from '../screens/BlockingDemoScreen';
 import ChatScreen from '../screens/ChatScreen';
 import AuthScreen from '../screens/AuthScreen';
+import AdminUserManagementScreen from '../screens/AdminUserManagementScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -141,6 +142,13 @@ function AppWithLockManager() {
         options={{
           headerShown: false,
           presentation: 'modal',
+        }}
+      />
+      <Stack.Screen 
+        name="AdminUserManagement" 
+        component={AdminUserManagementScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

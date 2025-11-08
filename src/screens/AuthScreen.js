@@ -50,15 +50,20 @@ export default function AuthScreen({ navigation }) {
       description: 'Sell products on the marketplace\n(Can also buy products)',
       icon: 'storefront',
       color: '#10B981'
-    },
-    { 
-      key: 'admin', 
-      label: 'Admin', 
-      description: 'Manage platform and users\n(Requires verification)',
-      icon: 'shield-checkmark',
-      color: '#F59E0B'
     }
   ];
+
+  // Pre-defined admin credentials (only one admin allowed)
+  const ADMIN_CREDENTIALS = {
+    email: 'admin@tlbdiamond.com',
+    password: 'TLBAdmin2024!',
+    firstName: 'System',
+    lastName: 'Administrator',
+    phoneNumber: '+1-800-TLB-ADMIN',
+    sex: 'other',
+    birthday: '01/01/1990',
+    userType: 'admin'
+  };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -137,17 +142,6 @@ export default function AuthScreen({ navigation }) {
         return false;
       }
 
-      // Check if user is trying to register as admin
-      if (formData.userType === 'admin') {
-        Alert.alert(
-          'Admin Registration',
-          'Admin accounts require verification. Please contact support at admin@tlbdiamond.com for approval.',
-          [
-            { text: 'OK', onPress: () => setFormData(prev => ({ ...prev, userType: 'buyer' })) }
-          ]
-        );
-        return false;
-      }
     }
 
     return true;
@@ -160,7 +154,32 @@ export default function AuthScreen({ navigation }) {
       const { email, password, ...profileData } = formData;
 
       if (isLogin) {
-        // Login logic
+        // Check if trying to login as admin
+        if (email === ADMIN_CREDENTIALS.email) {
+          if (password === ADMIN_CREDENTIALS.password) {
+            // Store admin session
+            await SecureStore.setItemAsync('currentUser', JSON.stringify({
+              ...ADMIN_CREDENTIALS,
+              registeredAt: new Date().toISOString(),
+              isVerified: true,
+              canSell: true,
+              canBuy: true,
+              isAdmin: true
+            }));
+            
+            Alert.alert(
+              'Admin Login Successful',
+              `Welcome back, Administrator! You have full system access.`,
+              [{ text: 'Continue', onPress: () => navigation.replace('MainTabs') }]
+            );
+            return;
+          } else {
+            Alert.alert('Login Failed', 'Invalid admin password');
+            return;
+          }
+        }
+
+        // Regular user login logic
         const storedUser = await SecureStore.getItemAsync(`user_${email}`);
         
         if (!storedUser) {
@@ -185,7 +204,12 @@ export default function AuthScreen({ navigation }) {
         );
 
       } else {
-        // Registration logic
+        // Registration logic - prevent using admin email
+        if (email === ADMIN_CREDENTIALS.email) {
+          Alert.alert('Registration Failed', 'This email is reserved for system administration.');
+          return;
+        }
+
         const existingUser = await SecureStore.getItemAsync(`user_${email}`);
         
         if (existingUser) {
@@ -410,7 +434,8 @@ export default function AuthScreen({ navigation }) {
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>
               ℹ️ Note: Buyers can also sell products after registration.
-              Sellers have additional marketplace tools available.
+              Sellers have additional marketplace tools available.{'\n\n'}
+              🔒 Administrator access is restricted and not available through public registration.
             </Text>
           </View>
         )}
