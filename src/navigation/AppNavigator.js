@@ -21,6 +21,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import DeviceStatusScreen from '../screens/DeviceStatusScreen';
 import LockScreen from '../screens/LockScreen';
 import BlockingDemoScreen from '../screens/BlockingDemoScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -130,6 +131,14 @@ function AppWithLockManager() {
           title: 'Blocking Demo',
           headerStyle: { backgroundColor: '#FFF8E7' },
           headerTintColor: '#2C1810',
+        }}
+      />
+      <Stack.Screen 
+        name="ChatScreen" 
+        component={ChatScreen}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
         }}
       />
     </Stack.Navigator>

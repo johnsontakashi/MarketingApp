@@ -146,19 +146,7 @@ export default function LockScreen({ navigation }) {
   };
 
   const handleChat = () => {
-    Alert.alert(
-      '💬 Live Chat Support',
-      'Connect with our support team for immediate assistance.\n\n• Available 24/7\n• Real-time help\n• Payment guidance\n• Technical support\n\nWould you like to start a chat session?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Start Chat', 
-          onPress: () => {
-            Alert.alert('Chat Started', 'Connecting you to our support team...\n\nThis feature will be available in the next update!');
-          }
-        }
-      ]
-    );
+    navigation.navigate('ChatScreen');
   };
 
   const progressPercentage = (lockInfo.paymentsCompleted / lockInfo.totalPayments) * 100;
