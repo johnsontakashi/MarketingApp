@@ -24,6 +24,8 @@ export default function WalletScreen({ navigation }) {
   const [showSendModal, setShowSendModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [showTransactionDetailsModal, setShowTransactionDetailsModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
   
   // Send form state
   const [sendForm, setSendForm] = useState({
@@ -319,10 +321,8 @@ export default function WalletScreen({ navigation }) {
   };
 
   const handleTransactionPress = (transaction) => {
-    showInfo(
-      'Transaction Details',
-      `${transaction.title}\n\nAmount: 💎 ${transaction.amount.toFixed(2)} TLB\nStatus: ${transaction.status}\nDate: ${transaction.time}\nID: ${transaction.transactionId}`
-    );
+    setSelectedTransaction(transaction);
+    setShowTransactionDetailsModal(true);
   };
 
   const handleViewAllTransactions = () => {
@@ -911,6 +911,99 @@ export default function WalletScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* Transaction Details Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showTransactionDetailsModal}
+        onRequestClose={() => setShowTransactionDetailsModal(false)}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.transactionDetailOverlay}>
+          <View style={styles.transactionDetailContainer}>
+            <View style={styles.transactionDetailHeader}>
+              <Text style={styles.transactionDetailTitle}>💎 Transaction Details</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => setShowTransactionDetailsModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            {selectedTransaction && (
+              <View style={styles.transactionDetailContent}>
+                <View style={styles.transactionDetailCard}>
+                  <View style={[styles.transactionDetailIcon, { backgroundColor: selectedTransaction.color }]}>
+                    <Ionicons name={selectedTransaction.icon} size={28} color="#FFFFFF" />
+                  </View>
+                  
+                  <View style={styles.transactionDetailInfo}>
+                    <Text style={styles.transactionDetailAmount}>
+                      {selectedTransaction.type === 'received' ? '+' : '-'}💎 {selectedTransaction.amount.toFixed(2)} TLB
+                    </Text>
+                    <Text style={styles.transactionDetailStatus}>
+                      {selectedTransaction.status || 'Completed'}
+                    </Text>
+                  </View>
+                </View>
+                
+                <View style={styles.transactionDetailFields}>
+                  <View style={styles.transactionDetailFieldRow}>
+                    <View style={styles.transactionDetailField}>
+                      <Text style={styles.transactionDetailFieldLabel}>Transaction ID</Text>
+                      <Text style={styles.transactionDetailFieldValue} numberOfLines={1}>{selectedTransaction.transactionId}</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.transactionDetailFieldRow}>
+                    <View style={styles.transactionDetailField}>
+                      <Text style={styles.transactionDetailFieldLabel}>Title</Text>
+                      <Text style={styles.transactionDetailFieldValue} numberOfLines={1}>{selectedTransaction.title}</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.transactionDetailFieldRow}>
+                    <View style={styles.transactionDetailField}>
+                      <Text style={styles.transactionDetailFieldLabel}>Date</Text>
+                      <Text style={styles.transactionDetailFieldValue}>{selectedTransaction.time || selectedTransaction.date}</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.transactionDetailFieldRow}>
+                    <View style={styles.transactionDetailField}>
+                      <Text style={styles.transactionDetailFieldLabel}>Type</Text>
+                      <Text style={styles.transactionDetailFieldValue}>{selectedTransaction.type === 'received' ? 'Credit' : 'Debit'}</Text>
+                    </View>
+                  </View>
+                </View>
+                
+                <View style={styles.transactionDetailActions}>
+                  <TouchableOpacity 
+                    style={styles.transactionDetailCopyButton}
+                    onPress={() => {
+                      showSuccess('Copied!', 'Transaction ID copied to clipboard');
+                    }}
+                  >
+                    <Ionicons name="copy" size={20} color="#D4AF37" />
+                    <Text style={styles.transactionDetailCopyText}>Copy ID</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+            
+            <View style={styles.transactionDetailFooter}>
+              <TouchableOpacity 
+                style={styles.transactionDetailCloseButton}
+                onPress={() => setShowTransactionDetailsModal(false)}
+              >
+                <Text style={styles.transactionDetailCloseText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* Custom Alert */}
       <CustomAlert 
         visible={alertConfig.visible}
@@ -926,15 +1019,8 @@ export default function WalletScreen({ navigation }) {
 }
 
 const handleTransactionDetailPress = (transaction) => {
-  // This function will be enhanced in the future to use custom alerts
-  Alert.alert(
-    '💎 Transaction Details',
-    `Transaction ID: ${transaction.transactionId}\n\nTitle: ${transaction.title}\nDescription: ${transaction.subtitle}\nAmount: ${transaction.type === 'received' ? '+' : '-'}💎 ${transaction.amount.toFixed(2)} TLB\nDate: ${transaction.date}\nStatus: ${transaction.status}\nType: ${transaction.type === 'received' ? 'Credit' : 'Debit'}`,
-    [
-      { text: 'Copy ID', onPress: () => Alert.alert('Copied', 'Transaction ID copied to clipboard') },
-      { text: 'Close', style: 'cancel' }
-    ]
-  );
+  setSelectedTransaction(transaction);
+  setShowTransactionDetailsModal(true);
 };
 
 const styles = StyleSheet.create({
@@ -1518,5 +1604,153 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#8B4513',
     fontWeight: '500',
+  },
+  // Transaction Details Modal Styles
+  transactionDetailOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  transactionDetailContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '90%',
+    minHeight: 500,
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    overflow: 'hidden',
+  },
+  transactionDetailHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5E6A3',
+    backgroundColor: '#FFFDF4',
+  },
+  transactionDetailTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C1810',
+  },
+  transactionDetailContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    justifyContent: 'space-between',
+  },
+  transactionDetailCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFDF4',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#F5E6A3',
+  },
+  transactionDetailIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  transactionDetailInfo: {
+    flex: 1,
+  },
+  transactionDetailAmount: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 2,
+  },
+  transactionDetailStatus: {
+    fontSize: 14,
+    color: '#10B981',
+    fontWeight: '600',
+  },
+  transactionDetailFields: {
+    flex: 1,
+    marginBottom: 12,
+  },
+  transactionDetailFieldRow: {
+    marginBottom: 10,
+  },
+  transactionDetailField: {
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  transactionDetailFieldLabel: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  transactionDetailFieldValue: {
+    fontSize: 15,
+    color: '#2C1810',
+    fontWeight: '600',
+  },
+  transactionDetailActions: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  transactionDetailCopyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFDF4',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  transactionDetailCopyText: {
+    fontSize: 14,
+    color: '#D4AF37',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  transactionDetailFooter: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F5E6A3',
+    backgroundColor: '#FFFDF4',
+  },
+  transactionDetailCloseButton: {
+    backgroundColor: '#D4AF37',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  transactionDetailCloseText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 });
