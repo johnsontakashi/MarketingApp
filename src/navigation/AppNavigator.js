@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import LockManager from '../components/mdm/LockManager';
 import KioskManager from '../components/mdm/KioskManager';
 import SystemKioskManager from '../components/mdm/SystemKioskManager';
@@ -22,6 +23,7 @@ import DeviceStatusScreen from '../screens/DeviceStatusScreen';
 import LockScreen from '../screens/LockScreen';
 import BlockingDemoScreen from '../screens/BlockingDemoScreen';
 import ChatScreen from '../screens/ChatScreen';
+import AuthScreen from '../screens/AuthScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -152,20 +154,42 @@ function AppNavigator() {
     overdueHours: 0,
     paid: false
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check authentication status on app start
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const currentUser = await SecureStore.getItemAsync('currentUser');
+      if (currentUser) {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+    } finally {
+      setIsCheckingAuth(false);
+    }
+  };
 
   // Simulate payment status changes (in real app, this would come from API)
   useEffect(() => {
-    // For demonstration, simulate overdue payment after 5 seconds
-    const timer = setTimeout(() => {
-      setPaymentStatus({
-        overdue: true,
-        overdueHours: 2, // 2 hours overdue - will trigger warning stage
-        paid: false
-      });
-    }, 5000);
+    if (isAuthenticated) {
+      // For demonstration, simulate overdue payment after 5 seconds
+      const timer = setTimeout(() => {
+        setPaymentStatus({
+          overdue: true,
+          overdueHours: 2, // 2 hours overdue - will trigger warning stage
+          paid: false
+        });
+      }, 5000);
 
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
   // Handle payment requirement navigation
   const handlePaymentRequired = () => {
@@ -181,16 +205,27 @@ function AppNavigator() {
     }, 3000);
   };
 
+  // Show loading screen while checking auth
+  if (isCheckingAuth) {
+    return null; // Or a loading component
+  }
+
   return (
     <NavigationContainer>
-      <BlockingManager 
-        paymentStatus={paymentStatus}
-        onPaymentRequired={handlePaymentRequired}
-      >
-        <SystemKioskManager>
-          <AppWithLockManager />
-        </SystemKioskManager>
-      </BlockingManager>
+      {!isAuthenticated ? (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Auth" component={AuthScreen} />
+        </Stack.Navigator>
+      ) : (
+        <BlockingManager 
+          paymentStatus={paymentStatus}
+          onPaymentRequired={handlePaymentRequired}
+        >
+          <SystemKioskManager>
+            <AppWithLockManager />
+          </SystemKioskManager>
+        </BlockingManager>
+      )}
     </NavigationContainer>
   );
 }
