@@ -684,15 +684,15 @@ export default function WalletScreen({ navigation }) {
                 </Text>
               </View>
 
-              <View style={styles.walletFormSection}>
+              <View style={[styles.walletFormSection, styles.expandedMessageSection]}>
                 <Text style={styles.formLabel}>Message (Optional)</Text>
                 <TextInput
-                  style={[styles.formInput, styles.compactMessageInput]}
+                  style={[styles.formInput, styles.expandedMessageInput]}
                   placeholder="Add a note..."
                   value={sendForm.message}
                   onChangeText={(text) => setSendForm({...sendForm, message: text})}
                   multiline={true}
-                  numberOfLines={2}
+                  numberOfLines={6}
                 />
               </View>
             </View>
@@ -1509,7 +1509,17 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   compactMessageInput: {
-    height: 80,
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  expandedMessageSection: {
+    flex: 1,
+    marginBottom: 16,
+  },
+  expandedMessageInput: {
+    flex: 1,
+    minHeight: 150,
+    maxHeight: 200,
     textAlignVertical: 'top',
   },
   formHelper: {
