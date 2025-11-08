@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a React Native mobile application built with Expo SDK 54 that implements a **kiosk mode functionality** for Android devices. The project uses React 19.1.0 and React Native 0.81.5 with Expo's new architecture enabled (`newArchEnabled: true` in app.json).
 
-The app is branded as "TLB CASH DIAMOND TEST" and designed for commercial kiosk deployments.
+The app is branded as "MyAppNew" and designed as part of the TLB Diamond marketplace ecosystem with commercial kiosk deployment capabilities.
 
 ### Core Functionality
 The app is designed to lock Android devices into kiosk mode, disabling:
@@ -108,3 +108,43 @@ The app uses React hooks and context for state management:
 - MDM functionality disabled by default for emulator compatibility
 - Requires physical Android device with device owner privileges for full kiosk mode
 - See [KIOSK_SETUP.md](KIOSK_SETUP.md) for complete setup instructions
+- Global modal system implemented via GlobalModalProvider for consistent UI overlays
+- Custom alert system using useCustomAlert hook for native-like dialogs
+
+## Key Development Patterns
+
+### Global Modal System
+The app uses a centralized modal system:
+- **GlobalModalProvider** - Wraps the entire app in [src/components/modals/GlobalModalProvider.js](src/components/modals/GlobalModalProvider.js)
+- **ModalRegistry** - Service for managing modal state in [src/services/ModalRegistry.js](src/services/ModalRegistry.js)
+- **useCustomAlert** - Hook for native-like alerts in [src/hooks/useCustomAlert.js](src/hooks/useCustomAlert.js)
+
+### MDM Component Architecture
+The MDM (Mobile Device Management) system is modular:
+- **LockManager** - Primary kiosk mode controller
+- **KioskManager** - Device lock task management
+- **SystemKioskManager** - System-level kiosk controls
+- **BlockingManager** - Content/feature blocking
+- **NetworkManager** - Network restriction management
+- **AppRestrictionManager** - Application access control
+- **SimCardManager** - SIM card management for device security
+
+### Screen Organization
+- All screens follow consistent navigation patterns with React Navigation
+- Modal screens (DeviceStatus, LockScreen) are handled as stack overlays
+- Bottom tab navigation for main features (Home, Marketplace, Wallet, Community, Profile)
+
+## Important Development Notes
+
+### Testing Kiosk Functionality
+- **Development Mode**: Use emulator with alert-based simulation
+- **Production Mode**: Requires physical Android device with device owner privileges
+- **ADB Setup Required**: Must run `adb shell dpm set-device-owner` for full functionality
+- **Factory Reset Requirement**: Device must have no Google accounts for device owner setup
+
+### Code Quality Guidelines
+- No linting or testing scripts are configured in package.json
+- Follow existing component structure and naming conventions
+- Use hooks-based state management (no Redux/Context API globally)
+- Maintain consistent styling with the golden theme palette
+- Ensure all new components support safe area contexts
