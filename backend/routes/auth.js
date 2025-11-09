@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User, Wallet, Device } = require('../models');
-const { authMiddleware, deviceMiddleware } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
 // Generate JWT token
@@ -244,9 +244,9 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user profile
-router.get('/me', authMiddleware, async (req, res) => {
+router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findByPk(req.userId, {
+    const user = await User.findByPk(req.user.id, {
       attributes: { exclude: ['password_hash'] },
       include: [{
         model: Wallet,
@@ -276,7 +276,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 });
 
 // Update user profile
-router.put('/profile', authMiddleware, async (req, res) => {
+router.put('/profile', authenticateToken, async (req, res) => {
   try {
     const {
       firstName,
@@ -327,7 +327,7 @@ router.put('/profile', authMiddleware, async (req, res) => {
 });
 
 // Change password
-router.put('/password', authMiddleware, async (req, res) => {
+router.put('/password', authenticateToken, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 

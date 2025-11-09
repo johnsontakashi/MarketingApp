@@ -11,12 +11,12 @@ const { syncModels } = require('./models');
 // Import routes
 const authRoutes = require('./routes/auth');
 const walletRoutes = require('./routes/wallet');
+const communityRoutes = require('./routes/community');
+const productRoutes = require('./routes/products');
 // TODO: Add other routes as needed
 // const userRoutes = require('./routes/users');
 // const transactionRoutes = require('./routes/transactions');
-// const productRoutes = require('./routes/products');
 // const orderRoutes = require('./routes/orders');
-// const communityRoutes = require('./routes/community');
 // const mdmRoutes = require('./routes/mdm');
 // const adminRoutes = require('./routes/admin');
 
@@ -76,12 +76,12 @@ const API_PREFIX = `/api/${process.env.API_VERSION || 'v1'}`;
 
 app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/wallet`, walletRoutes);
+app.use(`${API_PREFIX}/community`, communityRoutes);
+app.use(`${API_PREFIX}/products`, productRoutes);
 // TODO: Enable these routes when they are created
 // app.use(`${API_PREFIX}/users`, userRoutes);
 // app.use(`${API_PREFIX}/transactions`, transactionRoutes);
-// app.use(`${API_PREFIX}/products`, productRoutes);
 // app.use(`${API_PREFIX}/orders`, orderRoutes);
-// app.use(`${API_PREFIX}/community`, communityRoutes);
 // app.use(`${API_PREFIX}/mdm`, mdmRoutes);
 // app.use(`${API_PREFIX}/admin`, adminRoutes);
 
