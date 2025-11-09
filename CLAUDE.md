@@ -4,19 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React Native mobile application built with Expo SDK 54 that implements a **kiosk mode functionality** for Android devices. The project uses React 19.1.0 and React Native 0.81.5 with Expo's new architecture enabled (`newArchEnabled: true` in app.json).
+This is a React Native mobile application built with Expo SDK 54 that implements an MDM (Mobile Device Management) kiosk system for Android devices. The project uses React 19.1.0 and React Native 0.81.5 with Expo's new architecture enabled (`newArchEnabled: true` in app.json).
 
-The app is branded as "MyAppNew" and designed as part of the TLB Diamond marketplace ecosystem with commercial kiosk deployment capabilities.
+The app is branded as "MyAppNew" and features authentication-gated access to a TLB Diamond marketplace ecosystem with MDM lock functionality for secure device management.
 
 ### Core Functionality
-The app is designed to lock Android devices into kiosk mode, disabling:
-- Home button navigation
-- Back button functionality  
-- App switching
-- Hardware button access
-- Status bar interactions
-
-The app includes a payment interface and unlock mechanism for controlled device access.
+The app features authentication-gated access with graduated MDM lock functionality:
+- **Authentication System**: Secure login required to access main features
+- **Kiosk Mode**: Lock Android devices with disabled navigation and hardware controls
+- **Graduated Blocking**: Progressive restrictions based on payment status (warnings → limited access → full lock)
+- **Payment Integration**: TLB Diamond wallet system with installment support
+- **Community Features**: Affiliate system, referral bonuses, and social elements
+- **Device Management**: Complete MDM control including anti-tamper measures
 
 ## Development Commands
 
@@ -72,12 +71,14 @@ This project has the React Native new architecture enabled. When working with na
 ## Application Architecture
 
 ### Navigation Structure
-The app uses React Navigation with a hybrid approach:
+The app uses React Navigation with authentication-gated hybrid navigation:
+- **Authentication Gate** - AuthScreen blocks access until user login is completed
 - **Bottom Tab Navigator** - Main navigation with 5 tabs (Home, Marketplace, Wallet, Community, Profile)
-- **Stack Navigator** - Handles modal screens like DeviceStatus and LockScreen
-- **LockManager Component** - Wraps the entire app to manage kiosk mode functionality
+- **Stack Navigator** - Handles modal screens (DeviceStatus, LockScreen, ChatScreen, AdminUserManagement)
+- **MDM Wrapper System** - Multi-layered approach with BlockingManager → SystemKioskManager → LockManager
 
 ### Screen Components
+- **AuthScreen** - Login/registration interface with secure authentication (src/screens/AuthScreen.js:227)
 - **HomeScreen** - Dashboard with quick actions, balance display, and status cards
 - **MarketplaceScreen** - Shopping interface for TLB Diamond marketplace
 - **WalletScreen** - Digital wallet for TLB Diamond tokens and payment management
@@ -85,18 +86,28 @@ The app uses React Navigation with a hybrid approach:
 - **ProfileScreen** - User settings and account management
 - **DeviceStatusScreen** - MDM device status and diagnostics
 - **LockScreen** - Kiosk mode interface with payment and unlock functionality
+- **ChatScreen** - Communication interface (modal presentation)
+- **AdminUserManagementScreen** - Administrative user management interface
+- **BlockingDemoScreen** - Demonstration of MDM blocking capabilities
 
 ### State Management
 The app uses React hooks and context for state management:
-- Local state in individual screens for component-specific data
-- LockManager handles global kiosk mode state
-- Navigation state managed by React Navigation
+- **Local State**: Component-specific data managed with useState/useEffect
+- **Authentication State**: Managed in AppNavigator with SecureStore persistence (src/navigation/AppNavigator.js:160-184)
+- **Global Modal State**: Centralized modal management via GlobalModalProvider context
+- **MDM Lock State**: Multi-layered state across BlockingManager, SystemKioskManager, and LockManager components
+- **Navigation State**: React Navigation handles screen transitions and stack management
 
 ### MDM Integration
-- **LockManager Component** - Central kiosk mode management in [src/components/mdm/LockManager.js](src/components/mdm/LockManager.js)
-- **Device Owner Setup** - Requires ADB setup for production kiosk functionality
-- **Hardware Integration** - BackHandler and native lock task mode integration
-- **Development Mode** - Alert-based simulation for emulator testing
+The MDM system is architected with multiple specialized managers:
+- **LockManager** - Core kiosk mode toggle and hardware button blocking (src/components/mdm/LockManager.js:14)
+- **KioskManager** - Device lock task management and native kiosk controls
+- **SystemKioskManager** - System-level kiosk enforcement and security
+- **BlockingManager** - Graduated access restriction based on payment status (src/navigation/AppNavigator.js:241-248)
+- **NetworkManager** - Network access control and restrictions
+- **AppRestrictionManager** - Application access control and whitelisting
+- **SimCardManager** - SIM card monitoring and security enforcement
+- **Development Mode** - Alert-based simulation for emulator compatibility
 
 ### Design System
 - **Golden Theme** - Consistent gold/bronze color palette (`#D4AF37`, `#B8860B`, `#8B4513`)
@@ -113,11 +124,19 @@ The app uses React hooks and context for state management:
 
 ## Key Development Patterns
 
+### Authentication Flow
+The app implements a secure authentication gate pattern:
+- **Entry Point Gate** - AppNavigator checks authentication status before showing main app (src/navigation/AppNavigator.js:168-184)
+- **SecureStore Integration** - User sessions persisted using Expo SecureStore for security
+- **State-Driven Navigation** - Authentication state determines which navigator tree is rendered
+- **Auth Callback Pattern** - AuthScreen uses callback props to notify parent of successful authentication
+
 ### Global Modal System
-The app uses a centralized modal system:
-- **GlobalModalProvider** - Wraps the entire app in [src/components/modals/GlobalModalProvider.js](src/components/modals/GlobalModalProvider.js)
-- **ModalRegistry** - Service for managing modal state in [src/services/ModalRegistry.js](src/services/ModalRegistry.js)
-- **useCustomAlert** - Hook for native-like alerts in [src/hooks/useCustomAlert.js](src/hooks/useCustomAlert.js)
+The app uses a centralized modal system for consistent UI:
+- **GlobalModalProvider** - Context provider wrapping entire app with modal overlay support (src/components/modals/GlobalModalProvider.js:26)
+- **ModalRegistry** - Service for cross-component modal management (src/services/ModalRegistry.js)
+- **useCustomAlert** - Hook for native-like alert dialogs (src/hooks/useCustomAlert.js)
+- **Specialized Modals** - Pre-built modals like SIM card detection warnings with security features list
 
 ### MDM Component Architecture
 The MDM (Mobile Device Management) system is modular:
@@ -136,11 +155,12 @@ The MDM (Mobile Device Management) system is modular:
 
 ## Important Development Notes
 
-### Testing Kiosk Functionality
-- **Development Mode**: Use emulator with alert-based simulation
+### Testing MDM Functionality
+- **Development Mode**: Emulator uses alert-based simulation instead of actual device locking
 - **Production Mode**: Requires physical Android device with device owner privileges
-- **ADB Setup Required**: Must run `adb shell dpm set-device-owner` for full functionality
+- **ADB Setup Required**: Device owner setup needed for full kiosk mode (`adb shell dpm set-device-owner`)
 - **Factory Reset Requirement**: Device must have no Google accounts for device owner setup
+- **Authentication Testing**: Use any credentials to test auth flow (no backend validation in current implementation)
 
 ### Code Quality Guidelines
 - No linting or testing scripts are configured in package.json

@@ -218,11 +218,24 @@ function AppNavigator() {
     return null; // Or a loading component
   }
 
+  const handleAuthSuccess = () => {
+    console.log('Auth success callback triggered - setting isAuthenticated to true');
+    setIsAuthenticated(true);
+    console.log('Authentication state updated, should show main app now');
+  };
+
+  console.log('AppNavigator rendering, isAuthenticated:', isAuthenticated);
+  
   return (
     <NavigationContainer>
       {!isAuthenticated ? (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Auth" component={AuthScreen} />
+          <Stack.Screen 
+            name="Auth"
+            initialParams={{ onAuthSuccess: handleAuthSuccess }}
+          >
+            {(props) => <AuthScreen {...props} onAuthSuccess={handleAuthSuccess} />}
+          </Stack.Screen>
         </Stack.Navigator>
       ) : (
         <BlockingManager 
