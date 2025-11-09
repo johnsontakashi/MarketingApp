@@ -108,112 +108,6 @@ export default function MarketplaceScreen({ navigation }) {
     }
   };
 
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      title: 'Premium Wireless Headphones',
-      price: 200.00,
-      originalPrice: 250.00,
-      rating: 4.8,
-      reviews: 127,
-      seller: 'TechStore',
-      supportBonus: 50,
-      installments: 4,
-      image: require('../../assets/pic1.jpeg'),
-      featured: true,
-      category: 'Electronics',
-      description: 'Experience premium sound quality with these state-of-the-art wireless headphones. Featuring active noise cancellation, 30-hour battery life, and crystal-clear audio for all your music needs.',
-      features: ['Active Noise Cancellation', '30-hour Battery Life', 'Bluetooth 5.0', 'Quick Charge', 'Premium Materials'],
-      specifications: {
-        'Battery Life': '30 hours',
-        'Connectivity': 'Bluetooth 5.0',
-        'Weight': '250g',
-        'Frequency Response': '20Hz - 20kHz',
-        'Charging Time': '2 hours'
-      },
-      inStock: true,
-      stockCount: 15,
-      shippingInfo: 'Free shipping • Arrives in 2-3 business days',
-      warranty: '2 Year Manufacturer Warranty'
-    },
-    {
-      id: 2,
-      title: 'Smart Fitness Watch',
-      price: 150.00,
-      rating: 4.6,
-      reviews: 89,
-      seller: 'FitGear',
-      supportBonus: 50,
-      installments: 3,
-      image: require('../../assets/pic2.jpeg'),
-      featured: false,
-      category: 'Sports',
-      description: 'Track your fitness goals with this advanced smart watch. Monitor heart rate, sleep patterns, and daily activities with precision and style.',
-      features: ['Heart Rate Monitor', 'Sleep Tracking', 'GPS', 'Water Resistant', '7-day Battery'],
-      specifications: {
-        'Display': '1.4" AMOLED',
-        'Battery Life': '7 days',
-        'Water Resistance': '5ATM',
-        'Sensors': 'Heart Rate, GPS, Accelerometer',
-        'Compatibility': 'iOS & Android'
-      },
-      inStock: true,
-      stockCount: 8,
-      shippingInfo: 'Free shipping • Arrives in 1-2 business days',
-      warranty: '1 Year Manufacturer Warranty'
-    },
-    {
-      id: 3,
-      title: 'Gaming Mouse Pro',
-      price: 75.00,
-      rating: 4.9,
-      reviews: 203,
-      seller: 'GameHub',
-      supportBonus: 40,
-      installments: 2,
-      image: require('../../assets/pic3.jpeg'),
-      featured: true,
-      category: 'Electronics',
-      description: 'Professional gaming mouse with precision tracking and customizable buttons for competitive gaming.',
-      features: ['16000 DPI Sensor', 'RGB Lighting', '8 Programmable Buttons', 'Ergonomic Design'],
-      specifications: {
-        'DPI': 'Up to 16000',
-        'Buttons': '8 Programmable',
-        'Connectivity': 'Wired USB',
-        'Weight': '85g'
-      },
-      inStock: true,
-      stockCount: 12,
-      shippingInfo: 'Free shipping • Arrives in 1-2 business days',
-      warranty: '2 Year Manufacturer Warranty'
-    },
-    {
-      id: 4,
-      title: 'Bluetooth Speaker',
-      price: 85.00,
-      rating: 4.5,
-      reviews: 156,
-      seller: 'AudioMax',
-      supportBonus: 45,
-      installments: 2,
-      image: require('../../assets/pic4.jpeg'),
-      featured: false,
-      category: 'Electronics',
-      description: 'Portable Bluetooth speaker with powerful sound and long battery life for music on the go.',
-      features: ['360° Sound', '12-hour Battery', 'Water Resistant', 'Wireless Charging'],
-      specifications: {
-        'Output Power': '20W',
-        'Battery Life': '12 hours',
-        'Bluetooth': '5.0',
-        'Water Rating': 'IPX7'
-      },
-      inStock: true,
-      stockCount: 6,
-      shippingInfo: 'Free shipping • Arrives in 2-3 business days',
-      warranty: '1 Year Manufacturer Warranty'
-    }
-  ]);
-
   const handleProductPress = (product) => {
     setSelectedProduct(product);
     setShowProductDetail(true);
@@ -236,71 +130,7 @@ export default function MarketplaceScreen({ navigation }) {
   };
 
   const handleLoadMore = () => {
-    // Simulate loading more products
-    const moreProducts = [
-      {
-        id: 5,
-        title: 'Wireless Charging Pad',
-        price: 45.00,
-        rating: 4.3,
-        reviews: 92,
-        seller: 'ChargeTech',
-        supportBonus: 30,
-        installments: 2,
-        image: require('../../assets/pic1.jpeg'),
-        featured: false,
-        category: 'Electronics'
-      },
-      {
-        id: 6,
-        title: 'Smart LED Bulb',
-        price: 25.00,
-        rating: 4.7,
-        reviews: 234,
-        seller: 'SmartHome',
-        supportBonus: 25,
-        installments: 1,
-        image: require('../../assets/pic2.jpeg'),
-        featured: true,
-        category: 'Home'
-      },
-      {
-        id: 7,
-        title: 'Portable Power Bank',
-        price: 35.00,
-        rating: 4.6,
-        reviews: 178,
-        seller: 'PowerUp',
-        supportBonus: 35,
-        installments: 2,
-        image: require('../../assets/pic3.jpeg'),
-        featured: false,
-        category: 'Electronics'
-      },
-      {
-        id: 8,
-        title: 'Noise Cancelling Earbuds',
-        price: 120.00,
-        rating: 4.8,
-        reviews: 145,
-        seller: 'AudioPro',
-        supportBonus: 60,
-        installments: 3,
-        image: require('../../assets/pic4.jpeg'),
-        featured: true,
-        category: 'Electronics'
-      }
-    ];
-
-    // Add new products to existing products array
-    setProducts(prevProducts => [...prevProducts, ...moreProducts]);
-    
-    // Show confirmation message
-    Alert.alert(
-      '✅ Products Loaded',
-      `${moreProducts.length} new products have been added to the marketplace!`,
-      [{ text: 'OK' }]
-    );
+    loadMoreProducts();
   };
 
   const renderStars = (rating) => {
@@ -324,28 +154,8 @@ export default function MarketplaceScreen({ navigation }) {
     return stars;
   };
 
-  // Filter products based on search query and selected category
-  const getFilteredProducts = () => {
-    let filtered = products;
-    
-    // Filter by search query
-    if (searchQuery.trim() !== '') {
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.seller.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    
-    // Filter by category
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-    
-    return filtered;
-  };
-
-  const filteredProducts = getFilteredProducts();
+  // Products are already filtered by the API
+  const filteredProducts = products;
 
   return (
     <View style={styles.container}>
