@@ -301,6 +301,7 @@ export default function MarketplaceScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      )}
 
       {/* Product Detail Modal */}
       <Modal
