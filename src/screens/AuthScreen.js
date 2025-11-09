@@ -9,10 +9,12 @@ import {
   Alert,
   Dimensions,
   Modal,
-  Platform
+  Platform,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
+import apiClient, { ApiError } from '../services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +23,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   const authSuccessCallback = onAuthSuccess || (route?.params?.onAuthSuccess);
   const [isLogin, setIsLogin] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
