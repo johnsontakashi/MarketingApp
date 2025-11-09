@@ -16,7 +16,9 @@ import * as SecureStore from 'expo-secure-store';
 
 const { width } = Dimensions.get('window');
 
-export default function AuthScreen({ navigation }) {
+export default function AuthScreen({ navigation, route, onAuthSuccess }) {
+  // Get onAuthSuccess from props (preferred) or route params (fallback)
+  const authSuccessCallback = onAuthSuccess || (route?.params?.onAuthSuccess);
   const [isLogin, setIsLogin] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formData, setFormData] = useState({
@@ -148,13 +150,26 @@ export default function AuthScreen({ navigation }) {
   };
 
   const handleAuth = async () => {
-    if (!validateForm()) return;
+    console.log('handleAuth called', { isLogin, email: formData.email, passwordLength: formData.password.length });
+    
+    if (!validateForm()) {
+      console.log('Form validation failed');
+      return;
+    }
 
     try {
       const { email, password, ...profileData } = formData;
+      console.log('Starting authentication process', { isLogin, email });
 
       if (isLogin) {
         // Check if trying to login as admin
+        console.log('Checking admin credentials', { 
+          email, 
+          adminEmail: ADMIN_CREDENTIALS.email, 
+          emailMatch: email === ADMIN_CREDENTIALS.email,
+          passwordMatch: password === ADMIN_CREDENTIALS.password 
+        });
+        
         if (email === ADMIN_CREDENTIALS.email) {
           if (password === ADMIN_CREDENTIALS.password) {
             // Store admin session
@@ -167,11 +182,13 @@ export default function AuthScreen({ navigation }) {
               isAdmin: true
             }));
             
-            Alert.alert(
-              'Admin Login Successful',
-              `Welcome back, Administrator! You have full system access.`,
-              [{ text: 'Continue', onPress: () => navigation.replace('MainTabs') }]
-            );
+            // Success - trigger callback immediately without alert for now
+            console.log('Admin login successful, triggering callback...');
+            if (authSuccessCallback) {
+              authSuccessCallback();
+            } else {
+              console.error('No auth success callback provided');
+            }
             return;
           } else {
             Alert.alert('Login Failed', 'Invalid admin password');
@@ -197,11 +214,13 @@ export default function AuthScreen({ navigation }) {
         // Store current session
         await SecureStore.setItemAsync('currentUser', JSON.stringify(userData));
         
-        Alert.alert(
-          'Welcome Back!',
-          `Hello ${userData.firstName}! You are logged in as a ${userData.userType}.`,
-          [{ text: 'Continue', onPress: () => navigation.replace('MainTabs') }]
-        );
+        // Success - trigger callback immediately
+        console.log('Regular user login successful, triggering callback...');
+        if (authSuccessCallback) {
+          authSuccessCallback();
+        } else {
+          console.error('No auth success callback provided');
+        }
 
       } else {
         // Registration logic - prevent using admin email
@@ -236,11 +255,13 @@ export default function AuthScreen({ navigation }) {
         await SecureStore.setItemAsync(`user_${email}`, JSON.stringify(newUser));
         await SecureStore.setItemAsync('currentUser', JSON.stringify(newUser));
 
-        Alert.alert(
-          'Registration Successful!',
-          `Welcome ${newUser.firstName}! Your ${newUser.userType} account has been created.`,
-          [{ text: 'Continue', onPress: () => navigation.replace('MainTabs') }]
-        );
+        // Success - trigger callback immediately
+        console.log('Registration successful, triggering callback...');
+        if (authSuccessCallback) {
+          authSuccessCallback();
+        } else {
+          console.error('No auth success callback provided');
+        }
       }
 
     } catch (error) {
@@ -423,11 +444,39 @@ export default function AuthScreen({ navigation }) {
         )}
 
         {/* Auth Button */}
-        <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+        <TouchableOpacity 
+          style={styles.authButton} 
+          onPress={() => {
+            console.log('Button pressed!');
+            handleAuth();
+          }}
+        >
           <Text style={styles.authButtonText}>
             {isLogin ? 'Login' : 'Create Account'}
           </Text>
         </TouchableOpacity>
+
+        {/* Debug/Test Button - Remove in production */}
+        {isLogin && (
+          <TouchableOpacity 
+            style={[styles.authButton, { backgroundColor: '#10B981', marginTop: 10 }]} 
+            onPress={() => {
+              console.log('Quick admin login test');
+              setFormData(prev => ({
+                ...prev,
+                email: 'admin@tlbdiamond.com',
+                password: 'TLBAdmin2024!'
+              }));
+              setTimeout(() => {
+                handleAuth();
+              }, 100);
+            }}
+          >
+            <Text style={styles.authButtonText}>
+              Quick Admin Login (Test)
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Additional Info */}
         {!isLogin && (
