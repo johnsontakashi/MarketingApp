@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -9,26 +9,104 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
-  Modal
+  Modal,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import apiClient from '../services/api';
+import { useCustomAlert } from '../hooks/useCustomAlert';
+import CustomAlert from '../components/ui/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function MarketplaceScreen({ navigation }) {
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError } = useCustomAlert();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showProductDetail, setShowProductDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // API state
+  const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [pagination, setPagination] = useState({
+    limit: 20,
+    offset: 0,
+    hasMore: true
+  });
 
-  const categories = [
-    { name: 'All', icon: 'grid', count: 150 },
-    { name: 'Electronics', icon: 'phone-portrait', count: 45 },
-    { name: 'Fashion', icon: 'shirt', count: 38 },
-    { name: 'Home', icon: 'home', count: 29 },
-    { name: 'Sports', icon: 'football', count: 22 },
-    { name: 'Books', icon: 'book', count: 16 },
-  ];
+  // Load data on mount
+  useEffect(() => {
+    loadMarketplaceData();
+  }, []);
+
+  // Load marketplace data
+  const loadMarketplaceData = async () => {
+    try {
+      setLoading(true);
+      const [categoriesResponse, productsResponse] = await Promise.all([
+        apiClient.getCategories(),
+        apiClient.getProducts(pagination.limit, pagination.offset, null, searchQuery)
+      ]);
+      
+      // Load categories
+      if (categoriesResponse.categories) {
+        const allCategory = { name: 'All', icon: 'grid', count: 0, slug: 'all' };
+        const formattedCategories = [
+          allCategory,
+          ...categoriesResponse.categories.map(cat => ({
+            name: cat.name,
+            icon: cat.icon || 'folder',
+            count: cat.product_count || 0,
+            slug: cat.slug
+          }))
+        ];
+        setCategories(formattedCategories);
+      }
+      
+      // Load products
+      if (productsResponse.products) {
+        const formattedProducts = productsResponse.products.map(product => ({
+          id: product.id,
+          title: product.name,
+          price: parseFloat(product.price),
+          originalPrice: product.original_price ? parseFloat(product.original_price) : null,
+          rating: product.rating_average || 4.0,
+          reviews: product.rating_count || 0,
+          seller: product.seller_name || 'TLB Diamond',
+          supportBonus: product.support_bonus_percentage || 0,
+          installments: product.max_installments || 1,
+          image: product.image_url ? { uri: product.image_url } : require('../../assets/pic1.jpeg'),
+          featured: product.is_featured || false,
+          category: product.category_name || 'Other',
+          description: product.description || '',
+          features: product.features || [],
+          specifications: product.specifications || {},
+          inStock: product.stock_quantity > 0,
+          stockCount: product.stock_quantity || 0,
+          shippingInfo: 'Free shipping • Arrives in 2-3 business days',
+          warranty: '1 Year Manufacturer Warranty',
+          condition: product.condition || 'new',
+          brand: product.brand || 'Unknown'
+        }));
+        setProducts(formattedProducts);
+        
+        // Update pagination
+        setPagination(prev => ({
+          ...prev,
+          hasMore: formattedProducts.length === pagination.limit
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load marketplace data:', error);
+      showError('Error', 'Failed to load marketplace data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [products, setProducts] = useState([
     {
@@ -288,7 +366,13 @@ export default function MarketplaceScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+          <Text style={styles.loadingText}>Loading marketplace...</Text>
+        </View>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
         {/* Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categories</Text>
@@ -572,6 +656,17 @@ export default function MarketplaceScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
@@ -1085,5 +1180,36 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#9CA3AF',
     borderColor: '#6B7280',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#8B4513',
+    fontWeight: '500',
+  },
+  loadMoreButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 20,
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  loadMoreText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
