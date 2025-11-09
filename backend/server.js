@@ -10,14 +10,15 @@ const { syncModels } = require('./models');
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
 const walletRoutes = require('./routes/wallet');
-const transactionRoutes = require('./routes/transactions');
-const productRoutes = require('./routes/products');
-const orderRoutes = require('./routes/orders');
-const communityRoutes = require('./routes/community');
-const mdmRoutes = require('./routes/mdm');
-const adminRoutes = require('./routes/admin');
+// TODO: Add other routes as needed
+// const userRoutes = require('./routes/users');
+// const transactionRoutes = require('./routes/transactions');
+// const productRoutes = require('./routes/products');
+// const orderRoutes = require('./routes/orders');
+// const communityRoutes = require('./routes/community');
+// const mdmRoutes = require('./routes/mdm');
+// const adminRoutes = require('./routes/admin');
 
 // Initialize Express app
 const app = express();
@@ -74,14 +75,15 @@ app.get('/health', (req, res) => {
 const API_PREFIX = `/api/${process.env.API_VERSION || 'v1'}`;
 
 app.use(`${API_PREFIX}/auth`, authRoutes);
-app.use(`${API_PREFIX}/users`, userRoutes);
 app.use(`${API_PREFIX}/wallet`, walletRoutes);
-app.use(`${API_PREFIX}/transactions`, transactionRoutes);
-app.use(`${API_PREFIX}/products`, productRoutes);
-app.use(`${API_PREFIX}/orders`, orderRoutes);
-app.use(`${API_PREFIX}/community`, communityRoutes);
-app.use(`${API_PREFIX}/mdm`, mdmRoutes);
-app.use(`${API_PREFIX}/admin`, adminRoutes);
+// TODO: Enable these routes when they are created
+// app.use(`${API_PREFIX}/users`, userRoutes);
+// app.use(`${API_PREFIX}/transactions`, transactionRoutes);
+// app.use(`${API_PREFIX}/products`, productRoutes);
+// app.use(`${API_PREFIX}/orders`, orderRoutes);
+// app.use(`${API_PREFIX}/community`, communityRoutes);
+// app.use(`${API_PREFIX}/mdm`, mdmRoutes);
+// app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 // API documentation endpoint
 app.get(`${API_PREFIX}`, (req, res) => {
