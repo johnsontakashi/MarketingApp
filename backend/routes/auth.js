@@ -345,7 +345,7 @@ router.put('/password', authenticateToken, async (req, res) => {
       });
     }
 
-    const user = await User.findByPk(req.userId);
+    const user = await User.findByPk(req.user.id);
     
     // Verify current password
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password_hash);
@@ -363,7 +363,7 @@ router.put('/password', authenticateToken, async (req, res) => {
     // Update password
     await User.update(
       { password_hash: newPasswordHash },
-      { where: { id: req.userId } }
+      { where: { id: req.user.id } }
     );
 
     res.json({
@@ -380,14 +380,8 @@ router.put('/password', authenticateToken, async (req, res) => {
 });
 
 // Logout (optional - mainly for cleanup)
-router.post('/logout', authMiddleware, deviceMiddleware, async (req, res) => {
+router.post('/logout', authenticateToken, async (req, res) => {
   try {
-    // Update device status if device exists
-    if (req.device) {
-      req.device.last_heartbeat = new Date();
-      await req.device.save(['last_heartbeat']);
-    }
-
     res.json({
       message: 'Logged out successfully'
     });
@@ -402,7 +396,7 @@ router.post('/logout', authMiddleware, deviceMiddleware, async (req, res) => {
 });
 
 // Validate token
-router.post('/validate', authMiddleware, (req, res) => {
+router.post('/validate', authenticateToken, (req, res) => {
   res.json({
     valid: true,
     user: req.user
@@ -410,7 +404,7 @@ router.post('/validate', authMiddleware, (req, res) => {
 });
 
 // Refresh token
-router.post('/refresh', authMiddleware, (req, res) => {
+router.post('/refresh', authenticateToken, (req, res) => {
   try {
     const newToken = generateToken(req.user.id, req.user.email, req.user.role);
 

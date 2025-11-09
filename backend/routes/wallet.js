@@ -1,19 +1,19 @@
 const express = require('express');
 const { Wallet, Transaction, User } = require('../models');
-const { authMiddleware } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
 // Get wallet balance and details
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     let wallet = await Wallet.findOne({
-      where: { user_id: req.userId }
+      where: { user_id: req.user.id }
     });
 
     // Create wallet if it doesn't exist
     if (!wallet) {
       wallet = await Wallet.create({
-        user_id: req.userId,
+        user_id: req.user.id,
         available_balance: 0.00,
         currency: 'TLB'
       });
@@ -47,7 +47,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // Send TLB to another user
-router.post('/send', authMiddleware, async (req, res) => {
+router.post('/send', authenticateToken, async (req, res) => {
   try {
     const { recipient, amount, message } = req.body;
 
@@ -68,7 +68,7 @@ router.post('/send', authMiddleware, async (req, res) => {
 
     // Find sender's wallet
     const senderWallet = await Wallet.findOne({
-      where: { user_id: req.userId }
+      where: { user_id: req.user.id }
     });
 
     if (!senderWallet || !senderWallet.canSpend(sendAmount)) {
@@ -95,7 +95,7 @@ router.post('/send', authMiddleware, async (req, res) => {
       });
     }
 
-    if (recipientUser.id === req.userId) {
+    if (recipientUser.id === req.user.id) {
       return res.status(400).json({
         error: 'Invalid Operation',
         message: 'Cannot send TLB to yourself'
@@ -126,7 +126,7 @@ router.post('/send', authMiddleware, async (req, res) => {
       // Create transaction records
       const senderTransaction = await Transaction.create({
         wallet_id: senderWallet.id,
-        user_id: req.userId,
+        user_id: req.user.id,
         type: 'sent',
         amount: sendAmount,
         currency: 'TLB',
@@ -153,7 +153,7 @@ router.post('/send', authMiddleware, async (req, res) => {
         description: `Received from ${req.user.first_name} ${req.user.last_name}`,
         icon: 'arrow-down',
         color: '#10B981',
-        related_user_id: req.userId,
+        related_user_id: req.user.id,
         related_transaction_id: senderTransaction.id,
         message: message || null,
         balance_before: parseFloat(recipientWallet.available_balance) - sendAmount,
@@ -189,7 +189,7 @@ router.post('/send', authMiddleware, async (req, res) => {
 });
 
 // Request TLB from another user
-router.post('/request', authMiddleware, async (req, res) => {
+router.post('/request', authenticateToken, async (req, res) => {
   try {
     const { requester, amount, message } = req.body;
 
@@ -225,7 +225,7 @@ router.post('/request', authMiddleware, async (req, res) => {
       });
     }
 
-    if (requesterUser.id === req.userId) {
+    if (requesterUser.id === req.user.id) {
       return res.status(400).json({
         error: 'Invalid Operation',
         message: 'Cannot request TLB from yourself'
@@ -235,7 +235,7 @@ router.post('/request', authMiddleware, async (req, res) => {
     // Create a pending transaction for the request
     const requestTransaction = await Transaction.create({
       wallet_id: null, // No wallet ID for requests
-      user_id: req.userId,
+      user_id: req.user.id,
       type: 'received',
       amount: requestAmount,
       currency: 'TLB',
@@ -277,7 +277,7 @@ router.post('/request', authMiddleware, async (req, res) => {
 });
 
 // Top up wallet (placeholder for payment integration)
-router.post('/topup', authMiddleware, async (req, res) => {
+router.post('/topup', authenticateToken, async (req, res) => {
   try {
     const { method, amount, paymentDetails } = req.body;
 
@@ -307,7 +307,7 @@ router.post('/topup', authMiddleware, async (req, res) => {
 
     // Get wallet
     const wallet = await Wallet.findOne({
-      where: { user_id: req.userId }
+      where: { user_id: req.user.id }
     });
 
     // For demo purposes, we'll simulate successful payment
@@ -336,7 +336,7 @@ router.post('/topup', authMiddleware, async (req, res) => {
     // Create pending transaction
     const topUpTransaction = await Transaction.create({
       wallet_id: wallet.id,
-      user_id: req.userId,
+      user_id: req.user.id,
       type: 'topup',
       amount: topUpAmount,
       currency: 'TLB',
@@ -394,19 +394,19 @@ router.post('/topup', authMiddleware, async (req, res) => {
 });
 
 // Get transaction history
-router.get('/transactions', authMiddleware, async (req, res) => {
+router.get('/transactions', authenticateToken, async (req, res) => {
   try {
     const { limit = 20, offset = 0, type, status } = req.query;
 
     const wallet = await Wallet.findOne({
-      where: { user_id: req.userId }
+      where: { user_id: req.user.id }
     });
 
     if (!wallet) {
       return res.json({ transactions: [], total: 0, pagination: {} });
     }
 
-    const where = { user_id: req.userId };
+    const where = { user_id: req.user.id };
     
     if (type) {
       where.type = type;
@@ -479,12 +479,12 @@ router.get('/transactions', authMiddleware, async (req, res) => {
 });
 
 // Get specific transaction details
-router.get('/transactions/:id', authMiddleware, async (req, res) => {
+router.get('/transactions/:id', authenticateToken, async (req, res) => {
   try {
     const transaction = await Transaction.findOne({
       where: {
         id: req.params.id,
-        user_id: req.userId
+        user_id: req.user.id
       }
     });
 

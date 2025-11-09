@@ -72,6 +72,7 @@ router.get('/', async (req, res) => {
         },
         {
           model: Category,
+          as: 'category',
           attributes: ['id', 'name', 'slug']
         }
       ],
@@ -97,10 +98,10 @@ router.get('/', async (req, res) => {
         name: `${product.seller.first_name} ${product.seller.last_name}`,
         email: product.seller.email
       } : null,
-      category: product.Category ? {
-        id: product.Category.id,
-        name: product.Category.name,
-        slug: product.Category.slug
+      category: product.category ? {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug
       } : null,
       supportBonus: product.support_bonus_enabled ? product.support_bonus_percentage : 0,
       installments: product.installment_enabled ? product.max_installments : 0,
@@ -129,6 +130,44 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get all categories
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Category.findAll({
+      where: { 
+        status: 'active'
+      },
+      order: [
+        ['is_featured', 'DESC'],
+        ['sort_order', 'ASC'],
+        ['name', 'ASC']
+      ]
+    });
+
+    const formattedCategories = categories.map(category => ({
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      icon: category.icon,
+      color: category.color,
+      isFeatured: category.is_featured,
+      productCount: 0 // TODO: Add actual product count
+    }));
+
+    res.json({
+      categories: formattedCategories
+    });
+
+  } catch (error) {
+    console.error('Get categories error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to get categories'
+    });
+  }
+});
+
 // Get single product by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -143,10 +182,12 @@ router.get('/:id', async (req, res) => {
         },
         {
           model: Category,
+          as: 'category',
           attributes: ['id', 'name', 'slug', 'description']
         },
         {
           model: Review,
+          as: 'reviews',
           attributes: ['id', 'rating', 'comment', 'created_at'],
           include: [
             {
@@ -187,18 +228,18 @@ router.get('/:id', async (req, res) => {
         email: product.seller.email,
         memberSince: product.seller.created_at
       } : null,
-      category: product.Category ? {
-        id: product.Category.id,
-        name: product.Category.name,
-        slug: product.Category.slug,
-        description: product.Category.description
+      category: product.category ? {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        description: product.category.description
       } : null,
       supportBonus: product.support_bonus_enabled ? product.support_bonus_percentage : 0,
       installments: product.installment_enabled ? product.max_installments : 0,
       minDownPayment: product.min_down_payment || 0,
       stock: product.stock_quantity,
       totalSales: product.total_sales || 0,
-      reviews: product.Reviews ? product.Reviews.map(review => ({
+      reviews: product.reviews ? product.reviews.map(review => ({
         id: review.id,
         rating: review.rating,
         comment: review.comment,
@@ -218,44 +259,6 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to get product'
-    });
-  }
-});
-
-// Get all categories
-router.get('/categories', async (req, res) => {
-  try {
-    const categories = await Category.findAll({
-      where: { 
-        status: 'active'
-      },
-      order: [
-        ['is_featured', 'DESC'],
-        ['sort_order', 'ASC'],
-        ['name', 'ASC']
-      ]
-    });
-
-    const formattedCategories = categories.map(category => ({
-      id: category.id,
-      name: category.name,
-      slug: category.slug,
-      description: category.description,
-      icon: category.icon,
-      color: category.color,
-      isFeatured: category.is_featured,
-      productCount: 0 // TODO: Add actual product count
-    }));
-
-    res.json({
-      categories: formattedCategories
-    });
-
-  } catch (error) {
-    console.error('Get categories error:', error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Failed to get categories'
     });
   }
 });
@@ -300,6 +303,7 @@ router.get('/search', async (req, res) => {
       include: [
         {
           model: Category,
+          as: 'category',
           attributes: ['name']
         }
       ],
@@ -314,7 +318,7 @@ router.get('/search', async (req, res) => {
       price: parseFloat(product.price),
       image: product.images?.[0] || '/api/placeholder/300/200',
       rating: parseFloat(product.rating_average) || 0,
-      category: product.Category?.name
+      category: product.category?.name
     }));
 
     res.json({

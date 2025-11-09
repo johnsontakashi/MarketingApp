@@ -38,15 +38,10 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: [
-    'http://localhost:19006',  // Expo development server
-    'http://localhost:8081',   // Metro bundler
-    'http://localhost:3000',   // Web development
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Device-ID', 'X-App-Version']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Device-ID', 'X-App-Version', 'X-Device-Name', 'X-Device-Type']
 }));
 
 // Basic middleware

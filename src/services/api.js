@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 
 // API Configuration
 const API_BASE_URL = __DEV__ 
-  ? 'http://localhost:3000/api/v1'  // Development
+  ? 'http://217.182.175.221:3000/api/v1'  // Development
   : 'https://your-production-api.com/api/v1'; // Production
 
 // Device info for MDM
