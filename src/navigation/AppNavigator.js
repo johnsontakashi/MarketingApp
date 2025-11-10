@@ -10,6 +10,7 @@ import SystemKioskManager from '../components/mdm/SystemKioskManager';
 import BlockingManager from '../components/mdm/BlockingManager';
 import networkManager from '../components/mdm/NetworkManager';
 import appRestrictionManager from '../components/mdm/AppRestrictionManager';
+import AdminStackNavigator from './AdminNavigator';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -166,6 +167,7 @@ function AppNavigator() {
   });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [userRole, setUserRole] = useState(null);
 
   // Check authentication status on app start
   useEffect(() => {
@@ -180,15 +182,25 @@ function AppNavigator() {
       console.log('Checking auth status:', { hasToken: !!authToken, hasUser: !!currentUser });
       
       if (authToken && currentUser) {
+        try {
+          const userData = JSON.parse(currentUser);
+          setUserRole(userData.role || 'user');
+          console.log('User role:', userData.role);
+        } catch (parseError) {
+          console.error('Error parsing user data:', parseError);
+          setUserRole('user');
+        }
         setIsAuthenticated(true);
         console.log('User is authenticated');
       } else {
         console.log('User is not authenticated');
         setIsAuthenticated(false);
+        setUserRole(null);
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
       setIsAuthenticated(false);
+      setUserRole(null);
     } finally {
       setIsCheckingAuth(false);
     }
@@ -229,19 +241,34 @@ function AppNavigator() {
     return null; // Or a loading component
   }
 
-  const handleAuthSuccess = () => {
+  const handleAuthSuccess = async () => {
     console.log('Auth success callback triggered - setting isAuthenticated to true');
     setIsAuthenticated(true);
+    
+    // Re-check auth status to get user role
+    try {
+      const currentUser = await SecureStore.getItemAsync('currentUser');
+      if (currentUser) {
+        const userData = JSON.parse(currentUser);
+        setUserRole(userData.role || 'user');
+        console.log('User role set after auth success:', userData.role);
+      }
+    } catch (error) {
+      console.error('Error getting user role after auth success:', error);
+      setUserRole('user');
+    }
+    
     console.log('Authentication state updated, should show main app now');
   };
 
   const handleLogout = () => {
     console.log('Logout triggered - setting isAuthenticated to false');
     setIsAuthenticated(false);
+    setUserRole(null);
     console.log('Authentication state updated, should show login screen now');
   };
 
-  console.log('AppNavigator rendering, isAuthenticated:', isAuthenticated);
+  console.log('AppNavigator rendering, isAuthenticated:', isAuthenticated, 'userRole:', userRole);
   
   return (
     <NavigationContainer>
@@ -254,6 +281,15 @@ function AppNavigator() {
             {(props) => <AuthScreen {...props} onAuthSuccess={handleAuthSuccess} />}
           </Stack.Screen>
         </Stack.Navigator>
+      ) : userRole === 'admin' ? (
+        <BlockingManager 
+          paymentStatus={paymentStatus}
+          onPaymentRequired={handlePaymentRequired}
+        >
+          <SystemKioskManager>
+            <AdminStackNavigator onLogout={handleLogout} />
+          </SystemKioskManager>
+        </BlockingManager>
       ) : (
         <BlockingManager 
           paymentStatus={paymentStatus}
