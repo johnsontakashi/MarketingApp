@@ -13,7 +13,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../services/api';
+import sharedDataService from '../services/sharedDataService';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
 
@@ -126,21 +126,89 @@ export default function MarketplaceScreen({ navigation }) {
           }));
         }
       } catch (apiError) {
-        console.log('API failed, loading mock data...');
-        // Fallback to mock data when API is unavailable
-        loadMockData();
+        console.log('API failed, loading shared data...');
+        // Fallback to shared data when API is unavailable
+        await loadSharedData();
       }
     } catch (error) {
       console.error('Failed to load marketplace data:', error);
-      // Even if mock data fails, load basic mock data
-      loadMockData();
+      // Even if shared data fails, load basic mock data
+      await loadSharedData();
     } finally {
       setLoading(false);
     }
   };
 
-  // Mock data fallback
-  const loadMockData = () => {
+  // Shared data fallback
+  const loadSharedData = async () => {
+    try {
+      // Load products from shared data service
+      const sharedProducts = await sharedDataService.getProducts();
+      
+      // Transform shared products to marketplace format
+      const formattedProducts = sharedProducts
+        .filter(product => product.status === 'active') // Only show active products
+        .map(product => ({
+          id: product.id,
+          title: product.name,
+          price: product.price,
+          originalPrice: product.price * 1.25, // Add 25% markup for "original price"
+          rating: 4.0 + Math.random() * 1.0, // Random rating between 4.0-5.0
+          reviews: product.sales_count * 3 + Math.floor(Math.random() * 20),
+          seller: 'TLB Diamond',
+          supportBonus: Math.floor(Math.random() * 15), // Random bonus 0-15%
+          installments: product.price > 1000 ? 12 : 1,
+          image: product.image_url ? { uri: product.image_url } : require('../../assets/pic1.jpeg'),
+          featured: product.price > 10000, // Expensive items are featured
+          category: product.category,
+          description: product.description,
+          features: [],
+          specifications: {},
+          inStock: product.stock_quantity > 0,
+          stockCount: product.stock_quantity,
+          shippingInfo: 'Free shipping • Arrives in 2-3 business days',
+          warranty: '1 Year Manufacturer Warranty',
+          condition: 'new',
+          brand: 'TLB Diamond'
+        }));
+      
+      setProducts(formattedProducts);
+      
+      // Generate categories based on actual products
+      const categoryCount = {};
+      sharedProducts.forEach(product => {
+        if (product.status === 'active') {
+          categoryCount[product.category] = (categoryCount[product.category] || 0) + 1;
+        }
+      });
+      
+      const mockCategories = [
+        { name: 'All', icon: 'grid', count: formattedProducts.length, slug: 'all' },
+        { name: 'Diamond', icon: 'diamond', count: categoryCount.diamond || 0, slug: 'diamond' },
+        { name: 'Gold', icon: 'medal', count: categoryCount.gold || 0, slug: 'gold' },
+        { name: 'Jewelry', icon: 'star', count: categoryCount.jewelry || 0, slug: 'jewelry' },
+        { name: 'Accessories', icon: 'watch', count: categoryCount.accessories || 0, slug: 'accessories' },
+        { name: 'Special', icon: 'gift', count: categoryCount.special || 0, slug: 'special' }
+      ];
+      
+      setCategories(mockCategories);
+      
+      // Update pagination
+      setPagination(prev => ({
+        ...prev,
+        hasMore: false // All products loaded
+      }));
+      
+      console.log(`Loaded ${formattedProducts.length} products from shared data service`);
+    } catch (error) {
+      console.error('Failed to load shared data:', error);
+      // If shared data fails, use static mock data
+      loadStaticMockData();
+    }
+  };
+
+  // Static mock data as last resort
+  const loadStaticMockData = () => {
     const mockCategories = [
       { name: 'All', icon: 'grid', count: 15, slug: 'all' },
       { name: 'Diamond', icon: 'diamond', count: 8, slug: 'diamond' },

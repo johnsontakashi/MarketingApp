@@ -13,7 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
-import apiClient from '../services/api';
+import sharedDataService from '../services/sharedDataService';
 
 const { width } = Dimensions.get('window');
 
@@ -86,34 +86,41 @@ export default function WalletScreen({ navigation }) {
           });
         }
       } catch (apiError) {
-        console.log('API failed, loading mock wallet data...');
-        // Fallback to mock data when API is unavailable
-        loadMockWalletData();
+        console.log('API failed, loading shared wallet data...');
+        // Fallback to shared data when API is unavailable
+        await loadSharedWalletData();
       }
     } catch (error) {
       console.error('Failed to load wallet data:', error);
-      // Even if mock data fails, load basic mock data
-      loadMockWalletData();
+      // Even if shared data fails, load basic mock data
+      await loadSharedWalletData();
     } finally {
       setLoading(false);
     }
   };
 
-  // Mock wallet data fallback
-  const loadMockWalletData = () => {
-    const mockWallet = {
-      available: 1245.67,
-      locked: 150.00,
-      pending: 25.50,
-      lifetimeEarned: 3420.89,
-      lifetimeSpent: 2150.72,
-      monthlyEarned: 245.30,
-      monthlySpent: 89.75,
-      monthlyBonuses: 67.50
-    };
-    
-    setWalletData(mockWallet);
-    console.log('Loaded mock wallet data');
+  // Shared wallet data fallback
+  const loadSharedWalletData = async () => {
+    try {
+      const sharedWallet = await sharedDataService.getWalletData();
+      setWalletData(sharedWallet);
+      console.log('Loaded shared wallet data');
+    } catch (error) {
+      console.error('Failed to load shared wallet data:', error);
+      // Use static mock data as last resort
+      const mockWallet = {
+        available: 1245.67,
+        locked: 150.00,
+        pending: 25.50,
+        lifetimeEarned: 3420.89,
+        lifetimeSpent: 2150.72,
+        monthlyEarned: 245.30,
+        monthlySpent: 89.75,
+        monthlyBonuses: 67.50
+      };
+      setWalletData(mockWallet);
+      console.log('Loaded fallback mock wallet data');
+    }
   };
 
   const loadTransactions = async () => {

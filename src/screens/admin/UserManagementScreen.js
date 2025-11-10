@@ -12,7 +12,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../../services/api';
+import sharedDataService from '../../services/sharedDataService';
 import AdminAlert from '../../components/admin/AdminAlert';
 import { useAdminAlert } from '../../hooks/useAdminAlert';
 
@@ -33,12 +33,47 @@ export default function UserManagementScreen({ navigation }) {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API call when backend endpoint is available
-      // const response = await apiClient.get('/admin/users');
-      // setUsers(response.data);
       
-      // Mock data for now
-      const mockUsers = [
+      // Load actual users from shared data service
+      const registeredUsers = await sharedDataService.getRegisteredUsers();
+      
+      // Transform to admin interface format
+      const adminFormattedUsers = registeredUsers.map(user => ({
+        id: user.id,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        role: user.userType === 'admin' ? 'admin' : 'user',
+        created_at: user.registeredAt,
+        is_verified: user.isVerified,
+        last_login: user.registeredAt, // Use registration date as placeholder
+        status: user.isVerified ? 'active' : 'pending',
+        device_count: 1 // Assume 1 device per user
+      }));
+      
+      setUsers(adminFormattedUsers);
+      console.log(`Loaded ${adminFormattedUsers.length} users for admin interface`);
+      
+      // If no real users exist, add admin user as example
+      if (adminFormattedUsers.length === 0) {
+        const defaultAdmin = {
+          id: '1',
+          email: 'admin@tlbdiamond.com',
+          first_name: 'Admin',
+          last_name: 'User',
+          role: 'admin',
+          created_at: new Date().toISOString(),
+          is_verified: true,
+          last_login: new Date().toISOString(),
+          status: 'active',
+          device_count: 1
+        };
+        setUsers([defaultAdmin]);
+        console.log('No registered users found, showing default admin user');
+      }
+      
+      // Original mock data kept as reference but not used
+      const originalMockUsers = [
         {
           id: '1',
           email: 'admin@tlbdiamond.com',

@@ -11,7 +11,7 @@ import {
   ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
+import sharedDataService from '../services/sharedDataService';
 
 export default function AdminUserManagementScreen({ navigation }) {
   const [users, setUsers] = useState([]);
@@ -27,32 +27,21 @@ export default function AdminUserManagementScreen({ navigation }) {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const allKeys = await SecureStore.getValueAsync();
-      // This is a simplified version - in a real app, you'd have a better way to get all users
-      // For now, we'll show a placeholder message
-      setUsers([
-        {
-          id: '1',
-          email: 'john.doe@example.com',
-          firstName: 'John',
-          lastName: 'Doe',
-          userType: 'buyer',
-          registeredAt: new Date().toISOString(),
-          isVerified: true
-        },
-        {
-          id: '2',
-          email: 'jane.seller@example.com',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          userType: 'seller',
-          registeredAt: new Date().toISOString(),
-          isVerified: true
-        }
-      ]);
+      
+      // Load actual users from the shared data service
+      const registeredUsers = await sharedDataService.getRegisteredUsers();
+      
+      // If no users found, show empty list
+      if (registeredUsers.length === 0) {
+        console.log('No registered users found in the system');
+      }
+      
+      setUsers(registeredUsers);
+      console.log(`Loaded ${registeredUsers.length} registered users from database`);
     } catch (error) {
       console.error('Error loading users:', error);
       Alert.alert('Error', 'Failed to load users');
+      setUsers([]); // Set empty array if there's an error
     } finally {
       setLoading(false);
     }

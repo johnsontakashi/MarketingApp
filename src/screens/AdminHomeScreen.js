@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { CommonActions } from '@react-navigation/native';
-import apiClient from '../services/api';
+import sharedDataService from '../services/sharedDataService';
 
 const { width } = Dimensions.get('window');
 
@@ -39,24 +39,27 @@ export default function AdminHomeScreen({ navigation }) {
 
   const loadDashboardData = async () => {
     try {
-      // TODO: Implement admin dashboard API endpoints
-      // For now using mock data
-      setDashboardData({
-        totalUsers: 1247,
-        activeUsers: 892,
-        totalOrders: 3456,
-        pendingOrders: 23,
-        totalRevenue: 125840.50,
-        monthlyRevenue: 12580.75,
-        totalProducts: 245,
-        lowStockProducts: 8,
-        totalDevices: 156,
-        onlineDevices: 134,
-        supportTickets: 12,
-        systemAlerts: 3
-      });
+      // Load real data from shared data service
+      const stats = await sharedDataService.getDashboardStats();
+      setDashboardData(stats);
+      console.log('Loaded real dashboard statistics:', stats);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      // Fallback to basic stats if shared data fails
+      setDashboardData({
+        totalUsers: 0,
+        activeUsers: 0,
+        totalOrders: 0,
+        pendingOrders: 0,
+        totalRevenue: 0,
+        monthlyRevenue: 0,
+        totalProducts: 0,
+        lowStockProducts: 0,
+        totalDevices: 0,
+        onlineDevices: 0,
+        supportTickets: 0,
+        systemAlerts: 0
+      });
     }
   };
 
