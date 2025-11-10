@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import { CommonActions } from '@react-navigation/native';
 import apiClient from '../services/api';
 
 const { width } = Dimensions.get('window');
@@ -65,6 +66,47 @@ export default function AdminHomeScreen({ navigation }) {
     setRefreshing(false);
   };
 
+  const handleNavigation = (route, title) => {
+    console.log(`Navigating to: ${route}`);
+    
+    // Tab routes - navigate directly within the tab navigator
+    const tabRoutes = ['Users', 'Products', 'Devices', 'Settings'];
+    
+    // Stack routes - navigate to the parent stack navigator
+    const stackRoutes = [
+      'OrderManagement', 
+      'FinancialDashboard', 
+      'SystemLogs', 
+      'AdminReports',
+      'UserLookup',
+      'AddProduct', 
+      'SendNotification',
+      'SupportCenter'
+    ];
+    
+    try {
+      if (tabRoutes.includes(route)) {
+        // Navigate to tab screen
+        navigation.navigate(route);
+      } else if (stackRoutes.includes(route)) {
+        // Navigate to stack screen - get parent navigator
+        const parent = navigation.getParent();
+        if (parent) {
+          parent.navigate(route);
+        } else {
+          console.error('Parent navigator not found');
+          Alert.alert('Navigation Error', 'Unable to navigate to screen');
+        }
+      } else {
+        console.error(`Unknown route: ${route}`);
+        Alert.alert('Navigation Error', `Screen "${route}" not found`);
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
+      Alert.alert('Navigation Error', error.message);
+    }
+  };
+
   const AdminCard = ({ title, value, subtext, icon, color, onPress, alert = false }) => (
     <TouchableOpacity 
       style={[styles.adminCard, alert && styles.alertCard]} 
@@ -108,7 +150,14 @@ export default function AdminHomeScreen({ navigation }) {
             <Text style={styles.headerSubtitle}>TLB Diamond Control Center</Text>
           </View>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.notificationButton} onPress={() => {/* TODO: Implement notifications */}}>
+            <TouchableOpacity 
+              style={styles.notificationButton} 
+              onPress={() => {
+                console.log('Notifications button pressed');
+                Alert.alert('Notifications', 'Notification center coming soon!');
+              }}
+              activeOpacity={0.7}
+            >
               <Ionicons name="notifications" size={24} color="#D4AF37" />
               {dashboardData.systemAlerts > 0 && (
                 <View style={styles.notificationBadge}>
@@ -116,7 +165,11 @@ export default function AdminHomeScreen({ navigation }) {
                 </View>
               )}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('AdminSettings')}>
+            <TouchableOpacity 
+              style={styles.settingsButton} 
+              onPress={() => handleNavigation('Settings', 'Admin Settings')}
+              activeOpacity={0.7}
+            >
               <Ionicons name="settings" size={24} color="#D4AF37" />
             </TouchableOpacity>
           </View>
@@ -138,7 +191,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext={`${dashboardData.activeUsers} active`}
               icon="people"
               color="#10B981"
-              onPress={() => navigation.navigate('UserManagement')}
+              onPress={() => handleNavigation('Users', 'User Management')}
             />
             <AdminCard
               title="Orders"
@@ -146,7 +199,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext={`${dashboardData.pendingOrders} pending`}
               icon="receipt"
               color="#3B82F6"
-              onPress={() => navigation.navigate('OrderManagement')}
+              onPress={() => handleNavigation('OrderManagement', 'Order Management')}
               alert={dashboardData.pendingOrders > 20}
             />
             <AdminCard
@@ -155,7 +208,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext={`$${dashboardData.monthlyRevenue.toLocaleString()} this month`}
               icon="trending-up"
               color="#D4AF37"
-              onPress={() => navigation.navigate('FinancialDashboard')}
+              onPress={() => handleNavigation('FinancialDashboard', 'Financial Dashboard')}
             />
             <AdminCard
               title="Products"
@@ -163,7 +216,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext={`${dashboardData.lowStockProducts} low stock`}
               icon="cube"
               color="#8B5CF6"
-              onPress={() => navigation.navigate('ProductManagement')}
+              onPress={() => handleNavigation('Products', 'Product Management')}
               alert={dashboardData.lowStockProducts > 5}
             />
           </View>
@@ -179,7 +232,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext={`${dashboardData.onlineDevices} online`}
               icon="phone-portrait"
               color="#F59E0B"
-              onPress={() => navigation.navigate('DeviceManagement')}
+              onPress={() => handleNavigation('Devices', 'Device Management')}
             />
             <AdminCard
               title="Support Tickets"
@@ -187,7 +240,7 @@ export default function AdminHomeScreen({ navigation }) {
               subtext="Active tickets"
               icon="help-circle"
               color="#EF4444"
-              onPress={() => navigation.navigate('SupportCenter')}
+              onPress={() => handleNavigation('SupportCenter', 'Support Center')}
               alert={dashboardData.supportTickets > 10}
             />
           </View>
@@ -201,19 +254,19 @@ export default function AdminHomeScreen({ navigation }) {
               title="Add Product"
               icon="add-circle"
               color="#10B981"
-              onPress={() => navigation.navigate('AddProduct')}
+              onPress={() => handleNavigation('Products', 'Add Product')}
             />
             <QuickAction
               title="User Lookup"
               icon="search"
               color="#3B82F6"
-              onPress={() => navigation.navigate('UserLookup')}
+              onPress={() => handleNavigation('Users', 'User Lookup')}
             />
             <QuickAction
               title="System Logs"
               icon="document-text"
               color="#8B5CF6"
-              onPress={() => navigation.navigate('SystemLogs')}
+              onPress={() => handleNavigation('SystemLogs', 'System Logs')}
             />
             <QuickAction
               title="Backup Data"
@@ -225,13 +278,13 @@ export default function AdminHomeScreen({ navigation }) {
               title="Send Alert"
               icon="megaphone"
               color="#EF4444"
-              onPress={() => navigation.navigate('SendNotification')}
+              onPress={() => handleNavigation('SendNotification', 'Send Notification')}
             />
             <QuickAction
               title="Reports"
               icon="bar-chart"
               color="#6366F1"
-              onPress={() => navigation.navigate('AdminReports')}
+              onPress={() => handleNavigation('AdminReports', 'Admin Reports')}
             />
           </View>
         </View>

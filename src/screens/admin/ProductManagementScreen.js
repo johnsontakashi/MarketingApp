@@ -549,18 +549,24 @@ export default function ProductManagementScreen({ navigation }) {
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{selectedProduct ? 'Edit Product' : 'Add New Product'}</Text>
-            <TouchableOpacity onPress={() => {
-              setShowAddProduct(false);
-              setSelectedProduct(null);
-              setNewProduct({
-                name: '',
-                description: '',
-                price: '',
-                category: 'diamond',
-                stock_quantity: '',
-                image_url: ''
-              });
-            }}>
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => {
+                console.log('Add product modal close button pressed');
+                setShowAddProduct(false);
+                setSelectedProduct(null);
+                setNewProduct({
+                  name: '',
+                  description: '',
+                  price: '',
+                  category: 'diamond',
+                  stock_quantity: '',
+                  image_url: ''
+                });
+              }}
+              activeOpacity={0.7}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
               <Ionicons name="close" size={24} color="#D4AF37" />
             </TouchableOpacity>
           </View>

@@ -11,6 +11,7 @@ import {
   Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import PaymentRequiredModal from '../components/modals/PaymentRequiredModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,6 +28,7 @@ export default function LockScreen({ navigation }) {
 
   const [homeButtonAttempts, setHomeButtonAttempts] = useState(0);
   const [showKioskWarning, setShowKioskWarning] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     let backHandler;
@@ -105,20 +107,17 @@ export default function LockScreen({ navigation }) {
   }, [homeButtonAttempts]);
 
   const handlePayNow = () => {
-    Alert.alert(
-      'Payment Required',
-      `Pay 💎 ${lockInfo.nextPaymentAmount} TLB now?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Pay Now', 
-          onPress: () => {
-            Alert.alert('Payment Processed', 'Thank you! Processing your payment...');
-            // In real app, this would process payment and unlock if completed
-          }
-        }
-      ]
-    );
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentComplete = () => {
+    setShowPaymentModal(false);
+    Alert.alert('Payment Processed', 'Thank you! Processing your payment...');
+    // In real app, this would process payment and unlock if completed
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentModal(false);
   };
 
   const handleContactSupport = () => {
@@ -251,7 +250,21 @@ export default function LockScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* Hardware Button Blocking Indicator */}
+      {/* Payment Required Modal */}
+      <PaymentRequiredModal
+        visible={showPaymentModal}
+        title="Payment Required"
+        message={`Complete your payment to unlock the device and continue using all features.`}
+        amount={lockInfo.nextPaymentAmount}
+        dueDate={lockInfo.nextPaymentDue}
+        type="urgent"
+        onPayNow={handlePaymentComplete}
+        onEmergencySupport={handleContactSupport}
+        onClose={handlePaymentCancel}
+        showCancel={true}
+      />
+
+      {/* Hardware Button Blocking Indicator */
       <View style={styles.kioskStatus}>
         <View style={styles.kioskIndicator}>
           <Ionicons name="shield-checkmark" size={16} color="#FF6B35" />
