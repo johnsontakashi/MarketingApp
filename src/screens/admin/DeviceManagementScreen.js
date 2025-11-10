@@ -514,13 +514,28 @@ export default function DeviceManagementScreen({ navigation }) {
         visible={showDeviceDetails}
         animationType="slide"
         presentationStyle="pageSheet"
+        onRequestClose={() => {
+          console.log('Device details modal onRequestClose triggered');
+          setShowDeviceDetails(false);
+          setSelectedDevice(null);
+        }}
       >
         {selectedDevice && (
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Device Details</Text>
-              <TouchableOpacity onPress={() => setShowDeviceDetails(false)}>
-                <Ionicons name="close" size={24} color="#D4AF37" />
+              <TouchableOpacity 
+                style={styles.modalCloseButton}
+                onPress={() => {
+                  console.log('Device details modal close button pressed');
+                  setShowDeviceDetails(false);
+                  setSelectedDevice(null);
+                }}
+                activeOpacity={0.7}
+                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                testID="deviceDetailsCloseButton"
+              >
+                <Ionicons name="close" size={28} color="#D4AF37" />
               </TouchableOpacity>
             </View>
             
@@ -944,6 +959,19 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  modalCloseButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EF4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalContent: {
     flex: 1,
