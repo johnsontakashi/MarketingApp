@@ -190,6 +190,55 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 // Start server
 const PORT = process.env.PORT || 3000;
 
+const createAdminUser = async () => {
+  const bcrypt = require('bcryptjs');
+  const { User, Wallet } = require('./models');
+  
+  try {
+    // Check if admin user already exists
+    const existingAdmin = await User.findOne({ 
+      where: { email: 'admin@tlbdiamond.com' } 
+    });
+    
+    if (!existingAdmin) {
+      console.log('🔧 Creating admin user...');
+      
+      // Hash the admin password
+      const hashedPassword = await bcrypt.hash('TLBAdmin2024!', 12);
+      
+      // Create admin user
+      const adminUser = await User.create({
+        email: 'admin@tlbdiamond.com',
+        password_hash: hashedPassword,
+        first_name: 'TLB',
+        last_name: 'Administrator',
+        phone: '+1234567890',
+        role: 'admin',
+        account_type: 'business',
+        status: 'active',
+        is_verified: true,
+        verification_level: 'full'
+      });
+      
+      // Create admin wallet
+      await Wallet.create({
+        user_id: adminUser.id,
+        available_balance: 1000000.00, // Give admin 1M TLB for testing
+        currency: 'TLB'
+      });
+      
+      console.log('✅ Admin user created successfully');
+      console.log('📧 Email: admin@tlbdiamond.com');
+      console.log('🔑 Password: TLBAdmin2024!');
+    } else {
+      console.log('✅ Admin user already exists');
+    }
+    
+  } catch (error) {
+    console.error('❌ Failed to create admin user:', error);
+  }
+};
+
 const startServer = async () => {
   try {
     // Test database connection
@@ -197,6 +246,9 @@ const startServer = async () => {
     
     // Sync models (create tables)
     await syncModels(false); // Set to true to force recreate tables
+    
+    // Create admin user if it doesn't exist
+    await createAdminUser();
     
     // Start listening
     app.listen(PORT, () => {

@@ -4,8 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import * as SecureStore from 'expo-secure-store';
+import apiClient from '../services/api';
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, onLogout }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
   
   const [isAdmin, setIsAdmin] = useState(false);
@@ -951,6 +952,47 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  const handleSignOut = async () => {
+    try {
+      // Call API logout endpoint
+      await apiClient.logout();
+      
+      // Clear all authentication data
+      await SecureStore.deleteItemAsync('auth_token');
+      await SecureStore.deleteItemAsync('currentUser');
+      await SecureStore.deleteItemAsync('user_data');
+      
+      // Show success message
+      showSuccess(
+        'Signed Out Successfully',
+        'You have been securely signed out of TLB Diamond.'
+      );
+      
+      // Call the logout handler from AppNavigator
+      if (onLogout) {
+        onLogout();
+      }
+      
+    } catch (error) {
+      console.error('Sign out error:', error);
+      
+      // Even if API call fails, still clear local data
+      await SecureStore.deleteItemAsync('auth_token');
+      await SecureStore.deleteItemAsync('currentUser');
+      await SecureStore.deleteItemAsync('user_data');
+      
+      showSuccess(
+        'Signed Out',
+        'You have been signed out of the app.'
+      );
+      
+      // Call the logout handler from AppNavigator
+      if (onLogout) {
+        onLogout();
+      }
+    }
+  };
+
   const handleMenuPress = (action) => {
     switch (action) {
       case 'editProfile':
@@ -983,37 +1025,7 @@ export default function ProfileScreen({ navigation }) {
             { 
               text: 'Sign Out', 
               style: 'destructive', 
-              onPress: () => {
-                // Show signing out process
-                Alert.alert(
-                  '✅ Signing Out',
-                  'Please wait while we securely sign you out...',
-                  [],
-                  { cancelable: false }
-                );
-                
-                // Simulate sign out process
-                setTimeout(() => {
-                  Alert.alert(
-                    '👋 Signed Out Successfully',
-                    'You have been securely signed out of TLB Diamond.\n\n• All local data cleared\n• Session terminated\n• Security tokens removed\n\nThank you for using TLB Diamond!',
-                    [
-                      { 
-                        text: 'Return to Home', 
-                        onPress: () => {
-                          // Navigate back to home screen
-                          navigation.navigate('Home');
-                          // In a real app, you would:
-                          // - Clear AsyncStorage/SecureStore
-                          // - Reset navigation state
-                          // - Navigate to login screen
-                          console.log('User signed out successfully');
-                        }
-                      }
-                    ]
-                  );
-                }, 2000);
-              }
+              onPress: handleSignOut
             }
           ]
         );
