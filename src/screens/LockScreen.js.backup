@@ -30,6 +30,82 @@ export default function LockScreen({ navigation }) {
   const [showKioskWarning, setShowKioskWarning] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
+  useEffect(() => {
+    let backHandler;
+    let appStateListener;
+    let homeButtonDetector;
+
+    // Enhanced hardware button blocking
+    const setupKioskMode = () => {
+      // BACK button blocking
+      const backAction = () => {
+        setHomeButtonAttempts(prev => prev + 1);
+        Alert.alert(
+          '🔒 Device Locked - BACK Button',
+          'BACK button is disabled in kiosk mode.\n\nTo unlock device:\n• Complete your payment\n• Contact emergency support\n\nAttempts: ' + (homeButtonAttempts + 1),
+          [
+            { text: 'Pay Now', onPress: () => handlePayNow() },
+            { text: 'Emergency Support', onPress: () => handleContactSupport() },
+            { text: 'OK', style: 'cancel' }
+          ]
+        );
+        return true; // Prevent default behavior
+      };
+
+      // HOME button detection via AppState changes
+      const handleAppStateChange = (nextAppState) => {
+        if (nextAppState === 'background') {
+          setHomeButtonAttempts(prev => prev + 1);
+          console.warn('Kiosk violation: HOME button pressed or app switching attempted');
+          
+          // Show immediate warning
+          setShowKioskWarning(true);
+          
+          // Auto-hide warning after 3 seconds
+          setTimeout(() => {
+            setShowKioskWarning(false);
+          }, 3000);
+
+          // Force app back to foreground after brief delay
+          setTimeout(() => {
+            if (AppState.currentState === 'background') {
+              Alert.alert(
+                '⚠️ Kiosk Mode Violation - HOME Button',
+                'HOME button and app switching are disabled.\n\nDevice is locked in kiosk mode.\n\nAttempts: ' + homeButtonAttempts,
+                [
+                  { text: 'Return to App', onPress: () => {
+                    // In real implementation, this would bring app to foreground
+                    console.log('Attempting to return to app foreground');
+                  }},
+                  { text: 'Pay Now', onPress: () => handlePayNow() }
+                ]
+              );
+            }
+          }, 500);
+        }
+      };
+
+      // Periodic check to ensure app stays in foreground (anti-overview/recent apps)
+      homeButtonDetector = setInterval(() => {
+        if (AppState.currentState !== 'active') {
+          console.warn('Kiosk violation: App not in active state');
+          setHomeButtonAttempts(prev => prev + 1);
+        }
+      }, 1000);
+
+      backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+      appStateListener = AppState.addEventListener('change', handleAppStateChange);
+    };
+
+    setupKioskMode();
+
+    return () => {
+      if (backHandler) backHandler.remove();
+      if (appStateListener) appStateListener.remove();
+      if (homeButtonDetector) clearInterval(homeButtonDetector);
+    };
+  }, [homeButtonAttempts]);
+
   const handlePayNow = () => {
     setShowPaymentModal(true);
   };
@@ -37,6 +113,7 @@ export default function LockScreen({ navigation }) {
   const handlePaymentComplete = () => {
     setShowPaymentModal(false);
     Alert.alert('Payment Processed', 'Thank you! Processing your payment...');
+    // In real app, this would process payment and unlock if completed
   };
 
   const handlePaymentCancel = () => {
@@ -46,7 +123,7 @@ export default function LockScreen({ navigation }) {
   const handleContactSupport = () => {
     Alert.alert(
       'Contact Support',
-      'Emergency support options:\n\nPhone: 1-800-TLB-HELP\nEmail: emergency@tlbdiamond.com\n\nNote: Emergency unlocks are only for genuine emergencies and require verification.'
+      'Emergency support options:\n\n📞 1-800-TLB-HELP\n📧 emergency@tlbdiamond.com\n\nNote: Emergency unlocks are only for genuine emergencies and require verification.'
     );
   };
 
@@ -75,6 +152,7 @@ export default function LockScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <View style={styles.lockIconContainer}>
           <Ionicons name="lock-closed" size={60} color="#F4E4BC" />
@@ -87,6 +165,7 @@ export default function LockScreen({ navigation }) {
         </Text>
       </View>
 
+      {/* Payment Progress */}
       <View style={styles.progressSection}>
         <Text style={styles.progressTitle}>Payment Progress</Text>
         <View style={styles.progressContainer}>
@@ -105,6 +184,7 @@ export default function LockScreen({ navigation }) {
         </View>
       </View>
 
+      {/* Next Payment */}
       <View style={styles.paymentSection}>
         <Text style={styles.paymentTitle}>Next Payment Due</Text>
         <Text style={styles.paymentAmount}>Diamond {lockInfo.nextPaymentAmount} TLB</Text>
@@ -116,15 +196,16 @@ export default function LockScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* Action Buttons */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={[styles.actionButton, styles.emergencyButton]} onPress={handleContactSupport}>
           <Ionicons name="medical" size={24} color="#FFFFFF" />
-          <Text style={[styles.actionLabel, styles.emergencyLabel]}>Emergency Support</Text>
+          <Text style={[styles.actionLabel, styles.emergencyLabel]}>Emergency{"\n"}Support</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.actionButton, styles.helpButton]} onPress={() => Alert.alert('Help', 'Payment help and FAQ coming soon!')}>
           <Ionicons name="card" size={24} color="#FFFFFF" />
-          <Text style={[styles.actionLabel, styles.helpLabel]}>Payment Help</Text>
+          <Text style={[styles.actionLabel, styles.helpLabel]}>Payment{"\n"}Help</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.actionButton, styles.chatButton]} onPress={handleChat}>
@@ -138,6 +219,7 @@ export default function LockScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           For assistance, contact our 24/7 support team
@@ -147,15 +229,20 @@ export default function LockScreen({ navigation }) {
         </Text>
       </View>
 
+
+      {/* Hardware Button Blocking Indicator */
       <View style={styles.kioskStatus}>
         <View style={styles.kioskIndicator}>
           <Ionicons name="shield-checkmark" size={16} color="#FF6B35" />
           <Text style={styles.kioskText}>
-            KIOSK ACTIVE - BUTTONS DISABLED - ATTEMPTS: {homeButtonAttempts}
+            KIOSK ACTIVE - BUTTONS DISABLED - ATTEMPTS: 0
           </Text>
         </View>
       </View>
 
+      {/* Kiosk Violation Warning Overlay - temporarily disabled for debugging */}
+
+      {/* Payment Required Modal */}
       <PaymentRequiredModal
         visible={showPaymentModal}
         title="Payment Required"
@@ -197,43 +284,44 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#F4E4BC',
-    marginBottom: 5,
     textAlign: 'center',
+    marginBottom: 10,
   },
   lockSubtitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#D4AF37',
     fontWeight: '600',
     marginBottom: 15,
-    letterSpacing: 2,
   },
   lockDescription: {
     fontSize: 16,
-    color: '#F4E4BC',
+    color: '#B8860B',
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 20,
   },
   progressSection: {
-    marginVertical: 30,
+    backgroundColor: 'rgba(245, 230, 163, 0.1)',
+    borderRadius: 12,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
   },
   progressTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#F4E4BC',
     marginBottom: 15,
     textAlign: 'center',
   },
   progressContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   progressBar: {
-    width: '80%',
     height: 8,
-    backgroundColor: '#4A3728',
+    backgroundColor: 'rgba(184, 134, 11, 0.3)',
     borderRadius: 4,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   progressFill: {
     height: '100%',
@@ -242,43 +330,46 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 14,
-    color: '#F4E4BC',
+    color: '#B8860B',
     textAlign: 'center',
   },
   orderInfo: {
     alignItems: 'center',
-    marginTop: 15,
   },
   orderLabel: {
-    fontSize: 14,
-    color: '#B8860B',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#F4E4BC',
     marginBottom: 5,
   },
   orderReason: {
-    fontSize: 13,
-    color: '#8B4513',
+    fontSize: 14,
+    color: '#D4AF37',
     textAlign: 'center',
     marginBottom: 5,
-    paddingHorizontal: 20,
   },
   lockTime: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#B8860B',
   },
   paymentSection: {
+    backgroundColor: 'rgba(218, 165, 32, 0.1)',
+    borderRadius: 12,
+    padding: 20,
     alignItems: 'center',
-    marginVertical: 20,
+    borderWidth: 1,
+    borderColor: '#DAA520',
   },
   paymentTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#F4E4BC',
     marginBottom: 10,
   },
   paymentAmount: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#F4E4BC',
+    color: '#D4AF37',
     marginBottom: 5,
   },
   paymentDue: {
@@ -287,20 +378,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   payButton: {
-    backgroundColor: '#D4AF37',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 8,
+    backgroundColor: '#DAA520',
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 8,
+    shadowColor: '#B8860B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   payButtonText: {
     color: '#FFFFFF',
@@ -310,94 +398,132 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-around',
-    marginVertical: 20,
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
   actionButton: {
-    width: '22%',
-    aspectRatio: 1,
-    borderRadius: 12,
-    justifyContent: 'center',
+    backgroundColor: '#CD853F',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    minWidth: 70,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 6,
     elevation: 5,
+  },
+  unlockButton: {
+    backgroundColor: '#10B981',
+    borderWidth: 1,
+    borderColor: '#059669',
+  },
+  emergencyButton: {
+    backgroundColor: '#EF4444',
+    borderWidth: 1,
+    borderColor: '#DC2626',
+  },
+  helpButton: {
+    backgroundColor: '#F59E0B',
+    borderWidth: 1,
+    borderColor: '#D97706',
+  },
+  chatButton: {
+    backgroundColor: '#3B82F6',
+    borderWidth: 1,
+    borderColor: '#2563EB',
   },
   actionLabel: {
     color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '600',
-    marginTop: 5,
     textAlign: 'center',
-  },
-  emergencyButton: {
-    backgroundColor: '#FF4444',
-  },
-  emergencyLabel: {
-    color: '#FFFFFF',
-  },
-  helpButton: {
-    backgroundColor: '#4A90E2',
-  },
-  helpLabel: {
-    color: '#FFFFFF',
-  },
-  chatButton: {
-    backgroundColor: '#7ED321',
-  },
-  chatLabel: {
-    color: '#FFFFFF',
-  },
-  unlockButton: {
-    backgroundColor: '#D4AF37',
+    marginTop: 5,
+    lineHeight: 13,
   },
   unlockLabel: {
     color: '#FFFFFF',
   },
+  emergencyLabel: {
+    color: '#FFFFFF',
+  },
+  helpLabel: {
+    color: '#FFFFFF',
+  },
+  chatLabel: {
+    color: '#FFFFFF',
+  },
   footer: {
     alignItems: 'center',
-    marginBottom: 20,
+    paddingTop: 20,
   },
   footerText: {
-    fontSize: 12,
-    color: '#8B4513',
+    fontSize: 14,
+    color: '#B8860B',
     textAlign: 'center',
     marginBottom: 5,
   },
   footerContact: {
     fontSize: 12,
-    color: '#B8860B',
+    color: '#8B4513',
     textAlign: 'center',
-    fontWeight: '600',
+  },
+  warningOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 107, 53, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  warningContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 30,
+    alignItems: 'center',
+    maxWidth: 350,
+    borderWidth: 3,
+    borderColor: '#FF6B35',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  warningTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF6B35',
+    marginVertical: 15,
+    textAlign: 'center',
+  },
+  warningMessage: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 22,
   },
   kioskStatus: {
     position: 'absolute',
-    bottom: 10,
-    left: 10,
-    right: 10,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 107, 53, 0.95)',
+    paddingVertical: 8,
+    zIndex: 1000,
   },
   kioskIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#FF6B35',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
   },
   kioskText: {
-    fontSize: 10,
-    color: '#FF6B35',
-    marginLeft: 8,
+    color: '#FFFFFF',
+    fontSize: 12,
     fontWeight: 'bold',
-    flex: 1,
+    marginLeft: 8,
+    textAlign: 'center',
   },
 });

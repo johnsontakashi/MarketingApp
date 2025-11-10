@@ -31,6 +31,13 @@ The Metro bundler runs on port 8081 by default. To use a different port: `npx ex
 - Build APK: `cd android && ./gradlew assembleRelease` (requires Android setup)
 - Development builds are recommended for testing kiosk functionality
 
+### Key Dependencies
+- **React Navigation v7** - Navigation framework with bottom tabs and stack navigators
+- **Expo SDK 54** - Framework with new architecture enabled
+- **React Native 0.81.5** - Core framework
+- **Expo SecureStore** - Secure authentication token storage
+- **Ionicons** - Icon system via @expo/vector-icons
+
 ### Platform-Specific Development
 The app supports iOS, Android, and Web platforms. Platform-specific code can be added using `.ios.js`, `.android.js`, or `.web.js` file extensions.
 
@@ -162,9 +169,17 @@ The MDM (Mobile Device Management) system is modular:
 - **Factory Reset Requirement**: Device must have no Google accounts for device owner setup
 - **Authentication Testing**: Use any credentials to test auth flow (no backend validation in current implementation)
 
+### Admin Interface
+The app includes a complete admin interface with separate navigation:
+- **AdminNavigator** - Dedicated admin navigation with dark theme (src/navigation/AdminNavigator.js)
+- **Role-Based Access** - Authentication system differentiates between 'admin' and 'user' roles
+- **Admin Screens** - Complete admin panel including user management, product management, device management, and analytics
+- **Dual Interface System** - Regular users see the main app, admins see the admin dashboard
+
 ### Code Quality Guidelines
 - No linting or testing scripts are configured in package.json
 - Follow existing component structure and naming conventions
 - Use hooks-based state management (no Redux/Context API globally)
 - Maintain consistent styling with the golden theme palette
 - Ensure all new components support safe area contexts
+- Admin interface uses darker theme while main app uses golden theme

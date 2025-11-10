@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import * as SecureStore from 'expo-secure-store';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 
@@ -21,6 +22,7 @@ const { width } = Dimensions.get('window');
 export default function HomeScreen({ navigation }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
   
+  const [userName, setUserName] = useState('User');
   const [userBalance, setUserBalance] = useState(1250.00);
   const [deviceStatus, setDeviceStatus] = useState('secure');
   const [activeOrders, setActiveOrders] = useState(2);
@@ -28,6 +30,29 @@ export default function HomeScreen({ navigation }) {
   const [availableBonuses, setAvailableBonuses] = useState(3);
   const [referralEarnings, setReferralEarnings] = useState(25.00);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  // Load user data when component mounts
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedUser = await SecureStore.getItemAsync('currentUser');
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          const firstName = userData.first_name || userData.firstName || 'User';
+          setUserName(firstName);
+          
+          // Also set balance if available from user data
+          if (userData.balance !== undefined) {
+            setUserBalance(userData.balance);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   // Featured products data
   const featuredProducts = [
@@ -214,7 +239,7 @@ export default function HomeScreen({ navigation }) {
       {/* Header Section */}
       <View style={styles.header}>
         <View style={styles.greeting}>
-          <Text style={styles.greetingText}>👋 Hi John!</Text>
+          <Text style={styles.greetingText}>👋 Hi {userName}!</Text>
           <TouchableOpacity style={styles.notificationButton} onPress={handleNotifications}>
             <Ionicons name="notifications" size={24} color="#D4AF37" />
             <View style={styles.notificationBadge}>
