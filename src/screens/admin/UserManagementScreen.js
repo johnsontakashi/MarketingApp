@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   TextInput,
   Modal,
   ScrollView,
@@ -14,6 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../services/api';
+import AdminAlert from '../../components/admin/AdminAlert';
+import { useAdminAlert } from '../../hooks/useAdminAlert';
 
 export default function UserManagementScreen({ navigation }) {
   const [users, setUsers] = useState([]);
@@ -23,6 +24,7 @@ export default function UserManagementScreen({ navigation }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [filterType, setFilterType] = useState('all'); // all, buyer, seller, admin
+  const { alertConfig, hideAlert, showSuccess, showError, showDestructiveConfirm } = useAdminAlert();
 
   useEffect(() => {
     loadUsers();
@@ -101,7 +103,7 @@ export default function UserManagementScreen({ navigation }) {
       setUsers(mockUsers);
     } catch (error) {
       console.error('Error loading users:', error);
-      Alert.alert('Error', 'Failed to load users. Please try again.');
+      showError('Error', 'Failed to load users. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -138,33 +140,30 @@ export default function UserManagementScreen({ navigation }) {
         setShowUserDetails(true);
         break;
       case 'verify':
-        Alert.alert(
+        showDestructiveConfirm(
           'Verify User',
           `Are you sure you want to verify ${user.first_name} ${user.last_name}?`,
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Verify', onPress: () => verifyUser(user.id) }
-          ]
+          () => verifyUser(user.id),
+          null,
+          'Verify'
         );
         break;
       case 'deactivate':
-        Alert.alert(
+        showDestructiveConfirm(
           'Deactivate User',
           `Are you sure you want to deactivate ${user.first_name} ${user.last_name}?`,
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Deactivate', style: 'destructive', onPress: () => deactivateUser(user.id) }
-          ]
+          () => deactivateUser(user.id),
+          null,
+          'Deactivate'
         );
         break;
       case 'delete':
-        Alert.alert(
+        showDestructiveConfirm(
           'Delete User',
           `Are you sure you want to permanently delete ${user.first_name} ${user.last_name}? This action cannot be undone.`,
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => deleteUser(user.id) }
-          ]
+          () => deleteUser(user.id),
+          null,
+          'Delete'
         );
         break;
     }
@@ -176,9 +175,9 @@ export default function UserManagementScreen({ navigation }) {
       setUsers(prev => prev.map(user => 
         user.id === userId ? { ...user, is_verified: true, status: 'active' } : user
       ));
-      Alert.alert('Success', 'User has been verified successfully.');
+      showSuccess('Success', 'User has been verified successfully.');
     } catch (error) {
-      Alert.alert('Error', 'Failed to verify user. Please try again.');
+      showError('Error', 'Failed to verify user. Please try again.');
     }
   };
 
@@ -188,9 +187,9 @@ export default function UserManagementScreen({ navigation }) {
       setUsers(prev => prev.map(user => 
         user.id === userId ? { ...user, status: 'inactive' } : user
       ));
-      Alert.alert('Success', 'User has been deactivated successfully.');
+      showSuccess('Success', 'User has been deactivated successfully.');
     } catch (error) {
-      Alert.alert('Error', 'Failed to deactivate user. Please try again.');
+      showError('Error', 'Failed to deactivate user. Please try again.');
     }
   };
 
@@ -198,9 +197,9 @@ export default function UserManagementScreen({ navigation }) {
     try {
       // TODO: API call to delete user
       setUsers(prev => prev.filter(user => user.id !== userId));
-      Alert.alert('Success', 'User has been deleted successfully.');
+      showSuccess('Success', 'User has been deleted successfully.');
     } catch (error) {
-      Alert.alert('Error', 'Failed to delete user. Please try again.');
+      showError('Error', 'Failed to delete user. Please try again.');
     }
   };
 
@@ -378,6 +377,11 @@ export default function UserManagementScreen({ navigation }) {
         visible={showUserDetails}
         animationType="slide"
         presentationStyle="pageSheet"
+        onRequestClose={() => {
+          console.log('Modal onRequestClose triggered');
+          setShowUserDetails(false);
+          setSelectedUser(null);
+        }}
       >
         {selectedUser && (
           <View style={styles.modalContainer}>
@@ -391,9 +395,10 @@ export default function UserManagementScreen({ navigation }) {
                   setSelectedUser(null);
                 }}
                 activeOpacity={0.7}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                testID="closeButton"
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={28} color="#D4AF37" />
               </TouchableOpacity>
             </View>
             
@@ -435,10 +440,36 @@ export default function UserManagementScreen({ navigation }) {
                   <Text style={styles.detailValue}>{selectedUser.device_count} registered</Text>
                 </View>
               </View>
+              
+              {/* Done Button */}
+              <View style={styles.modalFooter}>
+                <TouchableOpacity 
+                  style={styles.doneButton}
+                  onPress={() => {
+                    console.log('Done button pressed in user details modal');
+                    setShowUserDetails(false);
+                    setSelectedUser(null);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.doneButtonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
             </ScrollView>
           </View>
         )}
       </Modal>
+
+      {/* Admin Alert */}
+      <AdminAlert
+        visible={alertConfig.visible}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
@@ -633,12 +664,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#3d3d3d',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EF4444',
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalContent: {
     flex: 1,
@@ -672,5 +708,21 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flex: 1,
     marginLeft: 16,
+  },
+  modalFooter: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#3d3d3d',
+  },
+  doneButton: {
+    backgroundColor: '#D4AF37',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  doneButtonText: {
+    color: '#1a1a1a',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

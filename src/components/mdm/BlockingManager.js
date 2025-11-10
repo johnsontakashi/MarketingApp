@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import networkManager from './NetworkManager';
 import appRestrictionManager from './AppRestrictionManager';
+import PaymentRequiredModal from '../modals/PaymentRequiredModal';
 
 // Graduated blocking stages
 const BLOCKING_STAGES = {
@@ -35,6 +36,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showNetworkBlockedModal, setShowNetworkBlockedModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [blockedApps, setBlockedApps] = useState([]);
   const [networkBlocked, setNetworkBlocked] = useState(false);
   const [appStateVisible, setAppStateVisible] = useState(AppState.currentState);
@@ -116,14 +118,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
 
     // Show periodic warnings
     warningIntervalRef.current = setInterval(() => {
-      Alert.alert(
-        '⚠️ Payment Required',
-        `Your payment is overdue. Device restrictions will begin in ${formatTime(timeRemaining)}.\n\nPlease make your payment to avoid restrictions.`,
-        [
-          { text: 'Pay Now', onPress: () => onPaymentRequired?.() },
-          { text: 'Remind Later', style: 'cancel' }
-        ]
-      );
+      setShowPaymentModal(true);
     }, 60 * 60 * 1000); // Every hour
   };
 
@@ -246,6 +241,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
     setCurrentStage(BLOCKING_STAGES.NONE);
     setShowWarningModal(false);
     setShowNetworkBlockedModal(false);
+    setShowPaymentModal(false);
     setBlockedApps([]);
     setNetworkBlocked(false);
     
@@ -408,6 +404,21 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
           </View>
         </View>
       </Modal>
+
+      {/* Payment Required Modal */}
+      <PaymentRequiredModal
+        visible={showPaymentModal}
+        title="⚠️ Payment Required"
+        message="Your payment is overdue. Device restrictions will begin soon. Please make your payment to avoid restrictions."
+        countdown={formatTime(timeRemaining)}
+        type="warning"
+        onPayNow={() => {
+          setShowPaymentModal(false);
+          onPaymentRequired?.();
+        }}
+        onClose={() => setShowPaymentModal(false)}
+        showCancel={true}
+      />
 
       {/* Stage Indicator */}
       {currentStage !== BLOCKING_STAGES.NONE && (

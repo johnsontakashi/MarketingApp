@@ -13,10 +13,12 @@ import {
   AppState
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import PaymentRequiredModal from '../modals/PaymentRequiredModal';
 
 const KioskManager = ({ children, navigation }) => {
   const [isLocked, setIsLocked] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [toggleValue, setToggleValue] = useState(false);
   const [kioskLevel, setKioskLevel] = useState('none'); // 'none', 'partial', 'full'
 
@@ -94,17 +96,16 @@ const KioskManager = ({ children, navigation }) => {
   }, [isLocked, kioskLevel]);
 
   const handlePaymentRequired = () => {
-    Alert.alert(
-      '💳 Payment Required',
-      'Complete your payment to unlock the device.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Pay Now', onPress: () => {
-          // Navigate to payment screen
-          Alert.alert('Payment', 'Redirecting to payment screen...');
-        }}
-      ]
-    );
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentComplete = () => {
+    setShowPaymentModal(false);
+    Alert.alert('Payment', 'Redirecting to payment screen...');
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentModal(false);
   };
 
   const handleEmergencySupport = () => {
@@ -299,6 +300,18 @@ const KioskManager = ({ children, navigation }) => {
           </View>
         </Modal>
       )}
+
+      {/* Payment Required Modal */}
+      <PaymentRequiredModal
+        visible={showPaymentModal}
+        title="💳 Payment Required"
+        message="Complete your payment to unlock the device and restore full functionality."
+        type="standard"
+        onPayNow={handlePaymentComplete}
+        onEmergencySupport={handleEmergencySupport}
+        onClose={handlePaymentCancel}
+        showCancel={true}
+      />
     </>
   );
 };
