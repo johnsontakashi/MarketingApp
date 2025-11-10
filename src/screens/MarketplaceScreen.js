@@ -43,6 +43,28 @@ export default function MarketplaceScreen({ navigation }) {
     loadMarketplaceData();
   }, []);
 
+  // Update product count when filtering changes
+  useEffect(() => {
+    if (categories.length > 0) {
+      // Update category counts based on filtered products
+      const updatedCategories = categories.map(category => {
+        if (category.name === 'All') {
+          return { ...category, count: products.length };
+        } else {
+          const count = products.filter(p => p.category === category.name.toLowerCase()).length;
+          return { ...category, count };
+        }
+      });
+      setCategories(updatedCategories);
+    }
+  }, [products]);
+
+  // Handle category selection
+  const handleCategorySelect = (categoryName) => {
+    setSelectedCategory(categoryName);
+    console.log(`Category selected: ${categoryName}`);
+  };
+
   // Load marketplace data
   const loadMarketplaceData = async () => {
     try {
@@ -365,8 +387,19 @@ export default function MarketplaceScreen({ navigation }) {
     return stars;
   };
 
-  // Products are already filtered by the API
-  const filteredProducts = products;
+  // Filter products based on selected category and search query
+  const filteredProducts = products.filter(product => {
+    // Category filter
+    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory.toLowerCase();
+    
+    // Search filter
+    const matchesSearch = searchQuery === '' || 
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.seller.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <View style={styles.container}>
@@ -406,7 +439,7 @@ export default function MarketplaceScreen({ navigation }) {
                     styles.categoryCard,
                     selectedCategory === category.name && styles.selectedCategoryCard
                   ]}
-                  onPress={() => setSelectedCategory(category.name)}
+                  onPress={() => handleCategorySelect(category.name)}
                 >
                   <Ionicons 
                     name={category.icon} 
