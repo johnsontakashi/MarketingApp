@@ -190,40 +190,70 @@ router.post('/login', async (req, res) => {
     user.login_count = user.login_count + 1;
     await user.save(['last_login', 'login_count']);
 
-    // Update or create device record
-    const deviceId = req.header('X-Device-ID');
-    if (deviceId) {
-      let device = await Device.findOne({
-        where: { device_id: deviceId }
-      });
+    // Update or create device record - wrap in try/catch to prevent login failure
+    try {
+      const deviceId = req.header('X-Device-ID');
+      if (deviceId) {
+        let device = await Device.findOne({
+          where: { device_id: deviceId }
+        });
 
-      if (device) {
-        // Update existing device - reassign to current user if needed
-        device.user_id = user.id;
-        device.last_seen_ip = req.ip;
-        device.user_agent = req.header('User-Agent');
-        device.app_version = req.header('X-App-Version') || device.app_version;
-        device.last_heartbeat = new Date();
-        await device.save();
-      } else {
-        // Create new device
-        try {
-          const deviceData = {
-            device_id: deviceId,
-            user_id: user.id,
-            device_name: req.header('X-Device-Name') || 'Mobile Device',
-            device_type: req.header('X-Device-Type') || 'android',
-            app_version: req.header('X-App-Version'),
-            user_agent: req.header('User-Agent'),
-            last_seen_ip: req.ip
-          };
+        if (device) {
+          // Update existing device - reassign to current user if needed
+          try {
+            device.user_id = user.id;
+            device.last_seen_ip = req.ip;
+            device.user_agent = req.header('User-Agent');
+            device.app_version = req.header('X-App-Version') || device.app_version;
+            device.last_heartbeat = new Date();
+            await device.save();
+            console.log('Device updated successfully for user:', user.email);
+          } catch (updateError) {
+            console.warn('Device update failed:', updateError.message);
+          }
+        } else {
+          // Create new device
+          try {
+            const deviceData = {
+              device_id: deviceId,
+              user_id: user.id,
+              device_name: req.header('X-Device-Name') || 'Mobile Device',
+              device_type: req.header('X-Device-Type') || 'android',
+              app_version: req.header('X-App-Version'),
+              user_agent: req.header('User-Agent'),
+              last_seen_ip: req.ip
+            };
 
-          await Device.create(deviceData);
-        } catch (deviceError) {
-          // If device creation fails (e.g., unique constraint), just log and continue
-          console.warn('Device registration failed:', deviceError.message);
+            await Device.create(deviceData);
+            console.log('New device created successfully for user:', user.email);
+          } catch (deviceError) {
+            // If device creation fails (e.g., unique constraint), check if it was created between our check and now
+            if (deviceError.name === 'SequelizeUniqueConstraintError') {
+              console.warn('Device already exists, attempting to update...');
+              try {
+                let existingDevice = await Device.findOne({
+                  where: { device_id: deviceId }
+                });
+                if (existingDevice) {
+                  existingDevice.user_id = user.id;
+                  existingDevice.last_seen_ip = req.ip;
+                  existingDevice.user_agent = req.header('User-Agent');
+                  existingDevice.last_heartbeat = new Date();
+                  await existingDevice.save();
+                  console.log('Existing device updated successfully');
+                }
+              } catch (fallbackError) {
+                console.warn('Device fallback update also failed:', fallbackError.message);
+              }
+            } else {
+              console.warn('Device registration failed:', deviceError.message);
+            }
+          }
         }
       }
+    } catch (deviceError) {
+      // Don't let device registration errors break the login flow
+      console.error('Device management error (non-blocking):', deviceError.message);
     }
 
     // Generate token

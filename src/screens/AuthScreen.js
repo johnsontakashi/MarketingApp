@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import apiClient, { ApiError } from '../services/api';
+import WelcomeModal from '../components/WelcomeModal';
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +25,8 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [welcomeData, setWelcomeData] = useState({ userName: '', isAdmin: false });
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -108,6 +111,17 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
     }
   };
 
+  const handleWelcomeModalClose = () => {
+    setShowWelcomeModal(false);
+    // Now trigger the authentication success callback to navigate to main app
+    console.log('Welcome modal closed, triggering auth success callback...');
+    if (authSuccessCallback) {
+      authSuccessCallback();
+    } else {
+      console.error('No auth success callback provided');
+    }
+  };
+
   const validateForm = () => {
     const { email, password, confirmPassword, firstName, lastName, phoneNumber, sex } = formData;
 
@@ -177,20 +191,16 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           // Store current session using the API response
           await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
           
-          // Show success message with user's name
+          // Show success message with beautiful welcome modal
+          const isAdmin = response.user.role === 'admin' || response.user.email === 'admin@tlbdiamond.com';
           const userName = response.user.first_name || response.user.email;
-          Alert.alert(
-            'Welcome to TLB Diamond!', 
-            `${userName} successfully logged in to this App`,
-            [{ text: 'OK', style: 'default' }]
-          );
           
-          console.log('API login successful, triggering callback...');
-          if (authSuccessCallback) {
-            authSuccessCallback();
-          } else {
-            console.error('No auth success callback provided');
-          }
+          // Set welcome modal data and show it
+          setWelcomeData({ userName, isAdmin });
+          setShowWelcomeModal(true);
+          
+          // Don't call authSuccessCallback immediately - wait for modal to close
+          console.log('API login successful, showing welcome modal first...');
         } else {
           Alert.alert('Login Failed', 'Invalid response from server');
         }
@@ -218,12 +228,13 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           // Store current session using the API response
           await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
           
-          console.log('API registration successful, triggering callback...');
-          if (authSuccessCallback) {
-            authSuccessCallback();
-          } else {
-            console.error('No auth success callback provided');
-          }
+          // Show success message with beautiful welcome modal
+          const userName = response.user.first_name || response.user.email;
+          setWelcomeData({ userName, isAdmin: false }); // New registrations are never admin
+          setShowWelcomeModal(true);
+          
+          // Don't call authSuccessCallback immediately - wait for modal to close
+          console.log('API registration successful, showing welcome modal first...');
         } else {
           Alert.alert('Registration Failed', 'Invalid response from server');
         }
@@ -570,6 +581,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           </View>
         </Modal>
       )}
+
+      {/* Welcome Modal */}
+      <WelcomeModal
+        visible={showWelcomeModal}
+        onClose={handleWelcomeModalClose}
+        userName={welcomeData.userName}
+        isAdmin={welcomeData.isAdmin}
+      />
     </ScrollView>
   );
 }
