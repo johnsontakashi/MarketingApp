@@ -177,6 +177,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           // Store current session using the API response
           await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
           
+          // Show success message with user's name
+          const userName = response.user.first_name || response.user.email;
+          Alert.alert(
+            'Welcome to TLB Diamond!', 
+            `${userName} successfully logged in to this App`,
+            [{ text: 'OK', style: 'default' }]
+          );
+          
           console.log('API login successful, triggering callback...');
           if (authSuccessCallback) {
             authSuccessCallback();

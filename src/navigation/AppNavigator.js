@@ -30,7 +30,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // Main tab navigator
-function MainTabNavigator() {
+function MainTabNavigator({ onLogout }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -88,10 +88,11 @@ function MainTabNavigator() {
         options={{ title: 'Community' }}
       />
       <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
+        name="Profile"
         options={{ title: 'Profile' }}
-      />
+      >
+        {(props) => <ProfileScreen {...props} onLogout={onLogout} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -105,9 +106,10 @@ function AppWithLockManager() {
       }}
     >
       <Stack.Screen 
-        name="MainTabs" 
-        component={MainTabNavigator} 
-      />
+        name="MainTabs"
+      >
+        {(props) => <MainTabNavigator {...props} onLogout={handleLogout} />}
+      </Stack.Screen>
       <Stack.Screen 
         name="DeviceStatus" 
         component={DeviceStatusScreen}
@@ -231,6 +233,12 @@ function AppNavigator() {
     console.log('Auth success callback triggered - setting isAuthenticated to true');
     setIsAuthenticated(true);
     console.log('Authentication state updated, should show main app now');
+  };
+
+  const handleLogout = () => {
+    console.log('Logout triggered - setting isAuthenticated to false');
+    setIsAuthenticated(false);
+    console.log('Authentication state updated, should show login screen now');
   };
 
   console.log('AppNavigator rendering, isAuthenticated:', isAuthenticated);
