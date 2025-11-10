@@ -10,14 +10,15 @@ const { syncModels } = require('./models');
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
 const walletRoutes = require('./routes/wallet');
-const transactionRoutes = require('./routes/transactions');
-const productRoutes = require('./routes/products');
-const orderRoutes = require('./routes/orders');
 const communityRoutes = require('./routes/community');
-const mdmRoutes = require('./routes/mdm');
-const adminRoutes = require('./routes/admin');
+const productRoutes = require('./routes/products');
+// TODO: Add other routes as needed
+// const userRoutes = require('./routes/users');
+// const transactionRoutes = require('./routes/transactions');
+// const orderRoutes = require('./routes/orders');
+// const mdmRoutes = require('./routes/mdm');
+// const adminRoutes = require('./routes/admin');
 
 // Initialize Express app
 const app = express();
@@ -37,15 +38,10 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: [
-    'http://localhost:19006',  // Expo development server
-    'http://localhost:8081',   // Metro bundler
-    'http://localhost:3000',   // Web development
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Device-ID', 'X-App-Version']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Device-ID', 'X-App-Version', 'X-Device-Name', 'X-Device-Type']
 }));
 
 // Basic middleware
@@ -74,14 +70,15 @@ app.get('/health', (req, res) => {
 const API_PREFIX = `/api/${process.env.API_VERSION || 'v1'}`;
 
 app.use(`${API_PREFIX}/auth`, authRoutes);
-app.use(`${API_PREFIX}/users`, userRoutes);
 app.use(`${API_PREFIX}/wallet`, walletRoutes);
-app.use(`${API_PREFIX}/transactions`, transactionRoutes);
-app.use(`${API_PREFIX}/products`, productRoutes);
-app.use(`${API_PREFIX}/orders`, orderRoutes);
 app.use(`${API_PREFIX}/community`, communityRoutes);
-app.use(`${API_PREFIX}/mdm`, mdmRoutes);
-app.use(`${API_PREFIX}/admin`, adminRoutes);
+app.use(`${API_PREFIX}/products`, productRoutes);
+// TODO: Enable these routes when they are created
+// app.use(`${API_PREFIX}/users`, userRoutes);
+// app.use(`${API_PREFIX}/transactions`, transactionRoutes);
+// app.use(`${API_PREFIX}/orders`, orderRoutes);
+// app.use(`${API_PREFIX}/mdm`, mdmRoutes);
+// app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 // API documentation endpoint
 app.get(`${API_PREFIX}`, (req, res) => {

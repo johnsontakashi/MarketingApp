@@ -213,8 +213,10 @@ async function setupDatabase() {
       {
         wallet_id: sampleWallet.id,
         user_id: sampleUser.id,
+        transaction_id: 'TXN-001234',
         type: 'received',
         amount: 5.00,
+        net_amount: 5.00,
         currency: 'TLB',
         status: 'completed',
         title: 'Referral Bonus',
@@ -226,8 +228,10 @@ async function setupDatabase() {
       {
         wallet_id: sampleWallet.id,
         user_id: sampleUser.id,
+        transaction_id: 'TXN-001235',
         type: 'sent',
         amount: 25.00,
+        net_amount: 25.00,
         currency: 'TLB',
         status: 'completed',
         title: 'Order Payment',
@@ -239,8 +243,10 @@ async function setupDatabase() {
       {
         wallet_id: sampleWallet.id,
         user_id: sampleUser.id,
+        transaction_id: 'TXN-001236',
         type: 'received',
         amount: 50.00,
+        net_amount: 50.00,
         currency: 'TLB',
         status: 'completed',
         title: 'Birthday Bonus',

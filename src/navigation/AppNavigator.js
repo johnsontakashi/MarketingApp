@@ -172,12 +172,21 @@ function AppNavigator() {
 
   const checkAuthStatus = async () => {
     try {
+      const authToken = await SecureStore.getItemAsync('auth_token');
       const currentUser = await SecureStore.getItemAsync('currentUser');
-      if (currentUser) {
+      
+      console.log('Checking auth status:', { hasToken: !!authToken, hasUser: !!currentUser });
+      
+      if (authToken && currentUser) {
         setIsAuthenticated(true);
+        console.log('User is authenticated');
+      } else {
+        console.log('User is not authenticated');
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
+      setIsAuthenticated(false);
     } finally {
       setIsCheckingAuth(false);
     }

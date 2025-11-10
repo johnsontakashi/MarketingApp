@@ -1,18 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
+import apiClient from '../services/api';
 
 const { width } = Dimensions.get('window');
 
 export default function CommunityScreen() {
-  const { alertConfig, showAlert, hideAlert, showInfo, showSuccess } = useCustomAlert();
+  const { alertConfig, showAlert, hideAlert, showInfo, showSuccess, showError } = useCustomAlert();
   const [showTreeModal, setShowTreeModal] = useState(false);
   const [expandedGenerations, setExpandedGenerations] = useState({});
   const [selectedMember, setSelectedMember] = useState(null);
   const [showMemberDetail, setShowMemberDetail] = useState(false);
-  const [availableBonuses] = useState([
+  
+  // API state
+  const [loading, setLoading] = useState(true);
+  const [bonusLoading, setBonusLoading] = useState(false);
+  const [availableBonuses, setAvailableBonuses] = useState([]);
+  const [referralStats, setReferralStats] = useState({
+    totalReferrals: 0,
+    totalEarnings: 0,
+    thisMonthEarnings: 0,
+    generationBreakdown: []
+  });
+  const [fullTreeData, setFullTreeData] = useState([]);
+  const [userProfile, setUserProfile] = useState({ referral_code: '' });
+  
+  // Load data on mount
+  useEffect(() => {
+    loadCommunityData();
+  }, []);
+
+  const loadCommunityData = async () => {
+    try {
+      setLoading(true);
+      const [bonusResponse, statsResponse, treeResponse] = await Promise.all([
+        apiClient.getAvailableBonuses(),
+        apiClient.getReferralStats(),
+        apiClient.getReferralTree()
+      ]);
+      
+      // Load bonuses
+      if (bonusResponse.bonuses) {
+        const formattedBonuses = bonusResponse.bonuses.map(bonus => ({
+          id: bonus.id,
+          type: bonus.type,
+          amount: parseFloat(bonus.amount),
+          title: bonus.title,
+          description: bonus.description,
+          expiresIn: formatTimeUntil(bonus.expires_at),
+          icon: bonus.icon || getBonusIcon(bonus.type),
+          giver: bonus.giver_name,
+          message: bonus.message
+        }));
+        setAvailableBonuses(formattedBonuses);
+      }
+
+      // Load referral stats
+      if (statsResponse.stats) {
+        setReferralStats({
+          totalReferrals: statsResponse.stats.total_referrals || 0,
+          totalEarnings: parseFloat(statsResponse.stats.total_earnings || 0),
+          thisMonthEarnings: parseFloat(statsResponse.stats.monthly_earnings || 0),
+          generationBreakdown: statsResponse.stats.generation_breakdown || []
+        });
+      }
+
+      // Load referral tree
+      if (treeResponse.tree) {
+        setFullTreeData(treeResponse.tree);
+      }
+
+      // Load user profile for referral code
+      const profileResponse = await apiClient.getProfile();
+      if (profileResponse.user) {
+        setUserProfile(profileResponse.user);
+      }
+    } catch (error) {
+      console.error('Failed to load community data:', error);
+      showError('Error', 'Failed to load community data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTimeUntil = (dateString) => {
+    const expiryDate = new Date(dateString);
+    const now = new Date();
+    const diffMs = expiryDate - now;
+    
+    if (diffMs <= 0) return 'Expired';
+    
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+    } else {
+      return `${diffHours} hour${diffHours > 1 ? 's' : ''}`;
+    }
+  };
+
+  const getBonusIcon = (type) => {
+    switch (type) {
+      case 'birthday': return '🎂';
+      case 'gift_of_legacy': return '⭐';
+      case 'daily_login': return '🎁';
+      case 'commission': return '💰';
+      default: return '🎁';
+    }
+  };
+  
+  // Original mock data for fallback (keeping structure intact)
+  const mockAvailableBonuses = [
     {
       id: 1,
       type: 'birthday',
@@ -42,9 +143,10 @@ export default function CommunityScreen() {
       expiresIn: '18 hours',
       icon: '🎁'
     }
-  ]);
+  ];
 
-  const [referralStats] = useState({
+  // Fallback mock data structure preserved
+  const mockReferralStats = {
     totalReferrals: 12,
     totalEarnings: 45.00,
     thisMonthEarnings: 15.00,
@@ -53,23 +155,46 @@ export default function CommunityScreen() {
       { level: 2, count: 7, earnings: 15.00 },
       { level: 3, count: 0, earnings: 5.00 }
     ]
-  });
+  };
 
-  const handleClaimBonus = (bonus) => {
-    Alert.alert(
-      'Claim Bonus',
-      `Claim ${bonus.icon} ${bonus.title} worth 💎 ${bonus.amount} TLB?`,
-      [
+  const handleClaimBonus = async (bonus) => {
+    showAlert({
+      title: 'Claim Bonus',
+      message: `Claim ${bonus.icon} ${bonus.title} worth 💎 ${bonus.amount} TLB?`,
+      type: 'warning',
+      icon: 'gift',
+      buttons: [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Claim', onPress: () => Alert.alert('Success!', 'Bonus claimed successfully!') }
+        {
+          text: 'Claim',
+          onPress: async () => {
+            try {
+              setBonusLoading(true);
+              await apiClient.claimBonus(bonus.id);
+              showSuccess('Success!', 'Bonus claimed successfully!');
+              // Reload bonuses to reflect changes
+              await loadCommunityData();
+            } catch (error) {
+              console.error('Claim bonus failed:', error);
+              if (error.isNetworkError?.()) {
+                showError('Network Error', 'Please check your internet connection and try again.');
+              } else {
+                showError('Claim Failed', error.message || 'Failed to claim bonus. Please try again.');
+              }
+            } finally {
+              setBonusLoading(false);
+            }
+          }
+        }
       ]
-    );
+    });
   };
 
   const handleShareReferral = () => {
+    const referralCode = userProfile.referral_code || 'LOADING...';
     showAlert({
       title: '🎯 Share Referral Code',
-      message: 'Your referral code: JOHN2024\n\nShare this code with friends and earn rewards!',
+      message: `Your referral code: ${referralCode}\n\nShare this code with friends and earn rewards!`,
       type: 'info',
       icon: 'share',
       buttons: [
@@ -90,7 +215,8 @@ export default function CommunityScreen() {
     });
   };
 
-  const [fullTreeData] = useState([
+  // Mock tree data structure preserved as fallback
+  const mockTreeData = [
     {
       generation: 1,
       totalEarnings: 25.00,
@@ -322,7 +448,7 @@ export default function CommunityScreen() {
         }
       ]
     }
-  ]);
+  ];
 
   const handleViewFullTree = () => {
     setShowTreeModal(true);
@@ -403,11 +529,15 @@ export default function CommunityScreen() {
         <Text style={styles.networkTitle}>🤝 Your Network</Text>
         <View style={styles.networkStats}>
           <View style={styles.networkStat}>
-            <Text style={styles.networkNumber}>{referralStats.totalReferrals}</Text>
+            <Text style={styles.networkNumber}>
+              {loading ? '...' : referralStats.totalReferrals}
+            </Text>
             <Text style={styles.networkLabel}>Referrals</Text>
           </View>
           <View style={styles.networkStat}>
-            <Text style={styles.networkNumber}>💎 {referralStats.totalEarnings}</Text>
+            <Text style={styles.networkNumber}>
+              {loading ? '💎 ...' : `💎 ${referralStats.totalEarnings.toFixed(2)}`}
+            </Text>
             <Text style={styles.networkLabel}>Total Earnings</Text>
           </View>
         </View>
@@ -420,7 +550,9 @@ export default function CommunityScreen() {
 
       {/* Available Bonuses */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🎁 Available Bonuses ({availableBonuses.length})</Text>
+        <Text style={styles.sectionTitle}>
+          🎁 Available Bonuses ({loading ? '...' : availableBonuses.length})
+        </Text>
         
         {availableBonuses.map((bonus) => (
           <View key={bonus.id} style={styles.bonusCard}>
@@ -447,10 +579,13 @@ export default function CommunityScreen() {
             
             <View style={styles.bonusActions}>
               <TouchableOpacity 
-                style={styles.claimButton}
+                style={[styles.claimButton, bonusLoading && styles.disabledButton]}
                 onPress={() => handleClaimBonus(bonus)}
+                disabled={bonusLoading}
               >
-                <Text style={styles.claimButtonText}>Claim Bonus</Text>
+                <Text style={styles.claimButtonText}>
+                  {bonusLoading ? 'Claiming...' : 'Claim Bonus'}
+                </Text>
               </TouchableOpacity>
               
               {bonus.type === 'gift_of_legacy' && (
@@ -468,15 +603,19 @@ export default function CommunityScreen() {
         <Text style={styles.sectionTitle}>📈 Your Referral Tree</Text>
         
         <View style={styles.treeContainer}>
-          {referralStats.generationBreakdown.map((gen, index) => (
-            <View key={index} style={styles.generationRow}>
-              <View style={styles.generationInfo}>
-                <Text style={styles.generationLabel}>Generation {gen.level}</Text>
-                <Text style={styles.generationCount}>{gen.count} people</Text>
+          {loading ? (
+            <Text style={{textAlign: 'center', color: '#8B4513', padding: 20}}>Loading...</Text>
+          ) : (
+            referralStats.generationBreakdown.map((gen, index) => (
+              <View key={index} style={styles.generationRow}>
+                <View style={styles.generationInfo}>
+                  <Text style={styles.generationLabel}>Generation {gen.level}</Text>
+                  <Text style={styles.generationCount}>{gen.count} people</Text>
+                </View>
+                <Text style={styles.generationEarnings}>💎 {gen.earnings?.toFixed(2) || '0.00'}</Text>
               </View>
-              <Text style={styles.generationEarnings}>💎 {gen.earnings.toFixed(2)}</Text>
-            </View>
-          ))}
+            ))
+          )}
         </View>
         
         <TouchableOpacity style={styles.viewTreeButton} onPress={handleViewFullTree}>
@@ -540,13 +679,13 @@ export default function CommunityScreen() {
             <View style={styles.treeQuickStats}>
               <View style={styles.quickStatItem}>
                 <Text style={styles.quickStatNumber}>
-                  {fullTreeData.reduce((total, gen) => total + gen.referrals.length, 0)}
+                  {fullTreeData.reduce((total, gen) => total + (gen.referrals?.length || 0), 0)}
                 </Text>
                 <Text style={styles.quickStatLabel}>Total Members</Text>
               </View>
               <View style={styles.quickStatItem}>
                 <Text style={styles.quickStatNumber}>
-                  💎 {fullTreeData.reduce((sum, gen) => sum + gen.totalEarnings, 0).toFixed(2)}
+                  💎 {fullTreeData.reduce((sum, gen) => sum + (gen.totalEarnings || 0), 0).toFixed(2)}
                 </Text>
                 <Text style={styles.quickStatLabel}>Total Earnings</Text>
               </View>
@@ -954,6 +1093,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     textAlign: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.6,
   },
   forwardButton: {
     backgroundColor: '#8B4513',

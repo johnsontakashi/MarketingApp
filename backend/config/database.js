@@ -8,7 +8,8 @@ const config = {
     database: process.env.DB_NAME || 'tlb_diamond_db',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
+    dialect: process.env.DB_DIALECT || 'sqlite',
+    storage: process.env.DB_STORAGE || './database.sqlite',
     logging: console.log,
     pool: {
       max: 10,
@@ -66,8 +67,20 @@ async function testConnection() {
   }
 }
 
+// Sync models function
+async function syncModels(force = false) {
+  try {
+    await sequelize.sync({ force });
+    console.log('✅ Database models synchronized successfully.');
+  } catch (error) {
+    console.error('❌ Database sync failed:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   sequelize,
   config,
-  testConnection
+  testConnection,
+  syncModels
 };

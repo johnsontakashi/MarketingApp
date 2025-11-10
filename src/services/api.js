@@ -1,10 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
-import * as Device from 'expo-device';
+// import * as Device from 'expo-device';  // Temporarily commented out
 import Constants from 'expo-constants';
 
 // API Configuration
 const API_BASE_URL = __DEV__ 
-  ? 'http://localhost:3000/api/v1'  // Development
+  ? 'http://217.182.175.221:3000/api/v1'  // Development
   : 'https://your-production-api.com/api/v1'; // Production
 
 // Device info for MDM
@@ -18,7 +18,7 @@ const initializeDevice = async () => {
       // Try to get stored device ID, or generate new one
       deviceId = await SecureStore.getItemAsync('device_id');
       if (!deviceId) {
-        deviceId = `${Device.brand}-${Device.modelName}-${Constants.sessionId}`.replace(/\s+/g, '-');
+        deviceId = `Unknown-Device-${Constants.sessionId}`.replace(/\s+/g, '-');
         await SecureStore.setItemAsync('device_id', deviceId);
       }
     }
@@ -26,12 +26,12 @@ const initializeDevice = async () => {
     if (!deviceInfo) {
       deviceInfo = {
         id: deviceId,
-        name: Device.deviceName || Device.modelName || 'Unknown Device',
-        type: Device.osName?.toLowerCase() || 'android',
-        brand: Device.brand,
-        model: Device.modelName,
-        manufacturer: Device.manufacturer,
-        osVersion: Device.osVersion,
+        name: 'Unknown Device',
+        type: 'android',
+        brand: 'Unknown',
+        model: 'Unknown',
+        manufacturer: 'Unknown',
+        osVersion: 'Unknown',
         appVersion: Constants.expoConfig?.version || '1.0.0'
       };
     }

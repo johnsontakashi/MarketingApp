@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -13,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
+import apiClient from '../services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -40,151 +41,137 @@ export default function WalletScreen({ navigation }) {
     amount: '',
     message: ''
   });
-  const [walletData] = useState({
-    available: 1200.00,
-    locked: 50.00,
+  
+  // API state
+  const [loading, setLoading] = useState(true);
+  const [walletData, setWalletData] = useState({
+    available: 0.00,
+    locked: 0.00,
     pending: 0.00,
-    lifetimeEarned: 5000.00,
-    lifetimeSpent: 3750.00,
-    monthlyEarned: 150.00,
-    monthlySpent: 300.00,
-    monthlyBonuses: 75.00
+    lifetimeEarned: 0.00,
+    lifetimeSpent: 0.00,
+    monthlyEarned: 0.00,
+    monthlySpent: 0.00,
+    monthlyBonuses: 0.00
   });
 
-  const [allTransactions] = useState([
-    {
-      id: 1,
-      type: 'received',
-      amount: 5.00,
-      title: 'Referral Bonus',
-      subtitle: 'From: Sarah M.',
-      time: 'Today',
-      date: '2024-12-05',
-      icon: 'people',
-      color: '#10B981',
-      status: 'completed',
-      transactionId: 'TXN-001234'
-    },
-    {
-      id: 2,
-      type: 'sent',
-      amount: 25.00,
-      title: 'Order Payment',
-      subtitle: 'Installment #2',
-      time: 'Yesterday',
-      date: '2024-12-04',
-      icon: 'card',
-      color: '#EF4444',
-      status: 'completed',
-      transactionId: 'TXN-001235'
-    },
-    {
-      id: 3,
-      type: 'received',
-      amount: 50.00,
-      title: 'Birthday Bonus',
-      subtitle: 'Special reward',
-      time: '2 days ago',
-      date: '2024-12-03',
-      icon: 'gift',
-      color: '#10B981',
-      status: 'completed',
-      transactionId: 'TXN-001236'
-    },
-    {
-      id: 4,
-      type: 'sent',
-      amount: 200.00,
-      title: 'Product Purchase',
-      subtitle: 'Wireless Headphones',
-      time: '3 days ago',
-      date: '2024-12-02',
-      icon: 'storefront',
-      color: '#EF4444',
-      status: 'completed',
-      transactionId: 'TXN-001237'
-    },
-    {
-      id: 5,
-      type: 'received',
-      amount: 25.00,
-      title: 'Daily Login Bonus',
-      subtitle: 'Streak: 7 days',
-      time: '4 days ago',
-      date: '2024-12-01',
-      icon: 'calendar',
-      color: '#10B981',
-      status: 'completed',
-      transactionId: 'TXN-001238'
-    },
-    {
-      id: 6,
-      type: 'sent',
-      amount: 75.00,
-      title: 'Gaming Mouse Pro',
-      subtitle: 'Installment #1',
-      time: '5 days ago',
-      date: '2024-11-30',
-      icon: 'storefront',
-      color: '#EF4444',
-      status: 'completed',
-      transactionId: 'TXN-001239'
-    },
-    {
-      id: 7,
-      type: 'received',
-      amount: 10.00,
-      title: 'Weekly Bonus',
-      subtitle: 'Community reward',
-      time: '1 week ago',
-      date: '2024-11-28',
-      icon: 'gift',
-      color: '#10B981',
-      status: 'completed',
-      transactionId: 'TXN-001240'
-    },
-    {
-      id: 8,
-      type: 'sent',
-      amount: 150.00,
-      title: 'Smart Fitness Watch',
-      subtitle: 'Full payment',
-      time: '1 week ago',
-      date: '2024-11-27',
-      icon: 'card',
-      color: '#EF4444',
-      status: 'completed',
-      transactionId: 'TXN-001241'
-    },
-    {
-      id: 9,
-      type: 'received',
-      amount: 30.00,
-      title: 'Support Bonus',
-      subtitle: 'Payment assistance',
-      time: '2 weeks ago',
-      date: '2024-11-20',
-      icon: 'shield-checkmark',
-      color: '#10B981',
-      status: 'completed',
-      transactionId: 'TXN-001242'
-    },
-    {
-      id: 10,
-      type: 'sent',
-      amount: 85.00,
-      title: 'Bluetooth Speaker',
-      subtitle: 'Installment #2',
-      time: '2 weeks ago',
-      date: '2024-11-19',
-      icon: 'storefront',
-      color: '#EF4444',
-      status: 'completed',
-      transactionId: 'TXN-001243'
-    }
-  ]);
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [transactionLoading, setTransactionLoading] = useState(false);
 
   const transactions = allTransactions.slice(0, 4); // Show only first 4 in recent
+
+  // Load wallet data on component mount
+  useEffect(() => {
+    loadWalletData();
+    loadTransactions();
+  }, []);
+
+  const loadWalletData = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.getWallet();
+      
+      if (response.wallet) {
+        setWalletData({
+          available: response.wallet.available_balance || 0,
+          locked: response.wallet.locked_balance || 0,
+          pending: response.wallet.pending_balance || 0,
+          lifetimeEarned: response.wallet.total_earned || 0,
+          lifetimeSpent: response.wallet.total_spent || 0,
+          monthlyEarned: response.wallet.monthly_earned || 0,
+          monthlySpent: response.wallet.monthly_spent || 0,
+          monthlyBonuses: response.wallet.monthly_bonuses || 0
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load wallet data:', error);
+      showError('Error', 'Failed to load wallet data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadTransactions = async () => {
+    try {
+      setTransactionLoading(true);
+      const response = await apiClient.getTransactions(20, 0);
+      
+      if (response.transactions) {
+        const formattedTransactions = response.transactions.map(transaction => ({
+          id: transaction.id,
+          type: transaction.type,
+          amount: parseFloat(transaction.amount),
+          title: transaction.title || formatTransactionTitle(transaction.type),
+          subtitle: transaction.description || '',
+          time: formatTimeAgo(transaction.created_at),
+          date: new Date(transaction.created_at).toISOString().split('T')[0],
+          icon: transaction.icon || getTransactionIcon(transaction.type),
+          color: transaction.color || getTransactionColor(transaction.type),
+          status: transaction.status,
+          transactionId: transaction.transaction_id || `TXN-${transaction.id}`
+        }));
+        setAllTransactions(formattedTransactions);
+      }
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+    } finally {
+      setTransactionLoading(false);
+    }
+  };
+
+  const formatTransactionTitle = (type) => {
+    switch (type) {
+      case 'sent': return 'Payment Sent';
+      case 'received': return 'Payment Received';
+      case 'commission': return 'Commission Earned';
+      case 'bonus': return 'Bonus Received';
+      case 'topup': return 'Wallet Top Up';
+      default: return 'Transaction';
+    }
+  };
+
+  const getTransactionIcon = (type) => {
+    switch (type) {
+      case 'sent': return 'arrow-up';
+      case 'received': return 'arrow-down';
+      case 'commission': return 'people';
+      case 'bonus': return 'gift';
+      case 'topup': return 'card';
+      default: return 'swap-horizontal';
+    }
+  };
+
+  const getTransactionColor = (type) => {
+    switch (type) {
+      case 'sent': return '#EF4444';
+      case 'received': return '#10B981';
+      case 'commission': return '#F59E0B';
+      case 'bonus': return '#8B5CF6';
+      case 'topup': return '#3B82F6';
+      default: return '#6B7280';
+    }
+  };
+
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMinutes < 60) {
+      return diffMinutes <= 1 ? 'Just now' : `${diffMinutes}m ago`;
+    } else if (diffHours < 24) {
+      return `${diffHours}h ago`;
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
 
   const quickActions = [
     { icon: 'send', label: 'Send', color: '#D4AF37' },
@@ -212,7 +199,7 @@ export default function WalletScreen({ navigation }) {
     }
   };
 
-  const handleSendTLB = () => {
+  const handleSendTLB = async () => {
     if (!sendForm.recipient || !sendForm.amount) {
       showError('Incomplete Form', 'Please fill in both recipient and amount fields.');
       return;
@@ -243,17 +230,37 @@ export default function WalletScreen({ navigation }) {
         {
           text: 'Send TLB',
           style: 'default',
-          onPress: () => {
-            setShowSendModal(false);
-            setSendForm({ recipient: '', amount: '', message: '' });
-            showSuccess('Transfer Sent!', `💎 ${amount.toFixed(2)} TLB sent successfully to ${sendForm.recipient}.`);
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await apiClient.sendTLB(sendForm.recipient, amount, sendForm.message);
+              
+              setShowSendModal(false);
+              setSendForm({ recipient: '', amount: '', message: '' });
+              showSuccess('Transfer Sent!', `💎 ${amount.toFixed(2)} TLB sent successfully to ${sendForm.recipient}.`);
+              
+              // Reload wallet data and transactions
+              await loadWalletData();
+              await loadTransactions();
+            } catch (error) {
+              console.error('Send TLB failed:', error);
+              if (error.isNetworkError?.()) {
+                showError('Network Error', 'Please check your internet connection and try again.');
+              } else if (error.isValidationError?.()) {
+                showError('Invalid Data', error.message);
+              } else {
+                showError('Transfer Failed', error.message || 'Failed to send TLB. Please try again.');
+              }
+            } finally {
+              setLoading(false);
+            }
           }
         }
       ]
     });
   };
 
-  const handleRequestTLB = () => {
+  const handleRequestTLB = async () => {
     if (!requestForm.requester || !requestForm.amount) {
       showError('Incomplete Form', 'Please fill in both requester and amount fields.');
       return;
@@ -279,45 +286,68 @@ export default function WalletScreen({ navigation }) {
         {
           text: 'Send Request',
           style: 'default',
-          onPress: () => {
-            setShowRequestModal(false);
-            setRequestForm({ requester: '', amount: '', message: '' });
-            showSuccess('Request Sent!', `Request for 💎 ${amount.toFixed(2)} TLB sent to ${requestForm.requester}.`);
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await apiClient.requestTLB(requestForm.requester, amount, requestForm.message);
+              
+              setShowRequestModal(false);
+              setRequestForm({ requester: '', amount: '', message: '' });
+              showSuccess('Request Sent!', `Request for 💎 ${amount.toFixed(2)} TLB sent to ${requestForm.requester}.`);
+            } catch (error) {
+              console.error('Request TLB failed:', error);
+              if (error.isNetworkError?.()) {
+                showError('Network Error', 'Please check your internet connection and try again.');
+              } else if (error.isValidationError?.()) {
+                showError('Invalid Data', error.message);
+              } else {
+                showError('Request Failed', error.message || 'Failed to send request. Please try again.');
+              }
+            } finally {
+              setLoading(false);
+            }
           }
         }
       ]
     });
   };
 
-  const handleTopUpOption = (method) => {
+  const handleTopUpOption = async (method) => {
     setShowTopUpModal(false);
     
-    switch (method) {
-      case 'card':
-        showInfo(
-          'Credit/Debit Card Top Up',
-          'Add funds using your credit or debit card:\n\n💳 Instant processing\n💎 Min: 10.00 TLB\n💎 Max: 5,000.00 TLB\n💰 Fee: 2.9% + $0.30\n\nFeature coming soon!'
-        );
-        break;
-      case 'bank':
-        showInfo(
-          'Bank Transfer Top Up',
-          'Add funds via bank transfer:\n\n🏦 3-5 business days\n💎 Min: 25.00 TLB\n💎 Max: 10,000.00 TLB\n💰 Fee: $5.00 flat rate\n\nFeature coming soon!'
-        );
-        break;
-      case 'crypto':
-        showInfo(
-          'Cryptocurrency Top Up',
-          'Add funds using cryptocurrency:\n\n₿ Bitcoin, Ethereum supported\n💎 Min: 50.00 TLB equivalent\n💎 Max: 25,000.00 TLB equivalent\n💰 Fee: 1.5%\n\nFeature coming soon!'
-        );
-        break;
-      case 'gift':
-        showInfo(
-          'Gift Card Redemption',
-          'Redeem TLB Diamond gift cards:\n\n🎁 Instant processing\n💎 Variable amounts\n💰 No fees\n\nFeature coming soon!'
-        );
-        break;
+    // For now, show info about the method. In future, integrate payment processing
+    const methodInfo = {
+      'card': {
+        title: 'Credit/Debit Card Top Up',
+        description: 'Add funds using your credit or debit card:\n\n💳 Instant processing\n💎 Min: 10.00 TLB\n💎 Max: 5,000.00 TLB\n💰 Fee: 2.9% + $0.30'
+      },
+      'bank': {
+        title: 'Bank Transfer Top Up',
+        description: 'Add funds via bank transfer:\n\n🏦 3-5 business days\n💎 Min: 25.00 TLB\n💎 Max: 10,000.00 TLB\n💰 Fee: $5.00 flat rate'
+      },
+      'crypto': {
+        title: 'Cryptocurrency Top Up',
+        description: 'Add funds using cryptocurrency:\n\n₿ Bitcoin, Ethereum supported\n💎 Min: 50.00 TLB equivalent\n💎 Max: 25,000.00 TLB equivalent\n💰 Fee: 1.5%'
+      },
+      'gift': {
+        title: 'Gift Card Redemption',
+        description: 'Redeem TLB Diamond gift cards:\n\n🎁 Instant processing\n💎 Variable amounts\n💰 No fees'
+      }
+    };
+
+    const info = methodInfo[method];
+    if (info) {
+      showInfo(info.title, info.description + '\n\nFeature coming soon!');
     }
+    
+    // In future versions, implement actual payment processing:
+    // try {
+    //   await apiClient.topUpWallet(method, amount, paymentDetails);
+    //   await loadWalletData();
+    //   await loadTransactions();
+    // } catch (error) {
+    //   showError('Top Up Failed', error.message);
+    // }
   };
 
   const handleTransactionPress = (transaction) => {
@@ -378,28 +408,28 @@ export default function WalletScreen({ navigation }) {
         </View>
         
         <Text style={styles.balanceAmount}>
-          {balanceVisible ? `💎 ${totalBalance.toFixed(2)} TLB` : '💎 ••••••'}
+          {loading ? '💎 Loading...' : (balanceVisible ? `💎 ${totalBalance.toFixed(2)} TLB` : '💎 ••••••')}
         </Text>
         
         <View style={styles.balanceBreakdown}>
           <View style={styles.breakdownItem}>
             <Text style={styles.breakdownLabel}>Available</Text>
             <Text style={styles.breakdownAmount}>
-              💎 {balanceVisible ? walletData.available.toFixed(2) : '••••'}
+              💎 {loading ? '...' : (balanceVisible ? walletData.available.toFixed(2) : '••••')}
             </Text>
           </View>
           
           <View style={styles.breakdownItem}>
             <Text style={styles.breakdownLabel}>Locked</Text>
             <Text style={styles.breakdownAmount}>
-              💎 {balanceVisible ? walletData.locked.toFixed(2) : '••••'}
+              💎 {loading ? '...' : (balanceVisible ? walletData.locked.toFixed(2) : '••••')}
             </Text>
           </View>
           
           <View style={styles.breakdownItem}>
             <Text style={styles.breakdownLabel}>Pending</Text>
             <Text style={styles.breakdownAmount}>
-              💎 {balanceVisible ? walletData.pending.toFixed(2) : '••••'}
+              💎 {loading ? '...' : (balanceVisible ? walletData.pending.toFixed(2) : '••••')}
             </Text>
           </View>
         </View>

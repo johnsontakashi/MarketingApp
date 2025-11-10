@@ -160,116 +160,85 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const { email, password, ...profileData } = formData;
-      console.log('Starting authentication process', { isLogin, email });
+      console.log('Starting API authentication process', { isLogin, email });
 
       if (isLogin) {
-        // Check if trying to login as admin
-        console.log('Checking admin credentials', { 
-          email, 
-          adminEmail: ADMIN_CREDENTIALS.email, 
-          emailMatch: email === ADMIN_CREDENTIALS.email,
-          passwordMatch: password === ADMIN_CREDENTIALS.password 
-        });
+        // Use real API for login
+        console.log('Attempting API login...');
+        const response = await apiClient.login(email, password);
         
-        if (email === ADMIN_CREDENTIALS.email) {
-          if (password === ADMIN_CREDENTIALS.password) {
-            // Store admin session
-            await SecureStore.setItemAsync('currentUser', JSON.stringify({
-              ...ADMIN_CREDENTIALS,
-              registeredAt: new Date().toISOString(),
-              isVerified: true,
-              canSell: true,
-              canBuy: true,
-              isAdmin: true
-            }));
-            
-            // Success - trigger callback immediately without alert for now
-            console.log('Admin login successful, triggering callback...');
-            if (authSuccessCallback) {
-              authSuccessCallback();
-            } else {
-              console.error('No auth success callback provided');
-            }
-            return;
+        console.log('API login response:', response);
+        
+        if (response.user && response.token) {
+          // Store current session using the API response
+          await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
+          
+          console.log('API login successful, triggering callback...');
+          if (authSuccessCallback) {
+            authSuccessCallback();
           } else {
-            Alert.alert('Login Failed', 'Invalid admin password');
-            return;
+            console.error('No auth success callback provided');
           }
-        }
-
-        // Regular user login logic
-        const storedUser = await SecureStore.getItemAsync(`user_${email}`);
-        
-        if (!storedUser) {
-          Alert.alert('Login Failed', 'User not found. Please register first.');
-          return;
-        }
-
-        const userData = JSON.parse(storedUser);
-        
-        if (userData.password !== password) {
-          Alert.alert('Login Failed', 'Incorrect password');
-          return;
-        }
-
-        // Store current session
-        await SecureStore.setItemAsync('currentUser', JSON.stringify(userData));
-        
-        // Success - trigger callback immediately
-        console.log('Regular user login successful, triggering callback...');
-        if (authSuccessCallback) {
-          authSuccessCallback();
         } else {
-          console.error('No auth success callback provided');
+          Alert.alert('Login Failed', 'Invalid response from server');
         }
 
       } else {
-        // Registration logic - prevent using admin email
-        if (email === ADMIN_CREDENTIALS.email) {
-          Alert.alert('Registration Failed', 'This email is reserved for system administration.');
-          return;
-        }
-
-        const existingUser = await SecureStore.getItemAsync(`user_${email}`);
+        // Use real API for registration
+        console.log('Attempting API registration...');
         
-        if (existingUser) {
-          Alert.alert('Registration Failed', 'User already exists. Please login instead.');
-          return;
-        }
-
-        const newUser = {
+        const registrationData = {
           email,
           password,
-          firstName: profileData.firstName,
-          lastName: profileData.lastName,
-          phoneNumber: profileData.phoneNumber,
-          sex: profileData.sex,
+          first_name: profileData.firstName,
+          last_name: profileData.lastName,
+          phone: profileData.phoneNumber,
+          gender: profileData.sex,
           birthday: profileData.birthday,
-          userType: profileData.userType,
-          registeredAt: new Date().toISOString(),
-          isVerified: profileData.userType !== 'admin',
-          canSell: true, // All users can potentially sell
-          canBuy: true   // All users can buy
+          account_type: profileData.userType === 'seller' ? 'business' : 'individual'
         };
-
-        // Store user data
-        await SecureStore.setItemAsync(`user_${email}`, JSON.stringify(newUser));
-        await SecureStore.setItemAsync('currentUser', JSON.stringify(newUser));
-
-        // Success - trigger callback immediately
-        console.log('Registration successful, triggering callback...');
-        if (authSuccessCallback) {
-          authSuccessCallback();
+        
+        const response = await apiClient.register(registrationData);
+        
+        console.log('API registration response:', response);
+        
+        if (response.user && response.token) {
+          // Store current session using the API response
+          await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
+          
+          console.log('API registration successful, triggering callback...');
+          if (authSuccessCallback) {
+            authSuccessCallback();
+          } else {
+            console.error('No auth success callback provided');
+          }
         } else {
-          console.error('No auth success callback provided');
+          Alert.alert('Registration Failed', 'Invalid response from server');
         }
       }
 
     } catch (error) {
       console.error('Auth error:', error);
-      Alert.alert('Error', 'An error occurred. Please try again.');
+      
+      if (error instanceof ApiError) {
+        if (error.isNetworkError()) {
+          Alert.alert('Network Error', 'Please check your internet connection and try again.');
+        } else if (error.isValidationError()) {
+          Alert.alert('Validation Error', error.message);
+        } else if (error.isAuthError()) {
+          Alert.alert(isLogin ? 'Login Failed' : 'Registration Failed', error.message);
+        } else {
+          Alert.alert('Error', error.message || 'An error occurred. Please try again.');
+        }
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 

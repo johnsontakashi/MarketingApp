@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -9,132 +9,104 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
-  Modal
+  Modal,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import apiClient from '../services/api';
+import { useCustomAlert } from '../hooks/useCustomAlert';
+import CustomAlert from '../components/ui/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function MarketplaceScreen({ navigation }) {
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError } = useCustomAlert();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showProductDetail, setShowProductDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // API state
+  const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [pagination, setPagination] = useState({
+    limit: 20,
+    offset: 0,
+    hasMore: true
+  });
 
-  const categories = [
-    { name: 'All', icon: 'grid', count: 150 },
-    { name: 'Electronics', icon: 'phone-portrait', count: 45 },
-    { name: 'Fashion', icon: 'shirt', count: 38 },
-    { name: 'Home', icon: 'home', count: 29 },
-    { name: 'Sports', icon: 'football', count: 22 },
-    { name: 'Books', icon: 'book', count: 16 },
-  ];
+  // Load data on mount
+  useEffect(() => {
+    loadMarketplaceData();
+  }, []);
 
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      title: 'Premium Wireless Headphones',
-      price: 200.00,
-      originalPrice: 250.00,
-      rating: 4.8,
-      reviews: 127,
-      seller: 'TechStore',
-      supportBonus: 50,
-      installments: 4,
-      image: require('../../assets/pic1.jpeg'),
-      featured: true,
-      category: 'Electronics',
-      description: 'Experience premium sound quality with these state-of-the-art wireless headphones. Featuring active noise cancellation, 30-hour battery life, and crystal-clear audio for all your music needs.',
-      features: ['Active Noise Cancellation', '30-hour Battery Life', 'Bluetooth 5.0', 'Quick Charge', 'Premium Materials'],
-      specifications: {
-        'Battery Life': '30 hours',
-        'Connectivity': 'Bluetooth 5.0',
-        'Weight': '250g',
-        'Frequency Response': '20Hz - 20kHz',
-        'Charging Time': '2 hours'
-      },
-      inStock: true,
-      stockCount: 15,
-      shippingInfo: 'Free shipping • Arrives in 2-3 business days',
-      warranty: '2 Year Manufacturer Warranty'
-    },
-    {
-      id: 2,
-      title: 'Smart Fitness Watch',
-      price: 150.00,
-      rating: 4.6,
-      reviews: 89,
-      seller: 'FitGear',
-      supportBonus: 50,
-      installments: 3,
-      image: require('../../assets/pic2.jpeg'),
-      featured: false,
-      category: 'Sports',
-      description: 'Track your fitness goals with this advanced smart watch. Monitor heart rate, sleep patterns, and daily activities with precision and style.',
-      features: ['Heart Rate Monitor', 'Sleep Tracking', 'GPS', 'Water Resistant', '7-day Battery'],
-      specifications: {
-        'Display': '1.4" AMOLED',
-        'Battery Life': '7 days',
-        'Water Resistance': '5ATM',
-        'Sensors': 'Heart Rate, GPS, Accelerometer',
-        'Compatibility': 'iOS & Android'
-      },
-      inStock: true,
-      stockCount: 8,
-      shippingInfo: 'Free shipping • Arrives in 1-2 business days',
-      warranty: '1 Year Manufacturer Warranty'
-    },
-    {
-      id: 3,
-      title: 'Gaming Mouse Pro',
-      price: 75.00,
-      rating: 4.9,
-      reviews: 203,
-      seller: 'GameHub',
-      supportBonus: 40,
-      installments: 2,
-      image: require('../../assets/pic3.jpeg'),
-      featured: true,
-      category: 'Electronics',
-      description: 'Professional gaming mouse with precision tracking and customizable buttons for competitive gaming.',
-      features: ['16000 DPI Sensor', 'RGB Lighting', '8 Programmable Buttons', 'Ergonomic Design'],
-      specifications: {
-        'DPI': 'Up to 16000',
-        'Buttons': '8 Programmable',
-        'Connectivity': 'Wired USB',
-        'Weight': '85g'
-      },
-      inStock: true,
-      stockCount: 12,
-      shippingInfo: 'Free shipping • Arrives in 1-2 business days',
-      warranty: '2 Year Manufacturer Warranty'
-    },
-    {
-      id: 4,
-      title: 'Bluetooth Speaker',
-      price: 85.00,
-      rating: 4.5,
-      reviews: 156,
-      seller: 'AudioMax',
-      supportBonus: 45,
-      installments: 2,
-      image: require('../../assets/pic4.jpeg'),
-      featured: false,
-      category: 'Electronics',
-      description: 'Portable Bluetooth speaker with powerful sound and long battery life for music on the go.',
-      features: ['360° Sound', '12-hour Battery', 'Water Resistant', 'Wireless Charging'],
-      specifications: {
-        'Output Power': '20W',
-        'Battery Life': '12 hours',
-        'Bluetooth': '5.0',
-        'Water Rating': 'IPX7'
-      },
-      inStock: true,
-      stockCount: 6,
-      shippingInfo: 'Free shipping • Arrives in 2-3 business days',
-      warranty: '1 Year Manufacturer Warranty'
+  // Load marketplace data
+  const loadMarketplaceData = async () => {
+    try {
+      setLoading(true);
+      const [categoriesResponse, productsResponse] = await Promise.all([
+        apiClient.getCategories(),
+        apiClient.getProducts(pagination.limit, pagination.offset, null, searchQuery)
+      ]);
+      
+      // Load categories
+      if (categoriesResponse.categories) {
+        const allCategory = { name: 'All', icon: 'grid', count: 0, slug: 'all' };
+        const formattedCategories = [
+          allCategory,
+          ...categoriesResponse.categories.map(cat => ({
+            name: cat.name,
+            icon: cat.icon || 'folder',
+            count: cat.product_count || 0,
+            slug: cat.slug
+          }))
+        ];
+        setCategories(formattedCategories);
+      }
+      
+      // Load products
+      if (productsResponse.products) {
+        const formattedProducts = productsResponse.products.map(product => ({
+          id: product.id,
+          title: product.name,
+          price: parseFloat(product.price),
+          originalPrice: product.original_price ? parseFloat(product.original_price) : null,
+          rating: product.rating_average || 4.0,
+          reviews: product.rating_count || 0,
+          seller: product.seller_name || 'TLB Diamond',
+          supportBonus: product.support_bonus_percentage || 0,
+          installments: product.max_installments || 1,
+          image: product.image_url ? { uri: product.image_url } : require('../../assets/pic1.jpeg'),
+          featured: product.is_featured || false,
+          category: product.category_name || 'Other',
+          description: product.description || '',
+          features: product.features || [],
+          specifications: product.specifications || {},
+          inStock: product.stock_quantity > 0,
+          stockCount: product.stock_quantity || 0,
+          shippingInfo: 'Free shipping • Arrives in 2-3 business days',
+          warranty: '1 Year Manufacturer Warranty',
+          condition: product.condition || 'new',
+          brand: product.brand || 'Unknown'
+        }));
+        setProducts(formattedProducts);
+        
+        // Update pagination
+        setPagination(prev => ({
+          ...prev,
+          hasMore: formattedProducts.length === pagination.limit
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load marketplace data:', error);
+      showError('Error', 'Failed to load marketplace data. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const handleProductPress = (product) => {
     setSelectedProduct(product);
@@ -158,71 +130,7 @@ export default function MarketplaceScreen({ navigation }) {
   };
 
   const handleLoadMore = () => {
-    // Simulate loading more products
-    const moreProducts = [
-      {
-        id: 5,
-        title: 'Wireless Charging Pad',
-        price: 45.00,
-        rating: 4.3,
-        reviews: 92,
-        seller: 'ChargeTech',
-        supportBonus: 30,
-        installments: 2,
-        image: require('../../assets/pic1.jpeg'),
-        featured: false,
-        category: 'Electronics'
-      },
-      {
-        id: 6,
-        title: 'Smart LED Bulb',
-        price: 25.00,
-        rating: 4.7,
-        reviews: 234,
-        seller: 'SmartHome',
-        supportBonus: 25,
-        installments: 1,
-        image: require('../../assets/pic2.jpeg'),
-        featured: true,
-        category: 'Home'
-      },
-      {
-        id: 7,
-        title: 'Portable Power Bank',
-        price: 35.00,
-        rating: 4.6,
-        reviews: 178,
-        seller: 'PowerUp',
-        supportBonus: 35,
-        installments: 2,
-        image: require('../../assets/pic3.jpeg'),
-        featured: false,
-        category: 'Electronics'
-      },
-      {
-        id: 8,
-        title: 'Noise Cancelling Earbuds',
-        price: 120.00,
-        rating: 4.8,
-        reviews: 145,
-        seller: 'AudioPro',
-        supportBonus: 60,
-        installments: 3,
-        image: require('../../assets/pic4.jpeg'),
-        featured: true,
-        category: 'Electronics'
-      }
-    ];
-
-    // Add new products to existing products array
-    setProducts(prevProducts => [...prevProducts, ...moreProducts]);
-    
-    // Show confirmation message
-    Alert.alert(
-      '✅ Products Loaded',
-      `${moreProducts.length} new products have been added to the marketplace!`,
-      [{ text: 'OK' }]
-    );
+    loadMoreProducts();
   };
 
   const renderStars = (rating) => {
@@ -246,28 +154,8 @@ export default function MarketplaceScreen({ navigation }) {
     return stars;
   };
 
-  // Filter products based on search query and selected category
-  const getFilteredProducts = () => {
-    let filtered = products;
-    
-    // Filter by search query
-    if (searchQuery.trim() !== '') {
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.seller.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    
-    // Filter by category
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-    
-    return filtered;
-  };
-
-  const filteredProducts = getFilteredProducts();
+  // Products are already filtered by the API
+  const filteredProducts = products;
 
   return (
     <View style={styles.container}>
@@ -288,7 +176,13 @@ export default function MarketplaceScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+          <Text style={styles.loadingText}>Loading marketplace...</Text>
+        </View>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
         {/* Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categories</Text>
@@ -407,6 +301,7 @@ export default function MarketplaceScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      )}
 
       {/* Product Detail Modal */}
       <Modal
@@ -572,6 +467,17 @@ export default function MarketplaceScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        onClose={hideAlert}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        type={alertConfig.type}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
@@ -1085,5 +991,36 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#9CA3AF',
     borderColor: '#6B7280',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#8B4513',
+    fontWeight: '500',
+  },
+  loadMoreButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 20,
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  loadMoreText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
