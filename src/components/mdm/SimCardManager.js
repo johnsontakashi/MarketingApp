@@ -13,9 +13,33 @@ class SimCardManager {
     this.deviceLockCallback = null;
   }
 
+  // Check if current user is an admin
+  async isAdminUser() {
+    try {
+      const currentUser = await SecureStore.getItemAsync('currentUser');
+      if (currentUser) {
+        const userData = JSON.parse(currentUser);
+        return userData.role === 'admin' || userData.email === 'admin@tlbdiamond.com';
+      }
+      return false;
+    } catch (error) {
+      console.warn('⚠️ Failed to check admin status:', error);
+      return false;
+    }
+  }
+
   // Initialize SIM monitoring
   async initializeSimMonitoring(deviceLockCallback) {
     this.deviceLockCallback = deviceLockCallback;
+    
+    // Skip SIM monitoring for admin users
+    const isAdmin = await this.isAdminUser();
+    if (isAdmin) {
+      console.log('🛡️ Admin user detected - SIM monitoring disabled');
+      this.initialSimState = 'present';
+      this.simState = 'present';
+      return;
+    }
     
     try {
       // Get initial SIM state from secure storage
@@ -125,9 +149,16 @@ class SimCardManager {
   }
 
   // Start monitoring SIM card state
-  startMonitoring() {
+  async startMonitoring() {
     if (this.isMonitoring) {
       console.log('📱 SIM monitoring already active');
+      return;
+    }
+
+    // Skip monitoring for admin users
+    const isAdmin = await this.isAdminUser();
+    if (isAdmin) {
+      console.log('🛡️ Admin user detected - SIM monitoring skipped');
       return;
     }
 
@@ -185,6 +216,12 @@ class SimCardManager {
 
   // Check current SIM state and handle changes
   async checkSimState() {
+    // Skip SIM state checks for admin users
+    const isAdmin = await this.isAdminUser();
+    if (isAdmin) {
+      return;
+    }
+
     const previousState = this.simState;
     await this.detectSimState();
 
@@ -333,7 +370,13 @@ Removal Count: ${this.simRemovedCount}`,
   }
 
   // Check if device should remain locked due to SIM violations
-  shouldMaintainLock() {
+  async shouldMaintainLock() {
+    // Admin users bypass SIM lock requirements
+    const isAdmin = await this.isAdminUser();
+    if (isAdmin) {
+      return false;
+    }
+    
     return this.lockTriggered || this.simRemovedCount > 0;
   }
 }
