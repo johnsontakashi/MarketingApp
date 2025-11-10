@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   TextInput,
   Modal,
   ScrollView,
@@ -15,6 +14,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../services/api';
+import AdminAlert from '../../components/admin/AdminAlert';
+import { useAdminAlert } from '../../hooks/useAdminAlert';
 
 export default function ProductManagementScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -25,6 +26,7 @@ export default function ProductManagementScreen({ navigation }) {
   const [showProductDetails, setShowProductDetails] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all');
+  const { alertConfig, hideAlert, showSuccess, showError, showDestructiveConfirm } = useAdminAlert();
 
   // New product form state
   const [newProduct, setNewProduct] = useState({
@@ -133,7 +135,7 @@ export default function ProductManagementScreen({ navigation }) {
       setProducts(mockProducts);
     } catch (error) {
       console.error('Error loading products:', error);
-      Alert.alert('Error', 'Failed to load products. Please try again.');
+      showError('Error', 'Failed to load products. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -178,13 +180,12 @@ export default function ProductManagementScreen({ navigation }) {
         toggleProductStatus(product.id, product.status);
         break;
       case 'delete':
-        Alert.alert(
+        showDestructiveConfirm(
           'Delete Product',
           `Are you sure you want to permanently delete "${product.name}"? This action cannot be undone.`,
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => deleteProduct(product.id) }
-          ]
+          () => deleteProduct(product.id),
+          null,
+          'Delete'
         );
         break;
       case 'restock':
@@ -212,9 +213,9 @@ export default function ProductManagementScreen({ navigation }) {
       setProducts(prev => prev.map(product => 
         product.id === productId ? { ...product, status: newStatus } : product
       ));
-      Alert.alert('Success', 'Product status updated successfully.');
+      showSuccess('Success', 'Product status updated successfully.');
     } catch (error) {
-      Alert.alert('Error', 'Failed to update product status. Please try again.');
+      showError('Error', 'Failed to update product status. Please try again.');
     }
   };
 
@@ -222,9 +223,9 @@ export default function ProductManagementScreen({ navigation }) {
     try {
       // TODO: API call to delete product
       setProducts(prev => prev.filter(product => product.id !== productId));
-      Alert.alert('Success', 'Product has been deleted successfully.');
+      showSuccess('Success', 'Product has been deleted successfully.');
     } catch (error) {
-      Alert.alert('Error', 'Failed to delete product. Please try again.');
+      showError('Error', 'Failed to delete product. Please try again.');
     }
   };
 
@@ -238,16 +239,16 @@ export default function ProductManagementScreen({ navigation }) {
           status: 'active'
         } : product
       ));
-      Alert.alert('Success', `Product restocked with ${quantity} items.`);
+      showSuccess('Success', `Product restocked with ${quantity} items.`);
     } catch (error) {
-      Alert.alert('Error', 'Failed to restock product. Please try again.');
+      showError('Error', 'Failed to restock product. Please try again.');
     }
   };
 
   const saveProduct = async () => {
     try {
       if (!newProduct.name || !newProduct.price || !newProduct.stock_quantity) {
-        Alert.alert('Error', 'Please fill in all required fields.');
+        showError('Error', 'Please fill in all required fields.');
         return;
       }
 
@@ -262,7 +263,7 @@ export default function ProductManagementScreen({ navigation }) {
         setProducts(prev => prev.map(product => 
           product.id === selectedProduct.id ? { ...product, ...productData } : product
         ));
-        Alert.alert('Success', 'Product updated successfully.');
+        showSuccess('Success', 'Product updated successfully.');
       } else {
         // Add new product
         const newProductData = {
@@ -274,7 +275,7 @@ export default function ProductManagementScreen({ navigation }) {
           sales_count: 0
         };
         setProducts(prev => [newProductData, ...prev]);
-        Alert.alert('Success', 'Product added successfully.');
+        showSuccess('Success', 'Product added successfully.');
       }
 
       setShowAddProduct(false);
@@ -288,7 +289,7 @@ export default function ProductManagementScreen({ navigation }) {
         image_url: ''
       });
     } catch (error) {
-      Alert.alert('Error', 'Failed to save product. Please try again.');
+      showError('Error', 'Failed to save product. Please try again.');
     }
   };
 
@@ -657,6 +658,17 @@ export default function ProductManagementScreen({ navigation }) {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Admin Alert */}
+      <AdminAlert
+        visible={alertConfig.visible}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
