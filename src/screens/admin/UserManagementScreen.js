@@ -129,10 +129,12 @@ export default function UserManagementScreen({ navigation }) {
   });
 
   const handleUserAction = (action, user) => {
+    console.log('User action triggered:', action, 'for user:', user.email);
     setSelectedUser(user);
     
     switch (action) {
       case 'view':
+        console.log('Opening user details modal for:', user.first_name, user.last_name);
         setShowUserDetails(true);
         break;
       case 'verify':
@@ -381,7 +383,16 @@ export default function UserManagementScreen({ navigation }) {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>User Details</Text>
-              <TouchableOpacity onPress={() => setShowUserDetails(false)}>
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => {
+                  console.log('User details modal close button pressed');
+                  setShowUserDetails(false);
+                  setSelectedUser(null);
+                }}
+                activeOpacity={0.7}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 <Ionicons name="close" size={24} color="#D4AF37" />
               </TouchableOpacity>
             </View>
@@ -620,6 +631,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#3d3d3d',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     flex: 1,
