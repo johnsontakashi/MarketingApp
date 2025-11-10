@@ -129,6 +129,69 @@ export default function MarketplaceScreen({ navigation }) {
     );
   };
 
+  // Load more products (pagination)
+  const loadMoreProducts = async () => {
+    if (productsLoading || !pagination.hasMore) {
+      return; // Don't load if already loading or no more products
+    }
+
+    try {
+      setProductsLoading(true);
+      const nextOffset = pagination.offset + pagination.limit;
+      
+      const response = await apiClient.getProducts(
+        pagination.limit, 
+        nextOffset, 
+        selectedCategory === 'All' ? null : selectedCategory,
+        searchQuery
+      );
+      
+      if (response.products && response.products.length > 0) {
+        const formattedNewProducts = response.products.map(product => ({
+          id: product.id,
+          title: product.name,
+          price: parseFloat(product.price),
+          originalPrice: product.original_price ? parseFloat(product.original_price) : null,
+          rating: product.rating_average || 4.0,
+          reviews: product.rating_count || 0,
+          seller: product.seller_name || 'TLB Diamond',
+          supportBonus: product.support_bonus_percentage || 0,
+          installments: product.max_installments || 1,
+          image: product.image_url ? { uri: product.image_url } : require('../../assets/pic1.jpeg'),
+          featured: product.is_featured || false,
+          category: product.category_name || 'Other',
+          description: product.description || '',
+          features: product.features || [],
+          specifications: product.specifications || {},
+          inStock: product.stock_quantity > 0,
+          stockCount: product.stock_quantity || 0,
+          shippingInfo: 'Free shipping • Arrives in 2-3 business days',
+          warranty: '1 Year Manufacturer Warranty',
+          condition: product.condition || 'new',
+          brand: product.brand || 'Unknown'
+        }));
+        
+        // Append new products to existing ones
+        setProducts(prev => [...prev, ...formattedNewProducts]);
+        
+        // Update pagination
+        setPagination(prev => ({
+          ...prev,
+          offset: nextOffset,
+          hasMore: formattedNewProducts.length === pagination.limit
+        }));
+      } else {
+        // No more products available
+        setPagination(prev => ({ ...prev, hasMore: false }));
+      }
+    } catch (error) {
+      console.error('Failed to load more products:', error);
+      showError('Error', 'Failed to load more products. Please try again.');
+    } finally {
+      setProductsLoading(false);
+    }
+  };
+
   const handleLoadMore = () => {
     loadMoreProducts();
   };
