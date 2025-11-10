@@ -194,11 +194,12 @@ router.post('/login', async (req, res) => {
     const deviceId = req.header('X-Device-ID');
     if (deviceId) {
       let device = await Device.findOne({
-        where: { device_id: deviceId, user_id: user.id }
+        where: { device_id: deviceId }
       });
 
       if (device) {
-        // Update existing device
+        // Update existing device - reassign to current user if needed
+        device.user_id = user.id;
         device.last_seen_ip = req.ip;
         device.user_agent = req.header('User-Agent');
         device.app_version = req.header('X-App-Version') || device.app_version;
@@ -206,17 +207,22 @@ router.post('/login', async (req, res) => {
         await device.save();
       } else {
         // Create new device
-        const deviceData = {
-          device_id: deviceId,
-          user_id: user.id,
-          device_name: req.header('X-Device-Name') || 'Mobile Device',
-          device_type: req.header('X-Device-Type') || 'android',
-          app_version: req.header('X-App-Version'),
-          user_agent: req.header('User-Agent'),
-          last_seen_ip: req.ip
-        };
+        try {
+          const deviceData = {
+            device_id: deviceId,
+            user_id: user.id,
+            device_name: req.header('X-Device-Name') || 'Mobile Device',
+            device_type: req.header('X-Device-Type') || 'android',
+            app_version: req.header('X-App-Version'),
+            user_agent: req.header('User-Agent'),
+            last_seen_ip: req.ip
+          };
 
-        await Device.create(deviceData);
+          await Device.create(deviceData);
+        } catch (deviceError) {
+          // If device creation fails (e.g., unique constraint), just log and continue
+          console.warn('Device registration failed:', deviceError.message);
+        }
       }
     }
 

@@ -98,7 +98,7 @@ function MainTabNavigator({ onLogout }) {
 }
 
 // Main app with navigation and lock management
-function AppWithLockManager() {
+function AppWithLockManager({ onLogout }) {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -108,7 +108,7 @@ function AppWithLockManager() {
       <Stack.Screen 
         name="MainTabs"
       >
-        {(props) => <MainTabNavigator {...props} onLogout={handleLogout} />}
+        {(props) => <MainTabNavigator {...props} onLogout={onLogout} />}
       </Stack.Screen>
       <Stack.Screen 
         name="DeviceStatus" 
@@ -260,7 +260,7 @@ function AppNavigator() {
           onPaymentRequired={handlePaymentRequired}
         >
           <SystemKioskManager>
-            <AppWithLockManager />
+            <AppWithLockManager onLogout={handleLogout} />
           </SystemKioskManager>
         </BlockingManager>
       )}
