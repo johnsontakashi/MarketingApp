@@ -20,7 +20,7 @@ import CustomAlert from '../components/ui/CustomAlert';
 const { width } = Dimensions.get('window');
 
 export default function MarketplaceScreen({ navigation }) {
-  const { alertConfig, showAlert, hideAlert, showSuccess, showError } = useCustomAlert();
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError, showInfo } = useCustomAlert();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -363,6 +363,12 @@ export default function MarketplaceScreen({ navigation }) {
   };
 
   const handleLoadMore = () => {
+    if (!pagination.hasMore) {
+      showInfo('Info', 'Items are already loaded.', [
+        { text: 'OK', onPress: hideAlert }
+      ]);
+      return;
+    }
     loadMoreProducts();
   };
 
@@ -539,9 +545,24 @@ export default function MarketplaceScreen({ navigation }) {
 
         {/* Load More */}
         <View style={styles.loadMoreContainer}>
-          <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore}>
-            <Text style={styles.loadMoreText}>Load More Products</Text>
-            <Ionicons name="chevron-down" size={16} color="#D4AF37" />
+          <TouchableOpacity 
+            style={[
+              styles.loadMoreButton, 
+              !pagination.hasMore && styles.loadMoreButtonDisabled
+            ]} 
+            onPress={handleLoadMore}
+          >
+            <Text style={[
+              styles.loadMoreText,
+              !pagination.hasMore && styles.loadMoreTextDisabled
+            ]}>
+              {pagination.hasMore ? 'Load More Products' : 'All Items Loaded'}
+            </Text>
+            <Ionicons 
+              name={pagination.hasMore ? "chevron-down" : "checkmark-circle"} 
+              size={16} 
+              color={pagination.hasMore ? "#D4AF37" : "#8B4513"} 
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -1266,5 +1287,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+  loadMoreButtonDisabled: {
+    backgroundColor: '#8B4513',
+    borderColor: '#654321',
+  },
+  loadMoreTextDisabled: {
+    color: '#D4AF37',
   },
 });
