@@ -173,8 +173,10 @@ class ApiClient {
       console.warn('Logout API call failed:', error.message);
     } finally {
       this.token = null;
+      // Only delete the auth token, keep user data for re-login
       await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('user_data');
+      // Note: We keep 'currentUser' and 'userRegistry' so users can re-login
+      console.log('Logout completed - session cleared but user data preserved');
     }
   }
 
