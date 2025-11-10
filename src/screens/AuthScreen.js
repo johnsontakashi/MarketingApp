@@ -19,6 +19,38 @@ import WelcomeModal from '../components/WelcomeModal';
 
 const { width } = Dimensions.get('window');
 
+// Helper functions for user registry management
+const storeUserInRegistry = async (user) => {
+  try {
+    // Get existing registry
+    const existingRegistry = await SecureStore.getItemAsync('userRegistry');
+    let registry = existingRegistry ? JSON.parse(existingRegistry) : {};
+    
+    // Add user to registry (use email as key)
+    registry[user.email] = user;
+    
+    // Save back to registry
+    await SecureStore.setItemAsync('userRegistry', JSON.stringify(registry));
+    console.log(`User ${user.email} added to registry`);
+  } catch (error) {
+    console.error('Error storing user in registry:', error);
+  }
+};
+
+const getUserFromRegistry = async (email) => {
+  try {
+    const existingRegistry = await SecureStore.getItemAsync('userRegistry');
+    if (existingRegistry) {
+      const registry = JSON.parse(existingRegistry);
+      return registry[email] || null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting user from registry:', error);
+    return null;
+  }
+};
+
 export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   // Get onAuthSuccess from props (preferred) or route params (fallback)
   const authSuccessCallback = onAuthSuccess || (route?.params?.onAuthSuccess);
@@ -194,6 +226,9 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           console.log('API login response:', response);
           
           if (response.user && response.token) {
+            // Store user in registry for future offline access
+            await storeUserInRegistry(response.user);
+            
             // Store current session using the API response
             await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
             
@@ -235,28 +270,26 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             return;
           }
           
-          // For regular users, check if they exist locally
-          const storedUser = await SecureStore.getItemAsync('currentUser');
-          if (storedUser) {
-            const userData = JSON.parse(storedUser);
-            if (userData.email === email) {
-              // User exists locally, allow login with any password for demo
-              await SecureStore.setItemAsync('auth_token', `local_token_${userData.id}`);
-              
-              const userName = userData.first_name || userData.email;
-              const isAdmin = userData.role === 'admin';
-              setWelcomeData({ userName, isAdmin });
-              setShowWelcomeModal(true);
-              
-              console.log('Local user login successful');
-              return;
-            }
+          // For regular users, check the user registry
+          const registeredUser = await getUserFromRegistry(email);
+          if (registeredUser) {
+            // User exists in registry, log them in
+            await SecureStore.setItemAsync('currentUser', JSON.stringify(registeredUser));
+            await SecureStore.setItemAsync('auth_token', `local_token_${registeredUser.id}`);
+            
+            const userName = registeredUser.first_name || registeredUser.email;
+            const isAdmin = registeredUser.role === 'admin';
+            setWelcomeData({ userName, isAdmin });
+            setShowWelcomeModal(true);
+            
+            console.log('Registry user login successful:', registeredUser.email);
+            return;
           }
           
-          // If no local user found, show error
+          // If no user found in registry, show error
           Alert.alert(
             'Login Failed', 
-            'Unable to connect to server and no local account found for this email. Please register first or check your internet connection.'
+            'No account found for this email. Please register first or check your internet connection.'
           );
         }
 
@@ -281,6 +314,9 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           console.log('API registration response:', response);
           
           if (response.user && response.token) {
+            // Store user in registry for future offline access
+            await storeUserInRegistry(response.user);
+            
             // Store current session using the API response
             await SecureStore.setItemAsync('currentUser', JSON.stringify(response.user));
             
@@ -312,7 +348,10 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             balance: 0
           };
           
-          // Store user locally
+          // Store user in persistent registry (survives logout)
+          await storeUserInRegistry(localUser);
+          
+          // Store current session
           await SecureStore.setItemAsync('currentUser', JSON.stringify(localUser));
           await SecureStore.setItemAsync('auth_token', `local_token_${localUser.id}`);
           
