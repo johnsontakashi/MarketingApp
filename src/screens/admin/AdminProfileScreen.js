@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   TextInput,
   Modal,
   Switch,
@@ -14,6 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import apiClient from '../../services/api';
+import AdminAlert from '../../components/admin/AdminAlert';
+import { useAdminAlert } from '../../hooks/useAdminAlert';
 
 export default function AdminProfileScreen({ navigation, onLogout }) {
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,8 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
     new_password: '',
     confirm_password: ''
   });
+  const { alertConfig, hideAlert, showSuccess, showError, showDestructiveConfirm, showAlert } = useAdminAlert();
+  const [deviceLimitModal, setDeviceLimitModal] = useState({ visible: false, value: '' });
 
   useEffect(() => {
     loadAdminData();
@@ -64,7 +67,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
       // setSystemSettings(settingsResponse.data);
     } catch (error) {
       console.error('Error loading admin data:', error);
-      Alert.alert('Error', 'Failed to load admin data. Please try again.');
+      showError('Error', 'Failed to load admin data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -77,15 +80,15 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
       
       // Show confirmation for critical settings
       if (key === 'maintenanceMode') {
-        Alert.alert(
-          'Maintenance Mode',
-          value ? 'Maintenance mode has been enabled. Users may experience service interruptions.' :
-                  'Maintenance mode has been disabled. Normal service has been restored.',
-          [{ text: 'OK' }]
-        );
+        showAlert({
+          type: value ? 'warning' : 'success',
+          title: 'Maintenance Mode',
+          message: value ? 'Maintenance mode has been enabled. Users may experience service interruptions.' :
+                           'Maintenance mode has been disabled. Normal service has been restored.'
+        });
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to update system setting. Please try again.');
+      showError('Error', 'Failed to update system setting. Please try again.');
       // Revert the change on error
       setSystemSettings(prev => ({ ...prev, [key]: !value }));
     }
@@ -94,21 +97,21 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
   const updateProfile = async () => {
     try {
       if (!profileForm.first_name || !profileForm.last_name) {
-        Alert.alert('Error', 'Please fill in all required fields.');
+        showError('Error', 'Please fill in all required fields.');
         return;
       }
 
       if (profileForm.new_password) {
         if (profileForm.new_password !== profileForm.confirm_password) {
-          Alert.alert('Error', 'New passwords do not match.');
+          showError('Error', 'New passwords do not match.');
           return;
         }
         if (profileForm.new_password.length < 8) {
-          Alert.alert('Error', 'New password must be at least 8 characters long.');
+          showError('Error', 'New password must be at least 8 characters long.');
           return;
         }
         if (!profileForm.current_password) {
-          Alert.alert('Error', 'Please enter your current password to change it.');
+          showError('Error', 'Please enter your current password to change it.');
           return;
         }
       }
@@ -123,7 +126,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
       await SecureStore.setItemAsync('currentUser', JSON.stringify(updatedData));
       setAdminData(updatedData);
       
-      Alert.alert('Success', 'Profile updated successfully.');
+      showSuccess('Success', 'Profile updated successfully.');
       setShowProfileEdit(false);
       setProfileForm(prev => ({
         ...prev,
@@ -132,82 +135,76 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
         confirm_password: ''
       }));
     } catch (error) {
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      showError('Error', 'Failed to update profile. Please try again.');
     }
   };
 
   const handleLogout = async () => {
-    Alert.alert(
+    showDestructiveConfirm(
       'Sign Out',
       'Are you sure you want to sign out of the admin account?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await SecureStore.deleteItemAsync('auth_token');
-              await SecureStore.deleteItemAsync('currentUser');
-              onLogout();
-            } catch (error) {
-              console.error('Error during logout:', error);
-              onLogout(); // Still logout even if cleanup fails
-            }
-          }
+      async () => {
+        try {
+          await SecureStore.deleteItemAsync('auth_token');
+          await SecureStore.deleteItemAsync('currentUser');
+          onLogout();
+        } catch (error) {
+          console.error('Error during logout:', error);
+          onLogout(); // Still logout even if cleanup fails
         }
-      ]
+      },
+      null,
+      'Sign Out'
     );
   };
 
   const exportSystemLogs = () => {
-    Alert.alert(
-      'Export System Logs',
-      'System logs will be prepared for download. This may take a few minutes.',
-      [
+    showAlert({
+      type: 'confirm',
+      title: 'Export System Logs',
+      message: 'System logs will be prepared for download. This may take a few minutes.',
+      buttons: [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Export', onPress: () => {
           // TODO: Implement log export
-          Alert.alert('Export Started', 'System logs export has been initiated. You will be notified when ready.');
+          showSuccess('Export Started', 'System logs export has been initiated. You will be notified when ready.');
         }}
       ]
-    );
+    });
   };
 
   const clearSystemCache = () => {
-    Alert.alert(
+    showDestructiveConfirm(
       'Clear System Cache',
       'This will clear all cached data and may improve performance. Continue?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear Cache', style: 'destructive', onPress: () => {
-          // TODO: Implement cache clearing
-          Alert.alert('Success', 'System cache has been cleared successfully.');
-        }}
-      ]
+      () => {
+        // TODO: Implement cache clearing
+        showSuccess('Success', 'System cache has been cleared successfully.');
+      },
+      null,
+      'Clear Cache'
     );
   };
 
   const resetToDefaults = () => {
-    Alert.alert(
+    showDestructiveConfirm(
       'Reset to Defaults',
       'This will reset all system settings to their default values. This action cannot be undone. Continue?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: () => {
-          setSystemSettings({
-            maintenanceMode: false,
-            newRegistrations: true,
-            emailNotifications: true,
-            pushNotifications: true,
-            autoBackup: true,
-            debugMode: false,
-            kioskModeDefault: true,
-            maxDevicesPerUser: 5
-          });
-          Alert.alert('Success', 'System settings have been reset to defaults.');
-        }}
-      ]
+      () => {
+        setSystemSettings({
+          maintenanceMode: false,
+          newRegistrations: true,
+          emailNotifications: true,
+          pushNotifications: true,
+          autoBackup: true,
+          debugMode: false,
+          kioskModeDefault: true,
+          maxDevicesPerUser: 5
+        });
+        showSuccess('Success', 'System settings have been reset to defaults.');
+      },
+      null,
+      'Reset'
     );
   };
 
@@ -332,21 +329,10 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
             description="Maximum devices allowed per user account"
             value={`${systemSettings.maxDevicesPerUser} devices`}
             onToggle={() => {
-              Alert.prompt(
-                'Max Devices Per User',
-                'Enter the maximum number of devices allowed per user:',
-                (text) => {
-                  const num = parseInt(text);
-                  if (!isNaN(num) && num > 0 && num <= 50) {
-                    updateSystemSetting('maxDevicesPerUser', num);
-                  } else {
-                    Alert.alert('Error', 'Please enter a valid number between 1 and 50.');
-                  }
-                },
-                'plain-text',
-                systemSettings.maxDevicesPerUser.toString(),
-                'numeric'
-              );
+              setDeviceLimitModal({ 
+                visible: true, 
+                value: systemSettings.maxDevicesPerUser.toString() 
+              });
             }}
             type="button"
           />
@@ -393,12 +379,25 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
         visible={showProfileEdit}
         animationType="slide"
         presentationStyle="pageSheet"
+        onRequestClose={() => {
+          console.log('Profile edit modal onRequestClose triggered');
+          setShowProfileEdit(false);
+        }}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Edit Admin Profile</Text>
-            <TouchableOpacity onPress={() => setShowProfileEdit(false)}>
-              <Ionicons name="close" size={24} color="#D4AF37" />
+            <TouchableOpacity 
+              style={styles.modalCloseButton}
+              onPress={() => {
+                console.log('Profile edit modal close button pressed');
+                setShowProfileEdit(false);
+              }}
+              activeOpacity={0.7}
+              hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+              testID="profileEditCloseButton"
+            >
+              <Ionicons name="close" size={28} color="#D4AF37" />
             </TouchableOpacity>
           </View>
           
@@ -488,6 +487,82 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Device Limit Modal */}
+      <Modal
+        visible={deviceLimitModal.visible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setDeviceLimitModal({ visible: false, value: '' })}
+      >
+        <View style={styles.deviceLimitModalOverlay}>
+          <View style={styles.deviceLimitModalContainer}>
+            <View style={styles.deviceLimitModalHeader}>
+              <Text style={styles.deviceLimitModalTitle}>Max Devices Per User</Text>
+              <TouchableOpacity
+                onPress={() => setDeviceLimitModal({ visible: false, value: '' })}
+                style={styles.deviceLimitModalClose}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="close" size={24} color="#D4AF37" />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.deviceLimitModalContent}>
+              <Text style={styles.deviceLimitModalLabel}>Maximum devices allowed per user account:</Text>
+              <TextInput
+                style={styles.deviceLimitModalInput}
+                placeholder="Enter number (1-50)"
+                placeholderTextColor="#9CA3AF"
+                value={deviceLimitModal.value}
+                onChangeText={(text) => setDeviceLimitModal(prev => ({ ...prev, value: text }))}
+                keyboardType="numeric"
+                maxLength={2}
+              />
+              <Text style={styles.deviceLimitModalNote}>
+                Enter a number between 1 and 50
+              </Text>
+            </View>
+            
+            <View style={styles.deviceLimitModalButtons}>
+              <TouchableOpacity
+                style={[styles.deviceLimitModalButton, styles.deviceLimitModalCancelButton]}
+                onPress={() => setDeviceLimitModal({ visible: false, value: '' })}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.deviceLimitModalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={[styles.deviceLimitModalButton, styles.deviceLimitModalSaveButton]}
+                onPress={() => {
+                  const num = parseInt(deviceLimitModal.value);
+                  if (!isNaN(num) && num > 0 && num <= 50) {
+                    updateSystemSetting('maxDevicesPerUser', num);
+                    setDeviceLimitModal({ visible: false, value: '' });
+                  } else {
+                    showError('Error', 'Please enter a valid number between 1 and 50.');
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.deviceLimitModalSaveText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Admin Alert */}
+      <AdminAlert
+        visible={alertConfig.visible}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
@@ -685,6 +760,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  modalCloseButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EF4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
   modalContent: {
     flex: 1,
     padding: 16,
@@ -739,6 +827,99 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   saveButtonText: {
+    color: '#1a1a1a',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deviceLimitModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deviceLimitModalContainer: {
+    backgroundColor: '#2d2d2d',
+    borderRadius: 12,
+    margin: 20,
+    maxWidth: 400,
+    width: '90%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  deviceLimitModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    paddingBottom: 10,
+  },
+  deviceLimitModalTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  deviceLimitModalClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#3d3d3d',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deviceLimitModalContent: {
+    padding: 20,
+    paddingTop: 10,
+  },
+  deviceLimitModalLabel: {
+    color: '#9CA3AF',
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  deviceLimitModalInput: {
+    backgroundColor: '#3d3d3d',
+    color: '#FFFFFF',
+    fontSize: 16,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#4d4d4d',
+    textAlign: 'center',
+  },
+  deviceLimitModalNote: {
+    color: '#6B7280',
+    fontSize: 12,
+    marginTop: 8,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  deviceLimitModalButtons: {
+    flexDirection: 'row',
+    padding: 20,
+    paddingTop: 10,
+  },
+  deviceLimitModalButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  deviceLimitModalCancelButton: {
+    backgroundColor: '#3d3d3d',
+    marginRight: 10,
+  },
+  deviceLimitModalSaveButton: {
+    backgroundColor: '#D4AF37',
+    marginLeft: 10,
+  },
+  deviceLimitModalCancelText: {
+    color: '#9CA3AF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  deviceLimitModalSaveText: {
     color: '#1a1a1a',
     fontSize: 16,
     fontWeight: 'bold',
