@@ -483,7 +483,16 @@ export default function ProductManagementScreen({ navigation }) {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Product Details</Text>
-              <TouchableOpacity onPress={() => setShowProductDetails(false)}>
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => {
+                  console.log('Product details modal close button pressed');
+                  setShowProductDetails(false);
+                  setSelectedProduct(null);
+                }}
+                activeOpacity={0.7}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 <Ionicons name="close" size={24} color="#D4AF37" />
               </TouchableOpacity>
             </View>
@@ -862,6 +871,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#3d3d3d',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     flex: 1,
