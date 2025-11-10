@@ -72,70 +72,7 @@ export default function UserManagementScreen({ navigation }) {
         console.log('No registered users found, showing default admin user');
       }
       
-      // Original mock data kept as reference but not used
-      const originalMockUsers = [
-        {
-          id: '1',
-          email: 'admin@tlbdiamond.com',
-          first_name: 'Admin',
-          last_name: 'User',
-          role: 'admin',
-          created_at: '2024-11-01T10:00:00.000Z',
-          is_verified: true,
-          last_login: '2024-11-10T08:30:00.000Z',
-          status: 'active',
-          device_count: 1
-        },
-        {
-          id: '2',
-          email: 'john.doe@example.com',
-          first_name: 'John',
-          last_name: 'Doe',
-          role: 'user',
-          created_at: '2024-11-05T14:20:00.000Z',
-          is_verified: true,
-          last_login: '2024-11-09T16:45:00.000Z',
-          status: 'active',
-          device_count: 2
-        },
-        {
-          id: '3',
-          email: 'jane.seller@example.com',
-          first_name: 'Jane',
-          last_name: 'Smith',
-          role: 'user',
-          created_at: '2024-11-03T09:15:00.000Z',
-          is_verified: false,
-          last_login: '2024-11-08T12:20:00.000Z',
-          status: 'pending',
-          device_count: 0
-        },
-        {
-          id: '4',
-          email: 'mike.buyer@example.com',
-          first_name: 'Mike',
-          last_name: 'Johnson',
-          role: 'user',
-          created_at: '2024-11-07T16:30:00.000Z',
-          is_verified: true,
-          last_login: '2024-11-10T07:15:00.000Z',
-          status: 'active',
-          device_count: 1
-        },
-        {
-          id: '5',
-          email: 'sarah.inactive@example.com',
-          first_name: 'Sarah',
-          last_name: 'Wilson',
-          role: 'user',
-          created_at: '2024-10-20T11:45:00.000Z',
-          is_verified: true,
-          last_login: '2024-10-25T14:30:00.000Z',
-          status: 'inactive',
-          device_count: 0
-        }
-      ];
-      setUsers(mockUsers);
+      console.log('Successfully loaded users from SharedDataService');
     } catch (error) {
       console.error('Error loading users:', error);
       showError('Error', 'Failed to load users. Please try again.');

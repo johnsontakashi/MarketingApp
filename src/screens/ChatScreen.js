@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
+import sharedDataService from '../services/sharedDataService';
 
 const { width } = Dimensions.get('window');
 
@@ -21,76 +22,65 @@ const CHAT_STORAGE_KEY = 'TLBDiamondChatHistory';
 export default function ChatScreen({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const [waitingForAdmin, setWaitingForAdmin] = useState(false);
   const flatListRef = useRef(null);
 
-  const defaultWelcomeMessage = {
-    id: '1',
-    text: 'Hello! I\'m Sarah from TLB Diamond Support. I\'m here to help you with any questions about your locked device or payment issues. How can I assist you today?',
-    sender: 'support',
-    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    avatar: '👩‍💼'
-  };
-
-  const supportResponses = [
-    "I understand your concern. Let me help you with that payment issue.",
-    "For device unlock, you'll need to complete your remaining payments. Would you like me to show you the payment options?",
-    "Your device is currently in kiosk mode due to the Support Bonus agreement. I can help you understand the unlock process.",
-    "Let me check your account details. Can you please confirm your order number?",
-    "I see that you have 2 payments remaining. The next payment of 💎 25.00 TLB is due on Nov 12, 2024.",
-    "Would you like me to help you make a payment now? I can guide you through the process.",
-    "For emergency situations, we do have an emergency unlock option. This requires verification. Is this a genuine emergency?",
-    "I'm here to help 24/7. What specific issue are you experiencing with your device?",
-    "Thank you for contacting support. I'll do my best to resolve your issue quickly."
-  ];
-
-  // Load chat history from storage
+  // Load current user and chat history
   const loadChatHistory = async () => {
     try {
-      const storedMessages = await SecureStore.getItemAsync(CHAT_STORAGE_KEY);
-      if (storedMessages && storedMessages.trim() !== '') {
-        const parsedMessages = JSON.parse(storedMessages);
-        // Validate that we have an array with valid message structure
-        if (Array.isArray(parsedMessages) && parsedMessages.length > 0) {
-          setMessages(parsedMessages);
-        } else {
-          setMessages([defaultWelcomeMessage]);
-        }
+      // Clear any old local chat cache that might have bot responses
+      await SecureStore.deleteItemAsync(CHAT_STORAGE_KEY);
+      
+      // Get current logged in user
+      const currentUser = await SecureStore.getItemAsync('currentUser');
+      if (!currentUser) {
+        Alert.alert('Error', 'User not found. Please log in again.');
+        navigation.goBack();
+        return;
+      }
+      
+      const user = JSON.parse(currentUser);
+      setCurrentUserEmail(user.email);
+      
+      // Load chat for this user from admin system only
+      const userChat = await sharedDataService.getUserChat(user.email);
+      if (userChat && userChat.messages) {
+        // Only show messages that are either user messages or admin messages (no bots)
+        const realMessages = userChat.messages.filter(msg => 
+          msg.sender === 'user' || msg.sender === 'admin'
+        );
+        setMessages(realMessages);
       } else {
-        // If no chat history, start with welcome message
-        setMessages([defaultWelcomeMessage]);
+        // No chat history, start empty (admin will respond when they see the notification)
+        setMessages([]);
       }
     } catch (error) {
       console.error('Error loading chat history:', error);
-      // Fallback to welcome message if loading fails
-      setMessages([defaultWelcomeMessage]);
+      Alert.alert('Error', 'Failed to load chat. Please try again.');
+      navigation.goBack();
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Save chat history to storage
-  const saveChatHistory = async (newMessages) => {
+  // Refresh chat messages (poll for new admin responses)
+  const refreshMessages = async () => {
+    if (!currentUserEmail) return;
+    
     try {
-      // Only save if we have valid messages
-      if (Array.isArray(newMessages) && newMessages.length > 0) {
-        await SecureStore.setItemAsync(CHAT_STORAGE_KEY, JSON.stringify(newMessages));
+      const userChat = await sharedDataService.getUserChat(currentUserEmail);
+      if (userChat && userChat.messages) {
+        setMessages(userChat.messages);
+        // Check if we got a new admin response
+        const lastMessage = userChat.messages[userChat.messages.length - 1];
+        if (lastMessage && lastMessage.sender === 'admin') {
+          setWaitingForAdmin(false);
+        }
       }
     } catch (error) {
-      console.error('Error saving chat history:', error);
-      // Don't show error to user, just log it
-    }
-  };
-
-  // Clear chat history (for testing or reset)
-  const clearChatHistory = async () => {
-    try {
-      await SecureStore.deleteItemAsync(CHAT_STORAGE_KEY);
-      setMessages([defaultWelcomeMessage]);
-      saveChatHistory([defaultWelcomeMessage]);
-    } catch (error) {
-      console.error('Error clearing chat history:', error);
+      console.error('Error refreshing messages:', error);
     }
   };
 
@@ -108,56 +98,56 @@ export default function ChatScreen({ navigation }) {
     }
   }, [messages, isLoading]);
 
-  const sendMessage = () => {
-    if (inputText.trim() === '') return;
+  // Poll for new admin responses every 5 seconds
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      if (currentUserEmail && waitingForAdmin) {
+        refreshMessages();
+      }
+    }, 5000); // Poll every 5 seconds
 
-    const newMessage = {
-      id: Date.now().toString(),
-      text: inputText.trim(),
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    };
+    return () => clearInterval(pollInterval);
+  }, [currentUserEmail, waitingForAdmin]);
 
-    const updatedMessages = [...messages, newMessage];
-    setMessages(updatedMessages);
-    saveChatHistory(updatedMessages);
-    setInputText('');
-    
-    // Simulate support response
-    setIsTyping(true);
-    setTimeout(() => {
-      const randomResponse = supportResponses[Math.floor(Math.random() * supportResponses.length)];
-      const supportMessage = {
-        id: (Date.now() + 1).toString(),
-        text: randomResponse,
-        sender: 'support',
-        timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        avatar: '👩‍💼'
-      };
-      const finalMessages = [...updatedMessages, supportMessage];
-      setMessages(finalMessages);
-      saveChatHistory(finalMessages);
-      setIsTyping(false);
-    }, 1500 + Math.random() * 1000);
+  const sendMessage = async () => {
+    if (inputText.trim() === '' || !currentUserEmail) return;
+
+    try {
+      const messageText = inputText.trim();
+      setInputText('');
+      setWaitingForAdmin(true);
+      
+      // Send message to admin chat system
+      await sharedDataService.createOrUpdateUserChat(currentUserEmail, messageText, 'user');
+      
+      // Refresh local messages
+      await refreshMessages();
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      Alert.alert('Error', 'Failed to send message. Please try again.');
+      setWaitingForAdmin(false);
+    }
   };
 
   const renderMessage = ({ item }) => {
     const isUser = item.sender === 'user';
+    const formattedTime = new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     
     return (
       <View style={[styles.messageContainer, isUser ? styles.userMessage : styles.supportMessage]}>
         {!isUser && (
           <View style={styles.avatarContainer}>
-            <Text style={styles.avatar}>{item.avatar}</Text>
+            <Text style={styles.avatar}>👨‍💼</Text>
           </View>
         )}
         <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.supportBubble]}>
-          {!isUser && <Text style={styles.senderName}>Sarah - Support</Text>}
+          {!isUser && <Text style={styles.senderName}>Admin - Support</Text>}
           <Text style={[styles.messageText, isUser ? styles.userText : styles.supportText]}>
             {item.text}
           </Text>
           <Text style={[styles.timestamp, isUser ? styles.userTimestamp : styles.supportTimestamp]}>
-            {item.timestamp}
+            {formattedTime}
           </Text>
         </View>
       </View>
@@ -176,16 +166,16 @@ export default function ChatScreen({ navigation }) {
           <Text style={styles.backText}>Return</Text>
         </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>Live Support Chat</Text>
-          <Text style={styles.headerSubtitle}>TLB Diamond Support Team</Text>
+          <Text style={styles.headerTitle}>Admin Support Chat</Text>
+          <Text style={styles.headerSubtitle}>Direct chat with TLB Diamond Admin</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.clearButton} onPress={clearChatHistory}>
+          <TouchableOpacity style={styles.clearButton} onPress={refreshMessages}>
             <Ionicons name="refresh" size={18} color="#FFFFFF" />
           </TouchableOpacity>
           <View style={styles.statusIndicator}>
-            <View style={styles.onlineIndicator} />
-            <Text style={styles.onlineText}>Online</Text>
+            <View style={[styles.onlineIndicator, { backgroundColor: waitingForAdmin ? '#F59E0B' : '#10B981' }]} />
+            <Text style={styles.onlineText}>{waitingForAdmin ? 'Waiting...' : 'Connected'}</Text>
           </View>
         </View>
       </View>
@@ -207,17 +197,26 @@ export default function ChatScreen({ navigation }) {
         />
       )}
 
-      {/* Typing Indicator */}
-      {isTyping && (
+      {/* Waiting for Admin Indicator */}
+      {waitingForAdmin && (
         <View style={styles.typingContainer}>
           <View style={styles.typingBubble}>
-            <Text style={styles.typingText}>Sarah is typing</Text>
+            <Text style={styles.typingText}>Waiting for admin response...</Text>
             <View style={styles.typingDots}>
               <View style={[styles.dot, styles.dot1]} />
               <View style={[styles.dot, styles.dot2]} />
               <View style={[styles.dot, styles.dot3]} />
             </View>
           </View>
+        </View>
+      )}
+
+      {/* Empty chat message */}
+      {messages.length === 0 && !isLoading && (
+        <View style={styles.emptyChatContainer}>
+          <Ionicons name="chatbubble-ellipses-outline" size={64} color="#9CA3AF" />
+          <Text style={styles.emptyChatTitle}>Start a conversation</Text>
+          <Text style={styles.emptyChatText}>Send a message to get help from our admin team</Text>
         </View>
       )}
 
@@ -505,5 +504,24 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     flex: 1,
     textAlign: 'right',
+  },
+  emptyChatContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  emptyChatTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#374151',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyChatText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

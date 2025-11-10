@@ -5,20 +5,28 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   TextInput,
   Modal,
-  ScrollView
+  ScrollView,
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import sharedDataService from '../services/sharedDataService';
+import AdminAlert from '../components/admin/AdminAlert';
+import { useAdminAlert } from '../hooks/useAdminAlert';
 
 export default function AdminUserManagementScreen({ navigation }) {
+  const { alertConfig, hideAlert, showSuccess, showError, showWarning } = useAdminAlert();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatUser, setChatUser] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
     loadUsers();
@@ -31,17 +39,31 @@ export default function AdminUserManagementScreen({ navigation }) {
       // Load actual users from the shared data service
       const registeredUsers = await sharedDataService.getRegisteredUsers();
       
-      // If no users found, show empty list
+      // If no users found, show helpful message
       if (registeredUsers.length === 0) {
         console.log('No registered users found in the system');
+        setUsers([]);
+        showWarning(
+          'No Users Found',
+          'No registered users found in the system. New users will appear here when they register.'
+        );
+      } else {
+        setUsers(registeredUsers);
+        console.log(`Loaded ${registeredUsers.length} registered users from database`);
+        showSuccess(
+          'Users Loaded',
+          `Successfully loaded ${registeredUsers.length} registered user${registeredUsers.length > 1 ? 's' : ''}.`
+        );
       }
-      
-      setUsers(registeredUsers);
-      console.log(`Loaded ${registeredUsers.length} registered users from database`);
     } catch (error) {
       console.error('Error loading users:', error);
-      Alert.alert('Error', 'Failed to load users');
       setUsers([]); // Set empty array if there's an error
+      
+      // Show more helpful error message with troubleshooting
+      showError(
+        'Failed to Load Users',
+        'Unable to load user data from the system. This might be due to:\n\n• Database connectivity issues\n• Permission problems\n• Corrupted user registry\n\nPlease try refreshing or restart the app.'
+      );
     } finally {
       setLoading(false);
     }
@@ -87,6 +109,39 @@ export default function AdminUserManagementScreen({ navigation }) {
     );
   };
 
+  const openChatModal = async (user) => {
+    try {
+      setChatUser(user);
+      const userChat = await sharedDataService.getUserChat(user.email);
+      const messages = userChat ? userChat.messages : [];
+      setChatMessages(messages);
+      setShowChatModal(true);
+    } catch (error) {
+      console.error('Error loading chat:', error);
+      showError('Chat Error', 'Failed to load chat messages.');
+    }
+  };
+
+  const sendChatMessage = async () => {
+    if (!newMessage.trim() || !chatUser) return;
+
+    try {
+      const messageText = newMessage.trim();
+      setNewMessage('');
+      
+      // Send message as admin
+      await sharedDataService.createOrUpdateUserChat(chatUser.email, messageText, 'admin');
+      
+      // Refresh chat messages
+      const userChat = await sharedDataService.getUserChat(chatUser.email);
+      const messages = userChat ? userChat.messages : [];
+      setChatMessages(messages);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      showError('Message Error', 'Failed to send message.');
+    }
+  };
+
   const renderUserItem = ({ item }) => (
     <View style={styles.userCard}>
       <View style={styles.userInfo}>
@@ -125,6 +180,13 @@ export default function AdminUserManagementScreen({ navigation }) {
         
         <TouchableOpacity
           style={styles.actionButton}
+          onPress={() => openChatModal(item)}
+        >
+          <Ionicons name="chatbubble-ellipses" size={20} color="#8B5CF6" />
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={() => handleUserAction(item, 'suspend')}
         >
           <Ionicons name="ban" size={20} color="#F59E0B" />
@@ -141,6 +203,40 @@ export default function AdminUserManagementScreen({ navigation }) {
       default: return '#6B7280';
     }
   };
+
+  // Show loading screen on initial load
+  if (loading && users.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>User Management</Text>
+          <TouchableOpacity style={styles.refreshButton} onPress={loadUsers}>
+            <Ionicons name="refresh" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+          <Text style={styles.loadingText}>Loading users...</Text>
+          <Text style={styles.loadingSubtext}>Please wait while we fetch user data</Text>
+        </View>
+
+        {/* Admin Alert Component */}
+        <AdminAlert
+          visible={alertConfig.visible}
+          type={alertConfig.type}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          buttons={alertConfig.buttons}
+          onClose={hideAlert}
+          icon={alertConfig.icon}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -251,6 +347,16 @@ export default function AdminUserManagementScreen({ navigation }) {
                 
                 <View style={styles.modalActions}>
                   <TouchableOpacity
+                    style={[styles.modalActionButton, { backgroundColor: '#8B5CF6' }]}
+                    onPress={() => {
+                      setShowUserDetails(false);
+                      openChatModal(selectedUser);
+                    }}
+                  >
+                    <Text style={styles.modalActionButtonText}>Chat</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
                     style={[styles.modalActionButton, { backgroundColor: '#10B981' }]}
                     onPress={() => {
                       const newRole = selectedUser.userType === 'buyer' ? 'seller' : 'buyer';
@@ -276,6 +382,95 @@ export default function AdminUserManagementScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Chat Modal */}
+      <Modal
+        visible={showChatModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowChatModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.chatModalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                Chat with {chatUser?.firstName} {chatUser?.lastName}
+              </Text>
+              <TouchableOpacity onPress={() => setShowChatModal(false)}>
+                <Ionicons name="close" size={24} color="#8B4513" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.chatMessages}>
+              {chatMessages.length === 0 ? (
+                <View style={styles.emptyChatContainer}>
+                  <Ionicons name="chatbubble-ellipses-outline" size={48} color="#9CA3AF" />
+                  <Text style={styles.emptyChatText}>No messages yet</Text>
+                  <Text style={styles.emptyChatSubtext}>Start a conversation with this user</Text>
+                </View>
+              ) : (
+                chatMessages.map((message, index) => (
+                  <View 
+                    key={index} 
+                    style={[
+                      styles.chatMessage,
+                      message.sender === 'admin' ? styles.adminMessage : styles.userMessage
+                    ]}
+                  >
+                    <View style={[
+                      styles.messageBubble,
+                      message.sender === 'admin' ? styles.adminBubble : styles.userBubble
+                    ]}>
+                      <Text style={styles.senderName}>
+                        {message.sender === 'admin' ? 'Admin' : `${chatUser?.firstName}`}
+                      </Text>
+                      <Text style={[
+                        styles.messageText,
+                        message.sender === 'admin' ? styles.adminText : styles.userText
+                      ]}>
+                        {message.text}
+                      </Text>
+                      <Text style={styles.messageTime}>
+                        {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+              )}
+            </ScrollView>
+            
+            <View style={styles.chatInputContainer}>
+              <TextInput
+                style={styles.chatInput}
+                value={newMessage}
+                onChangeText={setNewMessage}
+                placeholder="Type your message..."
+                placeholderTextColor="#8B8B8B"
+                multiline
+                maxLength={500}
+              />
+              <TouchableOpacity 
+                style={[styles.sendButton, newMessage.trim() ? styles.sendButtonActive : null]}
+                onPress={sendChatMessage}
+                disabled={!newMessage.trim()}
+              >
+                <Ionicons name="send" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Admin Alert Component */}
+      <AdminAlert
+        visible={alertConfig.visible}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
+        icon={alertConfig.icon}
+      />
     </View>
   );
 }
@@ -485,5 +680,125 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+  loadingText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginTop: 16,
+  },
+  loadingSubtext: {
+    fontSize: 12,
+    color: '#8B4513',
+    marginTop: 8,
+  },
+  chatModalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 0,
+    width: '90%',
+    height: '80%',
+    maxHeight: 600,
+  },
+  chatMessages: {
+    flex: 1,
+    padding: 16,
+  },
+  emptyChatContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyChatText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6B7280',
+    marginTop: 12,
+  },
+  emptyChatSubtext: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    marginTop: 4,
+  },
+  chatMessage: {
+    marginBottom: 16,
+  },
+  adminMessage: {
+    alignItems: 'flex-end',
+  },
+  userMessage: {
+    alignItems: 'flex-start',
+  },
+  messageBubble: {
+    maxWidth: '80%',
+    borderRadius: 16,
+    padding: 12,
+  },
+  adminBubble: {
+    backgroundColor: '#D4AF37',
+    borderBottomRightRadius: 4,
+  },
+  userBubble: {
+    backgroundColor: '#F3F4F6',
+    borderBottomLeftRadius: 4,
+  },
+  senderName: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  messageText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
+  adminText: {
+    color: '#FFFFFF',
+  },
+  userText: {
+    color: '#374151',
+  },
+  messageTime: {
+    fontSize: 10,
+    marginTop: 4,
+    opacity: 0.7,
+  },
+  chatInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    backgroundColor: '#F9FAFB',
+  },
+  chatInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontSize: 14,
+    color: '#374151',
+    backgroundColor: '#FFFFFF',
+    maxHeight: 80,
+  },
+  sendButton: {
+    backgroundColor: '#9CA3AF',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  sendButtonActive: {
+    backgroundColor: '#D4AF37',
   },
 });

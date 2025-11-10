@@ -13,7 +13,7 @@ import {
   Switch
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../../services/api';
+import sharedDataService from '../../services/sharedDataService';
 import AdminAlert from '../../components/admin/AdminAlert';
 import { useAdminAlert } from '../../hooks/useAdminAlert';
 
@@ -27,6 +27,7 @@ export default function DeviceManagementScreen({ navigation }) {
   const [filterStatus, setFilterStatus] = useState('all'); // all, online, offline, locked, blocked
   const { alertConfig, hideAlert, showSuccess, showError, showDestructiveConfirm, showAlert } = useAdminAlert();
   const [messageModal, setMessageModal] = useState({ visible: false, message: '' });
+  const [chatModal, setChatModal] = useState({ visible: false, userEmail: '', messages: [], inputMessage: '' });
 
   useEffect(() => {
     loadDevices();
@@ -35,117 +36,29 @@ export default function DeviceManagementScreen({ navigation }) {
   const loadDevices = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API call when backend endpoint is available
-      // const response = await apiClient.get('/admin/devices');
-      // setDevices(response.data);
       
-      // Mock data for now
-      const mockDevices = [
-        {
-          id: '1',
-          device_id: 'TLBD001',
-          device_name: 'Admin Tablet 1',
-          user_email: 'admin@tlbdiamond.com',
-          device_model: 'Samsung Galaxy Tab S8',
-          os_version: 'Android 13',
-          app_version: '1.0.0',
-          ip_address: '192.168.1.101',
-          last_seen: '2024-11-10T10:30:00.000Z',
-          registered_at: '2024-11-01T10:00:00.000Z',
-          status: 'online',
-          is_locked: false,
-          is_blocked: false,
-          kiosk_mode: true,
-          location: 'New York Store',
-          battery_level: 85,
-          storage_used: 12.5,
-          storage_total: 64
-        },
-        {
-          id: '2',
-          device_id: 'TLBD002',
-          device_name: 'Customer Kiosk 1',
-          user_email: 'john.doe@example.com',
-          device_model: 'iPad Pro 11"',
-          os_version: 'iOS 17.1',
-          app_version: '1.0.0',
-          ip_address: '192.168.1.102',
-          last_seen: '2024-11-10T10:25:00.000Z',
-          registered_at: '2024-11-05T14:20:00.000Z',
-          status: 'online',
-          is_locked: false,
-          is_blocked: false,
-          kiosk_mode: false,
-          location: 'Los Angeles Store',
-          battery_level: 67,
-          storage_used: 8.2,
-          storage_total: 32
-        },
-        {
-          id: '3',
-          device_id: 'TLBD003',
-          device_name: 'Display Kiosk 2',
-          user_email: 'jane.seller@example.com',
-          device_model: 'Samsung Galaxy Tab A8',
-          os_version: 'Android 12',
-          app_version: '0.9.8',
-          ip_address: '192.168.1.103',
-          last_seen: '2024-11-10T09:45:00.000Z',
-          registered_at: '2024-11-03T09:15:00.000Z',
-          status: 'offline',
-          is_locked: true,
-          is_blocked: false,
-          kiosk_mode: true,
-          location: 'Chicago Store',
-          battery_level: 23,
-          storage_used: 15.8,
-          storage_total: 32
-        },
-        {
-          id: '4',
-          device_id: 'TLBD004',
-          device_name: 'Mobile Sales Device',
-          user_email: 'mike.buyer@example.com',
-          device_model: 'iPhone 14 Pro',
-          os_version: 'iOS 16.6',
-          app_version: '1.0.0',
-          ip_address: '192.168.1.104',
-          last_seen: '2024-11-10T08:15:00.000Z',
-          registered_at: '2024-11-07T16:30:00.000Z',
-          status: 'online',
-          is_locked: false,
-          is_blocked: true,
-          kiosk_mode: false,
-          location: 'Remote',
-          battery_level: 92,
-          storage_used: 45.2,
-          storage_total: 128
-        },
-        {
-          id: '5',
-          device_id: 'TLBD005',
-          device_name: 'Legacy Kiosk',
-          user_email: 'sarah.inactive@example.com',
-          device_model: 'Samsung Galaxy Tab S7',
-          os_version: 'Android 11',
-          app_version: '0.9.5',
-          ip_address: '192.168.1.105',
-          last_seen: '2024-11-08T14:30:00.000Z',
-          registered_at: '2024-10-20T11:45:00.000Z',
-          status: 'offline',
-          is_locked: false,
-          is_blocked: false,
-          kiosk_mode: true,
-          location: 'Miami Store',
-          battery_level: 0,
-          storage_used: 28.9,
-          storage_total: 64
-        }
-      ];
-      setDevices(mockDevices);
+      // Load real devices from shared data service
+      const registeredDevices = await sharedDataService.getDevices();
+      
+      if (registeredDevices.length === 0) {
+        console.log('No registered devices found in the system');
+        setDevices([]);
+        showError(
+          'No Devices Found',
+          'No registered devices found in the system. Devices will appear here when users register and connect their devices.'
+        );
+      } else {
+        setDevices(registeredDevices);
+        console.log(`Loaded ${registeredDevices.length} registered devices from database`);
+      }
     } catch (error) {
       console.error('Error loading devices:', error);
-      showError('Error', 'Failed to load devices. Please try again.');
+      setDevices([]); // Set empty array if there's an error
+      
+      showError(
+        'Failed to Load Devices',
+        'Unable to load device data from the system. This might be due to:\n\n• Database connectivity issues\n• Permission problems\n• Corrupted device registry\n\nPlease try refreshing or restart the app.'
+      );
     } finally {
       setLoading(false);
     }
@@ -237,18 +150,22 @@ export default function DeviceManagementScreen({ navigation }) {
         toggleKioskMode(device.id, !device.kiosk_mode);
         break;
       case 'send_message':
-        console.log('Opening message modal for device:', device.device_name);
-        setMessageModal({ visible: true, message: '' });
+        console.log('Opening chat modal for device:', device.device_name);
+        openChatModal(device.user_email);
         break;
     }
   };
 
   const toggleDeviceLock = async (deviceId, shouldLock) => {
     try {
-      // TODO: API call to lock/unlock device
+      // Update device in shared data service
+      await sharedDataService.updateDevice(deviceId, { is_locked: shouldLock });
+      
+      // Update local state
       setDevices(prev => prev.map(device => 
         device.id === deviceId ? { ...device, is_locked: shouldLock } : device
       ));
+      
       showSuccess('Success', `Device has been ${shouldLock ? 'locked' : 'unlocked'} successfully.`);
     } catch (error) {
       showError('Error', `Failed to ${shouldLock ? 'lock' : 'unlock'} device. Please try again.`);
@@ -257,10 +174,14 @@ export default function DeviceManagementScreen({ navigation }) {
 
   const toggleDeviceBlock = async (deviceId, shouldBlock) => {
     try {
-      // TODO: API call to block/unblock device
+      // Update device in shared data service
+      await sharedDataService.updateDevice(deviceId, { is_blocked: shouldBlock });
+      
+      // Update local state
       setDevices(prev => prev.map(device => 
         device.id === deviceId ? { ...device, is_blocked: shouldBlock } : device
       ));
+      
       showSuccess('Success', `Device has been ${shouldBlock ? 'blocked' : 'unblocked'} successfully.`);
     } catch (error) {
       showError('Error', `Failed to ${shouldBlock ? 'block' : 'unblock'} device. Please try again.`);
@@ -269,10 +190,14 @@ export default function DeviceManagementScreen({ navigation }) {
 
   const toggleKioskMode = async (deviceId, enableKiosk) => {
     try {
-      // TODO: API call to toggle kiosk mode
+      // Update device in shared data service
+      await sharedDataService.updateDevice(deviceId, { kiosk_mode: enableKiosk });
+      
+      // Update local state
       setDevices(prev => prev.map(device => 
         device.id === deviceId ? { ...device, kiosk_mode: enableKiosk } : device
       ));
+      
       showSuccess('Success', `Kiosk mode has been ${enableKiosk ? 'enabled' : 'disabled'} for the device.`);
     } catch (error) {
       showError('Error', 'Failed to toggle kiosk mode. Please try again.');
@@ -285,6 +210,51 @@ export default function DeviceManagementScreen({ navigation }) {
       showSuccess('Success', 'Remote wipe command has been sent to the device.');
     } catch (error) {
       showError('Error', 'Failed to send wipe command. Please try again.');
+    }
+  };
+
+  const openChatModal = async (userEmail) => {
+    try {
+      // Load chat history for this user
+      const userChat = await sharedDataService.getUserChat(userEmail);
+      const messages = userChat ? userChat.messages : [];
+      
+      setChatModal({
+        visible: true,
+        userEmail: userEmail,
+        messages: messages,
+        inputMessage: ''
+      });
+      
+      // Mark as read
+      if (userChat && userChat.hasUnreadMessages) {
+        await sharedDataService.markChatAsRead(userEmail);
+      }
+    } catch (error) {
+      showError('Error', 'Failed to load chat. Please try again.');
+    }
+  };
+
+  const sendChatMessage = async () => {
+    if (!chatModal.inputMessage.trim()) return;
+    
+    try {
+      const message = chatModal.inputMessage.trim();
+      
+      // Send admin message
+      await sharedDataService.createOrUpdateUserChat(chatModal.userEmail, message, 'admin');
+      
+      // Refresh chat
+      const userChat = await sharedDataService.getUserChat(chatModal.userEmail);
+      setChatModal(prev => ({
+        ...prev,
+        messages: userChat ? userChat.messages : [],
+        inputMessage: ''
+      }));
+      
+      showSuccess('Message Sent', 'Your message has been sent to the user.');
+    } catch (error) {
+      showError('Error', 'Failed to send message. Please try again.');
     }
   };
 
@@ -731,6 +701,76 @@ export default function DeviceManagementScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* Chat Modal */}
+      <Modal
+        visible={chatModal.visible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setChatModal(prev => ({ ...prev, visible: false }))}
+      >
+        <View style={styles.chatModalOverlay}>
+          <View style={styles.chatModalContainer}>
+            <View style={styles.chatModalHeader}>
+              <Text style={styles.chatModalTitle}>
+                Chat with {chatModal.userEmail}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setChatModal(prev => ({ ...prev, visible: false }))}
+                style={styles.chatModalClose}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="close" size={24} color="#D4AF37" />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.chatMessagesContainer}>
+              <ScrollView style={styles.chatMessagesList}>
+                {chatModal.messages.map((message, index) => {
+                  const isAdmin = message.sender === 'admin';
+                  return (
+                    <View key={index} style={[
+                      styles.chatMessageBubble,
+                      isAdmin ? styles.adminMessage : styles.userMessage
+                    ]}>
+                      <Text style={[
+                        styles.chatMessageText,
+                        isAdmin ? styles.adminMessageText : styles.userMessageText
+                      ]}>
+                        {message.text}
+                      </Text>
+                      <Text style={styles.chatMessageTime}>
+                        {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </View>
+            
+            <View style={styles.chatInputContainer}>
+              <TextInput
+                style={styles.chatInput}
+                placeholder="Type your response..."
+                placeholderTextColor="#9CA3AF"
+                value={chatModal.inputMessage}
+                onChangeText={(text) => setChatModal(prev => ({ ...prev, inputMessage: text }))}
+                multiline={true}
+                numberOfLines={2}
+                maxLength={500}
+              />
+              <TouchableOpacity
+                style={[styles.chatSendButton, !chatModal.inputMessage.trim() && styles.chatSendButtonDisabled]}
+                onPress={sendChatMessage}
+                disabled={!chatModal.inputMessage.trim()}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="send" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* Admin Alert */}
       <AdminAlert
         visible={alertConfig.visible}
@@ -1143,5 +1183,114 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
     fontSize: 16,
     fontWeight: '600',
+  },
+  // Chat Modal Styles
+  chatModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chatModalContainer: {
+    backgroundColor: '#2d2d2d',
+    borderRadius: 16,
+    width: '95%',
+    height: '80%',
+    maxHeight: 600,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  chatModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3d3d3d',
+  },
+  chatModalTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  chatModalClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#3d3d3d',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chatMessagesContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  chatMessagesList: {
+    flex: 1,
+  },
+  chatMessageBubble: {
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
+    maxWidth: '80%',
+  },
+  adminMessage: {
+    backgroundColor: '#D4AF37',
+    alignSelf: 'flex-end',
+  },
+  userMessage: {
+    backgroundColor: '#3d3d3d',
+    alignSelf: 'flex-start',
+  },
+  chatMessageText: {
+    fontSize: 14,
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  adminMessageText: {
+    color: '#1a1a1a',
+  },
+  userMessageText: {
+    color: '#FFFFFF',
+  },
+  chatMessageTime: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    textAlign: 'right',
+  },
+  chatInputContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#3d3d3d',
+    alignItems: 'flex-end',
+  },
+  chatInput: {
+    flex: 1,
+    backgroundColor: '#3d3d3d',
+    color: '#FFFFFF',
+    fontSize: 14,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#4d4d4d',
+    textAlignVertical: 'top',
+    maxHeight: 80,
+    marginRight: 8,
+  },
+  chatSendButton: {
+    backgroundColor: '#D4AF37',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chatSendButtonDisabled: {
+    backgroundColor: '#6B7280',
   },
 });

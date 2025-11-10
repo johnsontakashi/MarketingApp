@@ -274,13 +274,252 @@ class SharedDataService {
     }
   }
 
+  // ============ DEVICES ============
+  async getDevices() {
+    try {
+      const storedDevices = await SecureStore.getItemAsync('devices');
+      if (storedDevices) {
+        return JSON.parse(storedDevices);
+      }
+
+      // Generate devices based on registered users
+      const users = await this.getRegisteredUsers();
+      const devices = users.map((user, index) => {
+        const isOnline = Math.random() > 0.2; // 80% chance online
+        const isLocked = Math.random() > 0.9; // 10% chance locked
+        const isBlocked = Math.random() > 0.95; // 5% chance blocked
+        
+        return {
+          id: `device_${user.id || index + 1}`,
+          device_id: `TLBD${(index + 1).toString().padStart(3, '0')}`,
+          device_name: `${user.firstName}'s Device`,
+          user_email: user.email,
+          user_id: user.id || (index + 1).toString(),
+          device_model: this.getRandomDeviceModel(),
+          os_version: this.getRandomOSVersion(),
+          app_version: '1.0.0',
+          ip_address: `192.168.1.${100 + index}`,
+          last_seen: this.getRandomLastSeen(isOnline),
+          registered_at: user.registeredAt || new Date().toISOString(),
+          status: isOnline ? 'online' : 'offline',
+          is_locked: isLocked,
+          is_blocked: isBlocked,
+          kiosk_mode: Math.random() > 0.3, // 70% chance kiosk mode enabled
+          location: this.getRandomLocation(),
+          battery_level: Math.floor(Math.random() * 100),
+          storage_used: parseFloat((Math.random() * 50).toFixed(1)),
+          storage_total: [32, 64, 128, 256][Math.floor(Math.random() * 4)]
+        };
+      });
+
+      await this.saveDevices(devices);
+      return devices;
+    } catch (error) {
+      console.error('Error loading devices:', error);
+      return [];
+    }
+  }
+
+  async saveDevices(devices) {
+    try {
+      await SecureStore.setItemAsync('devices', JSON.stringify(devices));
+      console.log('Devices saved to local storage');
+    } catch (error) {
+      console.error('Error saving devices:', error);
+    }
+  }
+
+  async updateDevice(deviceId, updates) {
+    try {
+      const devices = await this.getDevices();
+      const updatedDevices = devices.map(device =>
+        device.id === deviceId ? { ...device, ...updates } : device
+      );
+      await this.saveDevices(updatedDevices);
+      return updatedDevices.find(d => d.id === deviceId);
+    } catch (error) {
+      console.error('Error updating device:', error);
+      throw error;
+    }
+  }
+
+  getRandomDeviceModel() {
+    const models = [
+      'Samsung Galaxy Tab S8',
+      'Samsung Galaxy Tab A8',
+      'Samsung Galaxy Tab S7',
+      'iPad Pro 11"',
+      'iPad Air',
+      'iPhone 14 Pro',
+      'Samsung Galaxy S23',
+      'Google Pixel 7'
+    ];
+    return models[Math.floor(Math.random() * models.length)];
+  }
+
+  getRandomOSVersion() {
+    const osVersions = [
+      'Android 13',
+      'Android 12',
+      'Android 11',
+      'iOS 17.1',
+      'iOS 16.6',
+      'iOS 15.7'
+    ];
+    return osVersions[Math.floor(Math.random() * osVersions.length)];
+  }
+
+  getRandomLastSeen(isOnline) {
+    if (isOnline) {
+      // Online devices seen recently (within 30 minutes)
+      const now = new Date();
+      const minutesAgo = Math.floor(Math.random() * 30);
+      return new Date(now.getTime() - minutesAgo * 60 * 1000).toISOString();
+    } else {
+      // Offline devices seen within last few days
+      const now = new Date();
+      const hoursAgo = Math.floor(Math.random() * 72) + 1; // 1-72 hours ago
+      return new Date(now.getTime() - hoursAgo * 60 * 60 * 1000).toISOString();
+    }
+  }
+
+  getRandomLocation() {
+    const locations = [
+      'New York Store',
+      'Los Angeles Store',
+      'Chicago Store',
+      'Miami Store',
+      'Dallas Store',
+      'Phoenix Store',
+      'Remote',
+      'Mobile User',
+      'Home Office'
+    ];
+    return locations[Math.floor(Math.random() * locations.length)];
+  }
+
+  // ============ CHAT SYSTEM ============
+  async getChats() {
+    try {
+      const storedChats = await SecureStore.getItemAsync('adminChats');
+      if (storedChats) {
+        return JSON.parse(storedChats);
+      }
+      return [];
+    } catch (error) {
+      console.error('Error loading chats:', error);
+      return [];
+    }
+  }
+
+  async saveChats(chats) {
+    try {
+      await SecureStore.setItemAsync('adminChats', JSON.stringify(chats));
+    } catch (error) {
+      console.error('Error saving chats:', error);
+    }
+  }
+
+  async createOrUpdateUserChat(userEmail, message, sender = 'user') {
+    try {
+      const chats = await this.getChats();
+      
+      // Find existing chat for this user
+      let existingChatIndex = chats.findIndex(chat => chat.userEmail === userEmail);
+      
+      const newMessage = {
+        id: Date.now().toString(),
+        text: message,
+        sender: sender, // 'user' or 'admin'
+        timestamp: new Date().toISOString(),
+        read: sender === 'admin' // Admin messages are automatically marked as read
+      };
+
+      if (existingChatIndex >= 0) {
+        // Add message to existing chat
+        chats[existingChatIndex].messages.push(newMessage);
+        chats[existingChatIndex].lastMessage = message;
+        chats[existingChatIndex].lastMessageTime = newMessage.timestamp;
+        chats[existingChatIndex].hasUnreadMessages = sender === 'user';
+      } else {
+        // Create new chat
+        const users = await this.getRegisteredUsers();
+        const user = users.find(u => u.email === userEmail);
+        
+        const newChat = {
+          id: Date.now().toString(),
+          userEmail: userEmail,
+          userName: user ? `${user.firstName} ${user.lastName}` : 'Unknown User',
+          deviceId: `TLBD${users.findIndex(u => u.email === userEmail) + 1}`.padStart(7, '0'),
+          messages: [newMessage],
+          lastMessage: message,
+          lastMessageTime: newMessage.timestamp,
+          hasUnreadMessages: sender === 'user',
+          createdAt: newMessage.timestamp
+        };
+        
+        chats.unshift(newChat); // Add to beginning for latest first
+      }
+
+      await this.saveChats(chats);
+      return chats;
+    } catch (error) {
+      console.error('Error creating/updating chat:', error);
+      throw error;
+    }
+  }
+
+  async markChatAsRead(userEmail) {
+    try {
+      const chats = await this.getChats();
+      const chatIndex = chats.findIndex(chat => chat.userEmail === userEmail);
+      
+      if (chatIndex >= 0) {
+        chats[chatIndex].hasUnreadMessages = false;
+        // Mark all user messages as read
+        chats[chatIndex].messages.forEach(msg => {
+          if (msg.sender === 'user') {
+            msg.read = true;
+          }
+        });
+        await this.saveChats(chats);
+      }
+      
+      return chats;
+    } catch (error) {
+      console.error('Error marking chat as read:', error);
+      throw error;
+    }
+  }
+
+  async getUserChat(userEmail) {
+    try {
+      const chats = await this.getChats();
+      return chats.find(chat => chat.userEmail === userEmail) || null;
+    } catch (error) {
+      console.error('Error getting user chat:', error);
+      return null;
+    }
+  }
+
+  async getUnreadChatCount() {
+    try {
+      const chats = await this.getChats();
+      return chats.filter(chat => chat.hasUnreadMessages).length;
+    } catch (error) {
+      console.error('Error getting unread chat count:', error);
+      return 0;
+    }
+  }
+
   // ============ DASHBOARD STATISTICS ============
   async getDashboardStats() {
     try {
-      const [users, products, wallet] = await Promise.all([
+      const [users, products, wallet, devices] = await Promise.all([
         this.getRegisteredUsers(),
         this.getProducts(),
-        this.getWalletData()
+        this.getWalletData(),
+        this.getDevices()
       ]);
 
       const activeUsers = users.filter(u => u.isVerified).length;
@@ -298,8 +537,8 @@ class SharedDataService {
         monthlyRevenue: totalRevenue * 0.15, // Estimate 15% this month
         totalProducts: totalProducts,
         lowStockProducts: lowStockProducts,
-        totalDevices: users.length, // Assume 1 device per user
-        onlineDevices: Math.floor(users.length * 0.8), // Estimate 80% online
+        totalDevices: devices.length,
+        onlineDevices: devices.filter(d => d.status === 'online').length,
         supportTickets: Math.floor(users.length * 0.05), // Estimate 5% have tickets
         systemAlerts: lowStockProducts + (users.length > 0 ? 1 : 0) // Stock alerts + general alerts
       };

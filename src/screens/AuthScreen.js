@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import apiClient, { ApiError } from '../services/api';
 import WelcomeModal from '../components/WelcomeModal';
+import { useCustomAlert } from '../hooks/useCustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -54,6 +55,7 @@ const getUserFromRegistry = async (email) => {
 export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   // Get onAuthSuccess from props (preferred) or route params (fallback)
   const authSuccessCallback = onAuthSuccess || (route?.params?.onAuthSuccess);
+  const { showAlert } = useCustomAlert();
   const [isLogin, setIsLogin] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -158,43 +160,83 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
     const { email, password, confirmPassword, firstName, lastName, phoneNumber, sex } = formData;
 
     if (!email.trim()) {
-      Alert.alert('Validation Error', 'Email is required');
+      showAlert({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Email is required',
+        buttons: [{ text: 'OK', onPress: () => {} }]
+      });
       return false;
     }
 
     if (!email.includes('@') || !email.includes('.')) {
-      Alert.alert('Validation Error', 'Please enter a valid email address');
+      showAlert({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Please enter a valid email address',
+        buttons: [{ text: 'OK', onPress: () => {} }]
+      });
       return false;
     }
 
     if (password.length < 6) {
-      Alert.alert('Validation Error', 'Password must be at least 6 characters');
+      showAlert({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Password must be at least 6 characters',
+        buttons: [{ text: 'OK', onPress: () => {} }]
+      });
       return false;
     }
 
     if (!isLogin) {
       if (password !== confirmPassword) {
-        Alert.alert('Validation Error', 'Passwords do not match');
+        showAlert({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Passwords do not match',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
         return false;
       }
 
       if (!firstName.trim() || !lastName.trim()) {
-        Alert.alert('Validation Error', 'First name and last name are required');
+        showAlert({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'First name and last name are required',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
         return false;
       }
 
       if (!phoneNumber.trim()) {
-        Alert.alert('Validation Error', 'Phone number is required');
+        showAlert({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Phone number is required',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
         return false;
       }
 
       if (!sex) {
-        Alert.alert('Validation Error', 'Please select your gender');
+        showAlert({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please select your gender',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
         return false;
       }
 
       if (!formData.birthday.trim()) {
-        Alert.alert('Validation Error', 'Birthday is required');
+        showAlert({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Birthday is required',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
         return false;
       }
     }
@@ -243,7 +285,12 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             // Don't call authSuccessCallback immediately - wait for modal to close
             console.log('API login successful, showing welcome modal first...');
           } else {
-            Alert.alert('Login Failed', 'Invalid response from server');
+            showAlert({
+              type: 'error',
+              title: 'Login Failed',
+              message: 'Invalid response from server',
+              buttons: [{ text: 'OK', onPress: () => {} }]
+            });
           }
         } catch (apiError) {
           console.log('API login failed, attempting local fallback...');
@@ -287,10 +334,12 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           }
           
           // If no user found in registry, show error
-          Alert.alert(
-            'Login Failed', 
-            'No account found for this email. Please register first or check your internet connection.'
-          );
+          showAlert({
+            type: 'error',
+            title: 'Login Failed',
+            message: 'No account found for this email. Please register first or check your internet connection.',
+            buttons: [{ text: 'OK', onPress: () => {} }]
+          });
         }
 
       } else {
@@ -328,7 +377,12 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             // Don't call authSuccessCallback immediately - wait for modal to close
             console.log('API registration successful, showing welcome modal first...');
           } else {
-            Alert.alert('Registration Failed', 'Invalid response from server');
+            showAlert({
+              type: 'error',
+              title: 'Registration Failed',
+              message: 'Invalid response from server',
+              buttons: [{ text: 'OK', onPress: () => {} }]
+            });
           }
         } catch (apiError) {
           console.log('API registration failed, attempting local fallback...');
@@ -371,16 +425,41 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
       
       if (error instanceof ApiError) {
         if (error.isNetworkError()) {
-          Alert.alert('Network Error', 'Please check your internet connection and try again.');
+          showAlert({
+            type: 'error',
+            title: 'Network Error',
+            message: 'Please check your internet connection and try again.',
+            buttons: [{ text: 'OK', onPress: () => {} }]
+          });
         } else if (error.isValidationError()) {
-          Alert.alert('Validation Error', error.message);
+          showAlert({
+            type: 'error',
+            title: 'Validation Error',
+            message: error.message,
+            buttons: [{ text: 'OK', onPress: () => {} }]
+          });
         } else if (error.isAuthError()) {
-          Alert.alert(isLogin ? 'Login Failed' : 'Registration Failed', error.message);
+          showAlert({
+            type: 'error',
+            title: isLogin ? 'Login Failed' : 'Registration Failed',
+            message: error.message,
+            buttons: [{ text: 'OK', onPress: () => {} }]
+          });
         } else {
-          Alert.alert('Error', error.message || 'An error occurred. Please try again.');
+          showAlert({
+            type: 'error',
+            title: 'Error',
+            message: error.message || 'An error occurred. Please try again.',
+            buttons: [{ text: 'OK', onPress: () => {} }]
+          });
         }
       } else {
-        Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+        showAlert({
+          type: 'error',
+          title: 'Error',
+          message: 'An unexpected error occurred. Please try again.',
+          buttons: [{ text: 'OK', onPress: () => {} }]
+        });
       }
     } finally {
       setIsLoading(false);
@@ -577,16 +656,63 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
         {isLogin && (
           <TouchableOpacity 
             style={[styles.authButton, { backgroundColor: '#10B981', marginTop: 10 }]} 
-            onPress={() => {
+            onPress={async () => {
               console.log('Quick admin login test');
-              setFormData(prev => ({
-                ...prev,
-                email: 'admin@tlbdiamond.com',
-                password: 'TLBAdmin2024!'
-              }));
-              setTimeout(() => {
-                handleAuth();
-              }, 100);
+              
+              // Set admin credentials in form
+              const updatedFormData = {
+                ...formData,
+                email: ADMIN_CREDENTIALS.email,
+                password: ADMIN_CREDENTIALS.password
+              };
+              
+              setFormData(updatedFormData);
+              
+              // Temporarily override formData for validation
+              const tempFormData = formData;
+              setFormData(updatedFormData);
+              
+              // Use the updated data directly for auth
+              setIsLoading(true);
+              
+              try {
+                console.log('Admin login detected, using local admin account');
+                
+                const adminUser = {
+                  ...ADMIN_CREDENTIALS,
+                  id: 'admin_001',
+                  role: 'admin',
+                  created_at: new Date().toISOString(),
+                  balance: 999999
+                };
+                
+                await SecureStore.setItemAsync('currentUser', JSON.stringify(adminUser));
+                await SecureStore.setItemAsync('auth_token', `admin_token_${adminUser.id}`);
+                
+                setWelcomeData({ userName: adminUser.firstName, isAdmin: true });
+                setShowWelcomeModal(true);
+                
+                console.log('Local admin login successful');
+                
+                showAlert({
+                  type: 'success',
+                  title: '✅ Admin Login Successful',
+                  message: `Welcome back, ${adminUser.firstName}! You have been logged in with administrator privileges.`,
+                  buttons: [{ text: 'Continue', onPress: () => {} }],
+                  autoHideDelay: 2000
+                });
+                
+              } catch (error) {
+                console.error('Admin login error:', error);
+                showAlert({
+                  type: 'error',
+                  title: 'Login Error',
+                  message: 'Failed to login with admin credentials. Please try again.',
+                  buttons: [{ text: 'OK', onPress: () => {} }]
+                });
+              } finally {
+                setIsLoading(false);
+              }
             }}
           >
             <Text style={styles.authButtonText}>
@@ -715,6 +841,8 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
         userName={welcomeData.userName}
         isAdmin={welcomeData.isAdmin}
       />
+      
+      {/* Custom Alert - render last so it appears on top */}
     </ScrollView>
   );
 }

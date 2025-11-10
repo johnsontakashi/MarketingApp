@@ -105,6 +105,11 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
     setShowWarningModal(true);
     setTimeRemaining(GRACE_PERIODS.WARNING);
     
+    // Auto-hide warning modal after 4 seconds
+    setTimeout(() => {
+      setShowWarningModal(false);
+    }, 4000);
+    
     // Start countdown timer
     stageTimerRef.current = setInterval(() => {
       setTimeRemaining(prev => {
@@ -116,9 +121,13 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
       });
     }, 1000);
 
-    // Show periodic warnings
+    // Show periodic warnings (but with auto-hide)
     warningIntervalRef.current = setInterval(() => {
       setShowPaymentModal(true);
+      // Auto-hide payment modal after 4 seconds
+      setTimeout(() => {
+        setShowPaymentModal(false);
+      }, 4000);
     }, 60 * 60 * 1000); // Every hour
   };
 
@@ -284,6 +293,14 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
             <Text style={styles.warningDetails}>
               Make your payment now to avoid restrictions on apps and internet access.
             </Text>
+            
+            {/* Close Button */}
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setShowWarningModal(false)}
+            >
+              <Ionicons name="close" size={24} color="#8B4513" />
+            </TouchableOpacity>
             
             <View style={styles.warningButtons}>
               <TouchableOpacity 
@@ -518,6 +535,16 @@ const styles = {
     color: '#D4AF37',
     fontSize: 16,
     fontWeight: '600',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+    backgroundColor: 'rgba(139, 69, 19, 0.1)',
+    borderRadius: 20,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(139, 69, 19, 0.3)',
   },
   stageIndicator: {
     position: 'absolute',
