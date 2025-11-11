@@ -92,7 +92,7 @@ export default function AdminHomeScreen({ navigation }) {
           message: `${unreadChatCount} unread message${unreadChatCount > 1 ? 's' : ''} from users`,
           time: 'Just now',
           priority: 'high',
-          action: () => navigation.navigate('DeviceManagement')
+          action: () => navigation.navigate('ChatManagement')
         });
       }
 
@@ -403,10 +403,10 @@ export default function AdminHomeScreen({ navigation }) {
               onPress={() => handleNavigation('SystemLogs', 'System Logs')}
             />
             <QuickAction
-              title="Backup Data"
-              icon="cloud-upload"
-              color="#F59E0B"
-              onPress={() => Alert.alert('Backup', 'Database backup initiated')}
+              title="Chat Management"
+              icon="chatbubble-ellipses"
+              color="#10B981"
+              onPress={() => navigation.navigate('ChatManagement')}
             />
             <QuickAction
               title="Send Alert"

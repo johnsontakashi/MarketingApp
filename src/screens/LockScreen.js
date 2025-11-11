@@ -129,7 +129,7 @@ export default function LockScreen({ navigation }) {
 
         <TouchableOpacity style={[styles.actionButton, styles.chatButton]} onPress={handleChat}>
           <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
-          <Text style={[styles.actionLabel, styles.chatLabel]}>Chat</Text>
+          <Text style={[styles.actionLabel, styles.chatLabel]}>Admin Chat</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.actionButton, styles.unlockButton]} onPress={handleUnlockDevice}>

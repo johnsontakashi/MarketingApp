@@ -15,6 +15,7 @@ import OrderManagementScreen from '../screens/admin/OrderManagementScreen';
 import FinancialDashboardScreen from '../screens/admin/FinancialDashboardScreen';
 import SystemLogsScreen from '../screens/admin/SystemLogsScreen';
 import AdminReportsScreen from '../screens/admin/AdminReportsScreen';
+import ChatManagementScreen from '../screens/admin/ChatManagementScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -197,6 +198,14 @@ function AdminStackNavigator({ onLogout }) {
         component={AdminProfileScreen}
         options={{ 
           title: 'System Settings',
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen 
+        name="ChatManagement"
+        component={ChatManagementScreen}
+        options={{ 
+          title: 'Chat Management',
           headerBackTitleVisible: false,
         }}
       />
