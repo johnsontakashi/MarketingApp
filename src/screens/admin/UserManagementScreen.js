@@ -12,7 +12,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../../services/api';
+import sharedDataService from '../../services/sharedDataService';
 import AdminAlert from '../../components/admin/AdminAlert';
 import { useAdminAlert } from '../../hooks/useAdminAlert';
 
@@ -33,74 +33,46 @@ export default function UserManagementScreen({ navigation }) {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API call when backend endpoint is available
-      // const response = await apiClient.get('/admin/users');
-      // setUsers(response.data);
       
-      // Mock data for now
-      const mockUsers = [
-        {
+      // Load actual users from shared data service
+      const registeredUsers = await sharedDataService.getRegisteredUsers();
+      
+      // Transform to admin interface format
+      const adminFormattedUsers = registeredUsers.map(user => ({
+        id: user.id,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        role: user.userType === 'admin' ? 'admin' : 'user',
+        created_at: user.registeredAt,
+        is_verified: user.isVerified,
+        last_login: user.registeredAt, // Use registration date as placeholder
+        status: user.isVerified ? 'active' : 'pending',
+        device_count: 1 // Assume 1 device per user
+      }));
+      
+      setUsers(adminFormattedUsers);
+      console.log(`Loaded ${adminFormattedUsers.length} users for admin interface`);
+      
+      // If no real users exist, add admin user as example
+      if (adminFormattedUsers.length === 0) {
+        const defaultAdmin = {
           id: '1',
           email: 'admin@tlbdiamond.com',
           first_name: 'Admin',
           last_name: 'User',
           role: 'admin',
-          created_at: '2024-11-01T10:00:00.000Z',
+          created_at: new Date().toISOString(),
           is_verified: true,
-          last_login: '2024-11-10T08:30:00.000Z',
+          last_login: new Date().toISOString(),
           status: 'active',
           device_count: 1
-        },
-        {
-          id: '2',
-          email: 'john.doe@example.com',
-          first_name: 'John',
-          last_name: 'Doe',
-          role: 'user',
-          created_at: '2024-11-05T14:20:00.000Z',
-          is_verified: true,
-          last_login: '2024-11-09T16:45:00.000Z',
-          status: 'active',
-          device_count: 2
-        },
-        {
-          id: '3',
-          email: 'jane.seller@example.com',
-          first_name: 'Jane',
-          last_name: 'Smith',
-          role: 'user',
-          created_at: '2024-11-03T09:15:00.000Z',
-          is_verified: false,
-          last_login: '2024-11-08T12:20:00.000Z',
-          status: 'pending',
-          device_count: 0
-        },
-        {
-          id: '4',
-          email: 'mike.buyer@example.com',
-          first_name: 'Mike',
-          last_name: 'Johnson',
-          role: 'user',
-          created_at: '2024-11-07T16:30:00.000Z',
-          is_verified: true,
-          last_login: '2024-11-10T07:15:00.000Z',
-          status: 'active',
-          device_count: 1
-        },
-        {
-          id: '5',
-          email: 'sarah.inactive@example.com',
-          first_name: 'Sarah',
-          last_name: 'Wilson',
-          role: 'user',
-          created_at: '2024-10-20T11:45:00.000Z',
-          is_verified: true,
-          last_login: '2024-10-25T14:30:00.000Z',
-          status: 'inactive',
-          device_count: 0
-        }
-      ];
-      setUsers(mockUsers);
+        };
+        setUsers([defaultAdmin]);
+        console.log('No registered users found, showing default admin user');
+      }
+      
+      console.log('Successfully loaded users from SharedDataService');
     } catch (error) {
       console.error('Error loading users:', error);
       showError('Error', 'Failed to load users. Please try again.');

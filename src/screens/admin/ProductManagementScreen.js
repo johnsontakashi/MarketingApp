@@ -10,10 +10,11 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  Image
+  Image,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../../services/api';
+import sharedDataService from '../../services/sharedDataService';
 import AdminAlert from '../../components/admin/AdminAlert';
 import { useAdminAlert } from '../../hooks/useAdminAlert';
 
@@ -47,92 +48,10 @@ export default function ProductManagementScreen({ navigation }) {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API call when backend endpoint is available
-      // const response = await apiClient.get('/admin/products');
-      // setProducts(response.data);
-      
-      // Mock data for now
-      const mockProducts = [
-        {
-          id: '1',
-          name: 'Premium Diamond Ring',
-          description: 'Exquisite 2-carat diamond ring with platinum band. Perfect for special occasions.',
-          price: 15000.00,
-          category: 'diamond',
-          stock_quantity: 5,
-          image_url: 'https://via.placeholder.com/150x150/D4AF37/FFFFFF?text=Diamond',
-          created_at: '2024-11-01T10:00:00.000Z',
-          updated_at: '2024-11-10T08:30:00.000Z',
-          status: 'active',
-          sales_count: 23
-        },
-        {
-          id: '2',
-          name: 'Gold Necklace Set',
-          description: '24k gold necklace with matching earrings. Traditional design with modern craftsmanship.',
-          price: 2500.00,
-          category: 'gold',
-          stock_quantity: 12,
-          image_url: 'https://via.placeholder.com/150x150/FFD700/FFFFFF?text=Gold',
-          created_at: '2024-11-03T14:20:00.000Z',
-          updated_at: '2024-11-09T16:45:00.000Z',
-          status: 'active',
-          sales_count: 45
-        },
-        {
-          id: '3',
-          name: 'Emerald Earrings',
-          description: 'Stunning emerald earrings with diamond accents. Elegant and timeless design.',
-          price: 4200.00,
-          category: 'jewelry',
-          stock_quantity: 0,
-          image_url: 'https://via.placeholder.com/150x150/50C878/FFFFFF?text=Emerald',
-          created_at: '2024-11-05T09:15:00.000Z',
-          updated_at: '2024-11-08T12:20:00.000Z',
-          status: 'out_of_stock',
-          sales_count: 12
-        },
-        {
-          id: '4',
-          name: 'Luxury Watch',
-          description: 'Swiss-made luxury watch with diamond markers. Water-resistant and precision crafted.',
-          price: 8500.00,
-          category: 'accessories',
-          stock_quantity: 3,
-          image_url: 'https://via.placeholder.com/150x150/C0C0C0/000000?text=Watch',
-          created_at: '2024-11-07T16:30:00.000Z',
-          updated_at: '2024-11-10T07:15:00.000Z',
-          status: 'active',
-          sales_count: 8
-        },
-        {
-          id: '5',
-          name: 'Ruby Pendant',
-          description: 'Beautiful ruby pendant with gold chain. Perfect gift for loved ones.',
-          price: 1800.00,
-          category: 'jewelry',
-          stock_quantity: 15,
-          image_url: 'https://via.placeholder.com/150x150/E0115F/FFFFFF?text=Ruby',
-          created_at: '2024-10-20T11:45:00.000Z',
-          updated_at: '2024-11-05T14:30:00.000Z',
-          status: 'active',
-          sales_count: 34
-        },
-        {
-          id: '6',
-          name: 'Limited Edition Diamond Set',
-          description: 'Exclusive limited edition diamond jewelry set. Only 10 pieces available worldwide.',
-          price: 45000.00,
-          category: 'special',
-          stock_quantity: 2,
-          image_url: 'https://via.placeholder.com/150x150/B19CD9/FFFFFF?text=Special',
-          created_at: '2024-11-09T20:00:00.000Z',
-          updated_at: '2024-11-10T09:00:00.000Z',
-          status: 'active',
-          sales_count: 1
-        }
-      ];
-      setProducts(mockProducts);
+      // Load products from shared data service to ensure consistency
+      const sharedProducts = await sharedDataService.getProducts();
+      setProducts(sharedProducts);
+      console.log(`Loaded ${sharedProducts.length} products from shared data service`);
     } catch (error) {
       console.error('Error loading products:', error);
       showError('Error', 'Failed to load products. Please try again.');
@@ -209,10 +128,12 @@ export default function ProductManagementScreen({ navigation }) {
   const toggleProductStatus = async (productId, currentStatus) => {
     try {
       const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-      // TODO: API call to toggle product status
-      setProducts(prev => prev.map(product => 
-        product.id === productId ? { ...product, status: newStatus } : product
-      ));
+      await sharedDataService.updateProduct(productId, { status: newStatus });
+      
+      // Reload products to ensure consistency
+      const updatedProducts = await sharedDataService.getProducts();
+      setProducts(updatedProducts);
+      
       showSuccess('Success', 'Product status updated successfully.');
     } catch (error) {
       showError('Error', 'Failed to update product status. Please try again.');
@@ -221,8 +142,12 @@ export default function ProductManagementScreen({ navigation }) {
 
   const deleteProduct = async (productId) => {
     try {
-      // TODO: API call to delete product
-      setProducts(prev => prev.filter(product => product.id !== productId));
+      await sharedDataService.deleteProduct(productId);
+      
+      // Reload products to ensure consistency
+      const updatedProducts = await sharedDataService.getProducts();
+      setProducts(updatedProducts);
+      
       showSuccess('Success', 'Product has been deleted successfully.');
     } catch (error) {
       showError('Error', 'Failed to delete product. Please try again.');
@@ -231,14 +156,16 @@ export default function ProductManagementScreen({ navigation }) {
 
   const restockProduct = async (productId, quantity) => {
     try {
-      // TODO: API call to restock product
-      setProducts(prev => prev.map(product => 
-        product.id === productId ? { 
-          ...product, 
-          stock_quantity: product.stock_quantity + quantity,
-          status: 'active'
-        } : product
-      ));
+      const currentProduct = products.find(p => p.id === productId);
+      await sharedDataService.updateProduct(productId, { 
+        stock_quantity: currentProduct.stock_quantity + quantity,
+        status: 'active'
+      });
+      
+      // Reload products to ensure consistency
+      const updatedProducts = await sharedDataService.getProducts();
+      setProducts(updatedProducts);
+      
       showSuccess('Success', `Product restocked with ${quantity} items.`);
     } catch (error) {
       showError('Error', 'Failed to restock product. Please try again.');
@@ -260,23 +187,17 @@ export default function ProductManagementScreen({ navigation }) {
 
       if (selectedProduct) {
         // Update existing product
-        setProducts(prev => prev.map(product => 
-          product.id === selectedProduct.id ? { ...product, ...productData } : product
-        ));
+        await sharedDataService.updateProduct(selectedProduct.id, productData);
         showSuccess('Success', 'Product updated successfully.');
       } else {
         // Add new product
-        const newProductData = {
-          id: Date.now().toString(),
-          ...productData,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          status: 'active',
-          sales_count: 0
-        };
-        setProducts(prev => [newProductData, ...prev]);
+        await sharedDataService.addProduct(productData);
         showSuccess('Success', 'Product added successfully.');
       }
+
+      // Reload products to ensure consistency
+      const updatedProducts = await sharedDataService.getProducts();
+      setProducts(updatedProducts);
 
       setShowAddProduct(false);
       setSelectedProduct(null);

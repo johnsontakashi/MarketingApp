@@ -13,14 +13,14 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../services/api';
+import sharedDataService from '../services/sharedDataService';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
 export default function MarketplaceScreen({ navigation }) {
-  const { alertConfig, showAlert, hideAlert, showSuccess, showError } = useCustomAlert();
+  const { alertConfig, showAlert, hideAlert, showSuccess, showError, showInfo } = useCustomAlert();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -42,6 +42,28 @@ export default function MarketplaceScreen({ navigation }) {
   useEffect(() => {
     loadMarketplaceData();
   }, []);
+
+  // Update product count when filtering changes
+  useEffect(() => {
+    if (categories.length > 0) {
+      // Update category counts based on filtered products
+      const updatedCategories = categories.map(category => {
+        if (category.name === 'All') {
+          return { ...category, count: products.length };
+        } else {
+          const count = products.filter(p => p.category === category.name.toLowerCase()).length;
+          return { ...category, count };
+        }
+      });
+      setCategories(updatedCategories);
+    }
+  }, [products]);
+
+  // Handle category selection
+  const handleCategorySelect = (categoryName) => {
+    setSelectedCategory(categoryName);
+    console.log(`Category selected: ${categoryName}`);
+  };
 
   // Load marketplace data
   const loadMarketplaceData = async () => {
@@ -104,21 +126,89 @@ export default function MarketplaceScreen({ navigation }) {
           }));
         }
       } catch (apiError) {
-        console.log('API failed, loading mock data...');
-        // Fallback to mock data when API is unavailable
-        loadMockData();
+        console.log('API failed, loading shared data...');
+        // Fallback to shared data when API is unavailable
+        await loadSharedData();
       }
     } catch (error) {
       console.error('Failed to load marketplace data:', error);
-      // Even if mock data fails, load basic mock data
-      loadMockData();
+      // Even if shared data fails, load basic mock data
+      await loadSharedData();
     } finally {
       setLoading(false);
     }
   };
 
-  // Mock data fallback
-  const loadMockData = () => {
+  // Shared data fallback
+  const loadSharedData = async () => {
+    try {
+      // Load products from shared data service
+      const sharedProducts = await sharedDataService.getProducts();
+      
+      // Transform shared products to marketplace format
+      const formattedProducts = sharedProducts
+        .filter(product => product.status === 'active') // Only show active products
+        .map(product => ({
+          id: product.id,
+          title: product.name,
+          price: product.price,
+          originalPrice: product.price * 1.25, // Add 25% markup for "original price"
+          rating: 4.0 + Math.random() * 1.0, // Random rating between 4.0-5.0
+          reviews: product.sales_count * 3 + Math.floor(Math.random() * 20),
+          seller: 'TLB Diamond',
+          supportBonus: Math.floor(Math.random() * 15), // Random bonus 0-15%
+          installments: product.price > 1000 ? 12 : 1,
+          image: product.image_url ? { uri: product.image_url } : require('../../assets/pic1.jpeg'),
+          featured: product.price > 10000, // Expensive items are featured
+          category: product.category,
+          description: product.description,
+          features: [],
+          specifications: {},
+          inStock: product.stock_quantity > 0,
+          stockCount: product.stock_quantity,
+          shippingInfo: 'Free shipping • Arrives in 2-3 business days',
+          warranty: '1 Year Manufacturer Warranty',
+          condition: 'new',
+          brand: 'TLB Diamond'
+        }));
+      
+      setProducts(formattedProducts);
+      
+      // Generate categories based on actual products
+      const categoryCount = {};
+      sharedProducts.forEach(product => {
+        if (product.status === 'active') {
+          categoryCount[product.category] = (categoryCount[product.category] || 0) + 1;
+        }
+      });
+      
+      const mockCategories = [
+        { name: 'All', icon: 'grid', count: formattedProducts.length, slug: 'all' },
+        { name: 'Diamond', icon: 'diamond', count: categoryCount.diamond || 0, slug: 'diamond' },
+        { name: 'Gold', icon: 'medal', count: categoryCount.gold || 0, slug: 'gold' },
+        { name: 'Jewelry', icon: 'star', count: categoryCount.jewelry || 0, slug: 'jewelry' },
+        { name: 'Accessories', icon: 'watch', count: categoryCount.accessories || 0, slug: 'accessories' },
+        { name: 'Special', icon: 'gift', count: categoryCount.special || 0, slug: 'special' }
+      ];
+      
+      setCategories(mockCategories);
+      
+      // Update pagination
+      setPagination(prev => ({
+        ...prev,
+        hasMore: false // All products loaded
+      }));
+      
+      console.log(`Loaded ${formattedProducts.length} products from shared data service`);
+    } catch (error) {
+      console.error('Failed to load shared data:', error);
+      // If shared data fails, use static mock data
+      loadStaticMockData();
+    }
+  };
+
+  // Static mock data as last resort
+  const loadStaticMockData = () => {
     const mockCategories = [
       { name: 'All', icon: 'grid', count: 15, slug: 'all' },
       { name: 'Diamond', icon: 'diamond', count: 8, slug: 'diamond' },
@@ -341,6 +431,12 @@ export default function MarketplaceScreen({ navigation }) {
   };
 
   const handleLoadMore = () => {
+    if (!pagination.hasMore) {
+      showInfo('Info', 'Items are already loaded.', [
+        { text: 'OK', onPress: hideAlert }
+      ]);
+      return;
+    }
     loadMoreProducts();
   };
 
@@ -365,8 +461,19 @@ export default function MarketplaceScreen({ navigation }) {
     return stars;
   };
 
-  // Products are already filtered by the API
-  const filteredProducts = products;
+  // Filter products based on selected category and search query
+  const filteredProducts = products.filter(product => {
+    // Category filter
+    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory.toLowerCase();
+    
+    // Search filter
+    const matchesSearch = searchQuery === '' || 
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.seller.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <View style={styles.container}>
@@ -406,7 +513,7 @@ export default function MarketplaceScreen({ navigation }) {
                     styles.categoryCard,
                     selectedCategory === category.name && styles.selectedCategoryCard
                   ]}
-                  onPress={() => setSelectedCategory(category.name)}
+                  onPress={() => handleCategorySelect(category.name)}
                 >
                   <Ionicons 
                     name={category.icon} 
@@ -506,9 +613,24 @@ export default function MarketplaceScreen({ navigation }) {
 
         {/* Load More */}
         <View style={styles.loadMoreContainer}>
-          <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore}>
-            <Text style={styles.loadMoreText}>Load More Products</Text>
-            <Ionicons name="chevron-down" size={16} color="#D4AF37" />
+          <TouchableOpacity 
+            style={[
+              styles.loadMoreButton, 
+              !pagination.hasMore && styles.loadMoreButtonDisabled
+            ]} 
+            onPress={handleLoadMore}
+          >
+            <Text style={[
+              styles.loadMoreText,
+              !pagination.hasMore && styles.loadMoreTextDisabled
+            ]}>
+              {pagination.hasMore ? 'Load More Products' : 'All Items Loaded'}
+            </Text>
+            <Ionicons 
+              name={pagination.hasMore ? "chevron-down" : "checkmark-circle"} 
+              size={16} 
+              color={pagination.hasMore ? "#D4AF37" : "#8B4513"} 
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -1233,5 +1355,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+  loadMoreButtonDisabled: {
+    backgroundColor: '#8B4513',
+    borderColor: '#654321',
+  },
+  loadMoreTextDisabled: {
+    color: '#D4AF37',
   },
 });

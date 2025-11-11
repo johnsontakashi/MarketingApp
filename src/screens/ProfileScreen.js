@@ -1017,18 +1017,29 @@ export default function ProfileScreen({ navigation, onLogout }) {
         navigation.navigate('DeviceStatus');
         break;
       case 'signOut':
-        Alert.alert(
-          '🚪 Sign Out',
-          'Are you sure you want to sign out?\n\n• Your session will be ended\n• You will need to log back in\n• Any unsaved changes will be lost',
-          [
-            { text: 'Cancel', style: 'cancel' },
+        showAlert({
+          title: 'Sign Out',
+          message: 'Are you sure you want to sign out?\n\n• Your session will be ended securely\n• You will need to log back in\n• All your data is safely stored',
+          type: 'warning',
+          icon: 'log-out',
+          buttons: [
+            { 
+              text: 'Cancel', 
+              style: 'cancel',
+              onPress: () => {
+                hideAlert();
+              }
+            },
             { 
               text: 'Sign Out', 
-              style: 'destructive', 
-              onPress: handleSignOut
+              style: 'destructive',
+              onPress: () => {
+                hideAlert();
+                handleSignOut();
+              }
             }
           ]
-        );
+        });
         break;
       case 'adminUsers':
         navigation.navigate('AdminUserManagement');
