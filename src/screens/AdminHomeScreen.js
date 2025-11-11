@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import sharedDataService from '../services/sharedDataService';
 import AdminAlert from '../components/admin/AdminAlert';
 import { useAdminAlert } from '../hooks/useAdminAlert';
@@ -25,6 +25,7 @@ export default function AdminHomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [dashboardData, setDashboardData] = useState({
     totalUsers: 0,
     activeUsers: 0,
@@ -43,6 +44,22 @@ export default function AdminHomeScreen({ navigation }) {
   useEffect(() => {
     loadDashboardData();
     loadAdminNotifications();
+  }, []);
+
+  // Refresh notifications when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadAdminNotifications();
+    }, [])
+  );
+
+  // Auto-refresh notifications every 30 seconds
+  useEffect(() => {
+    const notificationInterval = setInterval(() => {
+      loadAdminNotifications();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(notificationInterval);
   }, []);
 
   const loadDashboardData = async () => {
@@ -73,23 +90,26 @@ export default function AdminHomeScreen({ navigation }) {
 
   const loadAdminNotifications = async () => {
     try {
-      const [users, products, unreadChatCount] = await Promise.all([
+      const [users, products, chatCount] = await Promise.all([
         sharedDataService.getRegisteredUsers(),
         sharedDataService.getProducts(),
         sharedDataService.getUnreadChatCount()
       ]);
+      
+      // Update unread chat count state
+      setUnreadChatCount(chatCount);
 
       // Generate admin notifications based on real data
       const adminNotifications = [];
 
       // Chat notifications
-      if (unreadChatCount > 0) {
+      if (chatCount > 0) {
         adminNotifications.push({
           id: 'unread_chats',
           type: 'warning',
           icon: 'chatbubble-ellipses',
           title: 'New User Messages',
-          message: `${unreadChatCount} unread message${unreadChatCount > 1 ? 's' : ''} from users`,
+          message: `${chatCount} unread message${chatCount > 1 ? 's' : ''} from users`,
           time: 'Just now',
           priority: 'high',
           action: () => navigation.navigate('ChatManagement')
@@ -195,12 +215,23 @@ export default function AdminHomeScreen({ navigation }) {
     setShowNotificationModal(false);
     if (notification.action) {
       notification.action();
+      // Refresh notifications after action is taken
+      setTimeout(() => {
+        loadAdminNotifications();
+      }, 1000); // Short delay to allow action to complete
     }
   };
 
   const markAllAsRead = () => {
     setShowNotificationModal(false);
+    // Clear notifications and unread chat count immediately
+    setNotifications([]);
+    setUnreadChatCount(0);
     showSuccessNotification('Notifications Cleared', 'All notifications have been marked as read.', 3000);
+    // Refresh after delay to get actual state
+    setTimeout(() => {
+      loadAdminNotifications();
+    }, 2000);
   };
 
   const handleNavigation = (route, title) => {
@@ -293,9 +324,9 @@ export default function AdminHomeScreen({ navigation }) {
               activeOpacity={0.7}
             >
               <Ionicons name="notifications" size={24} color="#D4AF37" />
-              {notifications.length > 0 && (
+              {unreadChatCount > 0 && (
                 <View style={styles.notificationBadge}>
-                  <Text style={styles.badgeText}>{notifications.length}</Text>
+                  <Text style={styles.badgeText}>{unreadChatCount}</Text>
                 </View>
               )}
             </TouchableOpacity>
