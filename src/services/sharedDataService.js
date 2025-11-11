@@ -277,13 +277,18 @@ class SharedDataService {
   // ============ DEVICES ============
   async getDevices() {
     try {
-      const storedDevices = await SecureStore.getItemAsync('devices');
-      if (storedDevices) {
-        return JSON.parse(storedDevices);
-      }
+      // Clear any old fake device data and always generate fresh devices based on real users
+      await SecureStore.deleteItemAsync('devices');
+      console.log('Cleared old device cache to ensure real data only');
 
-      // Generate devices based on registered users
+      // Generate devices ONLY based on registered users (no fake data)
       const users = await this.getRegisteredUsers();
+      
+      if (users.length === 0) {
+        console.log('No registered users found, returning empty device list');
+        return [];
+      }
+      
       const devices = users.map((user, index) => {
         const isOnline = Math.random() > 0.2; // 80% chance online
         const isLocked = Math.random() > 0.9; // 10% chance locked
@@ -292,7 +297,7 @@ class SharedDataService {
         return {
           id: `device_${user.id || index + 1}`,
           device_id: `TLBD${(index + 1).toString().padStart(3, '0')}`,
-          device_name: `${user.firstName}'s Device`,
+          device_name: `${user.firstName || 'User'}'s Device`,
           user_email: user.email,
           user_id: user.id || (index + 1).toString(),
           device_model: this.getRandomDeviceModel(),
@@ -312,6 +317,7 @@ class SharedDataService {
         };
       });
 
+      console.log(`Generated ${devices.length} devices based on ${users.length} registered users`);
       await this.saveDevices(devices);
       return devices;
     } catch (error) {
