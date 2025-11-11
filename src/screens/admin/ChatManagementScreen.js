@@ -11,9 +11,11 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
-  Dimensions
+  Dimensions,
+  BackHandler
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import sharedDataService from '../../services/sharedDataService';
 
 const { width, height } = Dimensions.get('window');
@@ -34,6 +36,24 @@ export default function ChatManagementScreen({ navigation }) {
     const interval = setInterval(loadChats, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  // Handle Android hardware back button
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (showChatModal) {
+          // Close chat modal if open
+          closeModal();
+          return true;
+        }
+        // Allow default back behavior for main screen
+        return false;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [showChatModal])
+  );
 
   const loadChats = async () => {
     try {
@@ -65,6 +85,14 @@ export default function ChatManagementScreen({ navigation }) {
     setShowChatModal(true);
     // Mark as read
     markChatAsRead(chat.userEmail);
+  };
+
+  const closeModal = () => {
+    setShowChatModal(false);
+    setSelectedChat(null);
+    setReplyText('');
+    // Refresh chats when closing modal to update any changes
+    loadChats();
   };
 
   const markChatAsRead = async (userEmail) => {
@@ -173,6 +201,13 @@ export default function ChatManagementScreen({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.headerBackButton} 
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+          <Text style={styles.headerBackText}>Back</Text>
+        </TouchableOpacity>
         <Text style={styles.title}>Chat Management</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
@@ -212,6 +247,7 @@ export default function ChatManagementScreen({ navigation }) {
         visible={showChatModal}
         animationType="slide"
         presentationStyle="pageSheet"
+        onRequestClose={closeModal}
       >
         <KeyboardAvoidingView 
           style={styles.modalContainer}
@@ -221,7 +257,7 @@ export default function ChatManagementScreen({ navigation }) {
           <View style={styles.modalHeader}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => setShowChatModal(false)}
+              onPress={closeModal}
             >
               <Ionicons name="arrow-back" size={24} color="#D4AF37" />
               <Text style={styles.backText}>Back</Text>
@@ -285,17 +321,33 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#3d3d3d',
   },
+  headerBackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    marginRight: 16,
+  },
+  headerBackText: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
   title: {
+    flex: 1,
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    textAlign: 'center',
+    marginRight: 16,
   },
   headerActions: {
     flexDirection: 'row',
