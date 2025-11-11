@@ -174,7 +174,20 @@ The app includes a complete admin interface with separate navigation:
 - **AdminNavigator** - Dedicated admin navigation with dark theme (src/navigation/AdminNavigator.js)
 - **Role-Based Access** - Authentication system differentiates between 'admin' and 'user' roles
 - **Admin Screens** - Complete admin panel including user management, product management, device management, and analytics
+- **Admin Screen Components**: AdminHomeScreen, UserManagementScreen, ProductManagementScreen, DeviceManagementScreen, AdminProfileScreen, OrderManagementScreen, FinancialDashboardScreen, SystemLogsScreen, AdminReportsScreen
 - **Dual Interface System** - Regular users see the main app, admins see the admin dashboard
+
+### Services and Utilities
+- **sharedDataService.js** - Shared data management across components (currently modified in git status)
+- **api.js** - API service layer for backend communication
+- **ModalRegistry.js** - Cross-component modal management service
+- **Custom Hooks**:
+  - `useCustomAlert` - Native-like alert dialogs (src/hooks/useCustomAlert.js)
+  - `useAdminAlert` - Admin-specific alert system (src/hooks/useAdminAlert.js)
+- **UI Components**:
+  - `CustomAlert` - Reusable alert component (src/components/ui/CustomAlert.js)
+  - `AdminAlert` - Admin-specific alert component (src/components/admin/AdminAlert.js)
+  - `WelcomeModal` - Welcome/onboarding modal (src/components/WelcomeModal.js)
 
 ### Code Quality Guidelines
 - No linting or testing scripts are configured in package.json
@@ -183,3 +196,8 @@ The app includes a complete admin interface with separate navigation:
 - Maintain consistent styling with the golden theme palette
 - Ensure all new components support safe area contexts
 - Admin interface uses darker theme while main app uses golden theme
+
+## Additional Documentation
+- **ARCHITECTURE.md** - Detailed technical architecture and business logic documentation
+- **KIOSK_SETUP.md** - Complete setup instructions for Android device owner and kiosk mode functionality
+- **README.md** - Currently contains generic Vendure documentation (should be updated for this project)
