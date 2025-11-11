@@ -29,7 +29,9 @@ The Metro bundler runs on port 8081 by default. To use a different port: `npx ex
 
 ### Building for Production
 - Build APK: `cd android && ./gradlew assembleRelease` (requires Android setup)
+- Build debug APK: `cd android && ./gradlew assembleDebug`
 - Development builds are recommended for testing kiosk functionality
+- Create development build: `npx expo run:android --variant release`
 
 ### Key Dependencies
 - **React Navigation v7** - Navigation framework with bottom tabs and stack navigators
@@ -197,7 +199,20 @@ The app includes a complete admin interface with separate navigation:
 - Ensure all new components support safe area contexts
 - Admin interface uses darker theme while main app uses golden theme
 
+### Port Management
+The app uses various ports for development:
+- **8081** - Default Metro bundler port
+- **8082, 8084, 8099, 8100, 8101** - Alternative ports for running multiple instances
+- Use `EXPO_DEV_SERVER_URL=http://localhost:<port>` to specify custom ports
+
 ## Additional Documentation
-- **ARCHITECTURE.md** - Detailed technical architecture and business logic documentation
+- **ARCHITECTURE.md** - Detailed technical architecture and business logic documentation including TLB Diamond marketplace ecosystem
 - **KIOSK_SETUP.md** - Complete setup instructions for Android device owner and kiosk mode functionality
 - **README.md** - Currently contains generic Vendure documentation (should be updated for this project)
+
+## Important Reminders
+- MDM functionality requires physical Android device with device owner privileges for full testing
+- The app supports dual interface system: regular users see main app, admins see admin dashboard
+- Authentication gate prevents access to main features until login is completed
+- All screens implement safe area context for proper display on various devices
+- Golden theme palette should be maintained across all new components
