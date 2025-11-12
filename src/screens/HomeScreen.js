@@ -91,21 +91,12 @@ export default function HomeScreen({ navigation }) {
     { icon: 'cube', label: 'Orders', screen: 'Profile', color: '#8B4513' },
     { icon: 'people', label: 'Referrals', screen: 'Community', color: '#A0522D' },
     { icon: 'warning', label: 'Blocking Demo', screen: 'BlockingDemo', color: '#F59E0B' },
-    { icon: 'lock-closed', label: 'Lock', action: 'lock', color: '#EF4444' },
+    // Lock button removed - only admins should control device locking
   ];
 
   const handleQuickAction = (screenOrAction) => {
-    if (screenOrAction === 'lock') {
-      // Trigger the lock screen modal - this will be handled by LockManager
-      showWarning(
-        'Activate Kiosk Mode',
-        'This will lock your device for demonstration purposes. You can unlock it from the lock screen.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Continue', onPress: () => navigation.navigate('LockScreen') }
-        ]
-      );
-    } else {
+    // Lock functionality removed - only admins can control device locking
+    if (screenOrAction) {
       navigation.navigate(screenOrAction);
     }
   };
