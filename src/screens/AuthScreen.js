@@ -300,8 +300,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             console.log('Admin login detected, using local admin account');
             
             const adminUser = {
-              ...ADMIN_CREDENTIALS,
               id: 'admin_001',
+              email: ADMIN_CREDENTIALS.email,
+              first_name: ADMIN_CREDENTIALS.firstName,
+              last_name: ADMIN_CREDENTIALS.lastName,
+              phone: ADMIN_CREDENTIALS.phoneNumber,
+              gender: ADMIN_CREDENTIALS.sex,
+              birthday: ADMIN_CREDENTIALS.birthday,
+              account_type: 'admin',
               role: 'admin',
               created_at: new Date().toISOString(),
               balance: 999999
@@ -388,6 +394,15 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           console.log('API registration failed, attempting local fallback...');
           
           // Fallback to local storage when API is unavailable
+          console.log('Creating local user from registration data:', {
+            formData,
+            profileData,
+            email,
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+            phoneNumber: profileData.phoneNumber
+          });
+          
           const localUser = {
             id: Date.now().toString(),
             email: email,
@@ -401,6 +416,8 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             created_at: new Date().toISOString(),
             balance: 0
           };
+          
+          console.log('Local user object created:', localUser);
           
           // Store user in persistent registry (survives logout)
           await storeUserInRegistry(localUser);
@@ -679,8 +696,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
                 console.log('Admin login detected, using local admin account');
                 
                 const adminUser = {
-                  ...ADMIN_CREDENTIALS,
                   id: 'admin_001',
+                  email: ADMIN_CREDENTIALS.email,
+                  first_name: ADMIN_CREDENTIALS.firstName,
+                  last_name: ADMIN_CREDENTIALS.lastName,
+                  phone: ADMIN_CREDENTIALS.phoneNumber,
+                  gender: ADMIN_CREDENTIALS.sex,
+                  birthday: ADMIN_CREDENTIALS.birthday,
+                  account_type: 'admin',
                   role: 'admin',
                   created_at: new Date().toISOString(),
                   balance: 999999
@@ -720,6 +743,44 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             </Text>
           </TouchableOpacity>
         )}
+
+        {/* TEST BUTTON - Remove in production */}
+        <TouchableOpacity 
+          style={[styles.authButton, { backgroundColor: '#EF4444', marginTop: 10 }]} 
+          onPress={async () => {
+            console.log('=== TESTING EXACT DATA FLOW ===');
+            console.log('Current formData:', formData);
+            
+            // Test storing exact data
+            const testUser = {
+              id: 'test_' + Date.now(),
+              email: formData.email,
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              phone: formData.phoneNumber,
+              gender: formData.sex,
+              birthday: formData.birthday,
+              role: 'user'
+            };
+            
+            console.log('Test user object:', testUser);
+            await SecureStore.setItemAsync('currentUser', JSON.stringify(testUser));
+            console.log('Stored test user in SecureStore');
+            
+            // Immediately read it back
+            const storedData = await SecureStore.getItemAsync('currentUser');
+            console.log('Read back from SecureStore:', storedData);
+            
+            // Trigger auth success
+            if (onAuthSuccess) {
+              onAuthSuccess();
+            }
+          }}
+        >
+          <Text style={styles.authButtonText}>
+            🔴 TEST: Use Current Form Data
+          </Text>
+        </TouchableOpacity>
 
         {/* Additional Info */}
         {!isLogin && (
