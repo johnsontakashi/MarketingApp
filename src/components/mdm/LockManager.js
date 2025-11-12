@@ -200,19 +200,24 @@ const LockManager = ({ children, navigation }) => {
             onPress={(e) => e.stopPropagation()}
           >
             <View style={styles.toggleContainer}>
-              <Text style={styles.toggleLabel}>Lock Device</Text>
+              <Text style={styles.toggleLabel}>
+                {adminLockStatus ? '🔒 Admin Locked Device' : 'Lock Device'}
+              </Text>
               <Switch
                 value={toggleValue}
                 onValueChange={handleToggleChange}
-                trackColor={{ false: '#F5E6A3', true: '#D4AF37' }}
-                thumbColor={toggleValue ? '#B8860B' : '#DDD6C1'}
+                trackColor={{ false: '#F5E6A3', true: adminLockStatus ? '#EF4444' : '#D4AF37' }}
+                thumbColor={toggleValue ? (adminLockStatus ? '#DC2626' : '#B8860B') : '#DDD6C1'}
                 ios_backgroundColor="#F5E6A3"
                 style={styles.toggle}
+                disabled={adminLockStatus && toggleValue} // Disable if admin locked
               />
             </View>
 
             <Text style={styles.popupMessage}>
-              This will enable full kiosk mode and disable all device functions.
+              {adminLockStatus 
+                ? 'This device has been locked by an administrator. Only the admin can unlock it.'
+                : 'This will enable full kiosk mode and disable all device functions.'}
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
