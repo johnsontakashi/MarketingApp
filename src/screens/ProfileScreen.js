@@ -48,14 +48,15 @@ export default function ProfileScreen({ navigation, onLogout }) {
     giftCardNumber: '',
     giftCardPin: ''
   });
+  // Initialize with empty data - will be populated from SecureStore
   const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main Street, City, State 12345',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
     avatar: null
   });
-  const [editData, setEditData] = useState({ ...profileData });
+  const [editData, setEditData] = useState(profileData);
 
   // Full Settings state variables
   const [deviceBindingEnabled, setDeviceBindingEnabled] = useState(true);
@@ -127,18 +128,65 @@ export default function ProfileScreen({ navigation, onLogout }) {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [showNotificationDetailModal, setShowNotificationDetailModal] = useState(false);
 
-  // Check if current user is admin
+  // Check if current user is admin and load profile data
   useEffect(() => {
+    console.log('ProfileScreen useEffect triggered - calling checkUserRole()');
     checkUserRole();
   }, []);
 
+  // Update editData when currentUser changes
+  useEffect(() => {
+    if (currentUser) {
+      console.log('currentUser changed, updating editData from:', currentUser);
+      const editableData = {
+        name: `${currentUser.first_name || currentUser.firstName || ''} ${currentUser.last_name || currentUser.lastName || ''}`.trim(),
+        email: currentUser.email || '',
+        phone: currentUser.phone || currentUser.phoneNumber || '',
+        address: currentUser.address || '',
+        avatar: currentUser.avatar || null
+      };
+      setEditData(editableData);
+    }
+  }, [currentUser]);
+
+  // Debug function to show all SecureStore contents
+  const debugSecureStore = async () => {
+    try {
+      console.log('=== SECURE STORE DEBUG ===');
+      const currentUser = await SecureStore.getItemAsync('currentUser');
+      const userRegistry = await SecureStore.getItemAsync('userRegistry');
+      const authToken = await SecureStore.getItemAsync('auth_token');
+      const userData = await SecureStore.getItemAsync('user_data');
+      
+      console.log('currentUser:', currentUser);
+      console.log('userRegistry:', userRegistry);
+      console.log('auth_token:', authToken);
+      console.log('user_data:', userData);
+      console.log('=== END SECURE STORE DEBUG ===');
+    } catch (error) {
+      console.error('Error debugging SecureStore:', error);
+    }
+  };
+
   const checkUserRole = async () => {
     try {
+      console.log('checkUserRole() started');
+      
+      // First debug what's in SecureStore
+      await debugSecureStore();
+      
       const userData = await SecureStore.getItemAsync('currentUser');
+      console.log('Retrieved userData from SecureStore:', userData);
+      
       if (userData) {
         const user = JSON.parse(userData);
         setCurrentUser(user);
-        setIsAdmin(user.userType === 'admin' || user.isAdmin === true);
+        setIsAdmin(user.role === 'admin' || user.userType === 'admin' || user.isAdmin === true);
+        
+        console.log('=== USER DATA LOADED ===');
+        console.log('Raw user data from SecureStore:', JSON.stringify(user, null, 2));
+        console.log('This data will be displayed directly in profile');
+        console.log('=== END USER DATA DEBUG ===');
       }
     } catch (error) {
       console.error('Error checking user role:', error);
@@ -499,18 +547,80 @@ export default function ProfileScreen({ navigation, onLogout }) {
   ];
 
   const handleEditProfile = () => {
-    setEditData({ ...profileData });
+    // Use currentUser data directly for editing
+    const editableData = {
+      name: currentUser ? `${currentUser.first_name || currentUser.firstName || ''} ${currentUser.last_name || currentUser.lastName || ''}`.trim() : '',
+      email: currentUser ? currentUser.email || '' : '',
+      phone: currentUser ? currentUser.phone || currentUser.phoneNumber || '' : '',
+      address: currentUser ? currentUser.address || '' : '',
+      avatar: currentUser ? currentUser.avatar || null : null
+    };
+    console.log('Setting edit data from currentUser:', editableData);
+    setEditData(editableData);
     setShowEditModal(true);
   };
 
-  const handleSaveProfile = () => {
-    setProfileData({ ...editData });
-    setShowEditModal(false);
-    showSuccess('Profile Updated', 'Your profile has been successfully updated!');
+  const handleSaveProfile = async () => {
+    try {
+      if (!currentUser) {
+        showError('Error', 'No user data found');
+        return;
+      }
+      
+      // Parse the name back into first/last name components
+      const nameParts = editData.name.split(' ');
+      const updatedUser = {
+        ...currentUser,
+        first_name: nameParts[0] || '',
+        last_name: nameParts.slice(1).join(' ') || '',
+        email: editData.email,
+        phone: editData.phone,
+        address: editData.address,
+        avatar: editData.avatar
+      };
+      
+      await SecureStore.setItemAsync('currentUser', JSON.stringify(updatedUser));
+      
+      // Also update the user registry for persistence across logins
+      const registryData = await SecureStore.getItemAsync('userRegistry');
+      if (registryData) {
+        const registry = JSON.parse(registryData);
+        const originalEmail = currentUser.email;
+        if (registry[originalEmail]) {
+          // If email changed, update registry key
+          if (editData.email !== originalEmail) {
+            delete registry[originalEmail];
+            registry[editData.email] = updatedUser;
+          } else {
+            registry[originalEmail] = updatedUser;
+          }
+          await SecureStore.setItemAsync('userRegistry', JSON.stringify(registry));
+        }
+      }
+      
+      setCurrentUser(updatedUser);
+      console.log('Profile data saved to SecureStore:', updatedUser);
+      
+      setShowEditModal(false);
+      showSuccess('Profile Updated', 'Your profile has been successfully updated!');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      showError('Save Failed', 'Failed to save profile changes. Please try again.');
+    }
   };
 
   const handleCancelEdit = () => {
-    setEditData({ ...profileData });
+    // Reset edit data from currentUser
+    if (currentUser) {
+      const resetData = {
+        name: `${currentUser.first_name || currentUser.firstName || ''} ${currentUser.last_name || currentUser.lastName || ''}`.trim(),
+        email: currentUser.email || '',
+        phone: currentUser.phone || currentUser.phoneNumber || '',
+        address: currentUser.address || '',
+        avatar: currentUser.avatar || null
+      };
+      setEditData(resetData);
+    }
     setShowEditModal(false);
   };
 
@@ -538,15 +648,23 @@ export default function ProfileScreen({ navigation, onLogout }) {
   };
 
   const selectDemoAvatar = (avatarUri) => {
-    setProfileData({ ...profileData, avatar: avatarUri });
-    setEditData({ ...editData, avatar: avatarUri });
-    showSuccess("Success", "Profile picture updated successfully!");
+    if (currentUser) {
+      const updatedUser = { ...currentUser, avatar: avatarUri };
+      setCurrentUser(updatedUser);
+      SecureStore.setItemAsync('currentUser', JSON.stringify(updatedUser));
+      setEditData({ ...editData, avatar: avatarUri });
+      showSuccess("Success", "Profile picture updated successfully!");
+    }
   };
 
   const removeAvatar = () => {
-    setProfileData({ ...profileData, avatar: null });
-    setEditData({ ...editData, avatar: null });
-    showSuccess("Success", "Profile picture removed successfully!");
+    if (currentUser) {
+      const updatedUser = { ...currentUser, avatar: null };
+      setCurrentUser(updatedUser);
+      SecureStore.setItemAsync('currentUser', JSON.stringify(updatedUser));
+      setEditData({ ...editData, avatar: null });
+      showSuccess("Success", "Profile picture removed successfully!");
+    }
   };
 
   const handleMyOrders = () => {
@@ -957,10 +1075,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
       // Call API logout endpoint
       await apiClient.logout();
       
-      // Clear all authentication data
+      // Clear current session data but preserve user registry for future logins
       await SecureStore.deleteItemAsync('auth_token');
       await SecureStore.deleteItemAsync('currentUser');
-      await SecureStore.deleteItemAsync('user_data');
+      // Note: Keep userRegistry so users can re-login with their stored data
+      // Only delete user_data as it's API-specific session data
+      try {
+        await SecureStore.deleteItemAsync('user_data');
+      } catch (error) {
+        // user_data might not exist, that's okay
+        console.log('user_data not found, continuing with logout');
+      }
       
       // Show success message
       showSuccess(
@@ -976,10 +1101,15 @@ export default function ProfileScreen({ navigation, onLogout }) {
     } catch (error) {
       console.error('Sign out error:', error);
       
-      // Even if API call fails, still clear local data
+      // Even if API call fails, still clear local session data
       await SecureStore.deleteItemAsync('auth_token');
       await SecureStore.deleteItemAsync('currentUser');
-      await SecureStore.deleteItemAsync('user_data');
+      // Note: Keep userRegistry so users can re-login with their stored data
+      try {
+        await SecureStore.deleteItemAsync('user_data');
+      } catch (deleteError) {
+        console.log('user_data not found during error cleanup, continuing...');
+      }
       
       showSuccess(
         'Signed Out',
@@ -1076,8 +1206,8 @@ export default function ProfileScreen({ navigation, onLogout }) {
       {/* Profile Header */}
       <View style={styles.profileHeader}>
         <TouchableOpacity style={styles.avatarContainer} onPress={handleAvatarUpload}>
-          {profileData.avatar ? (
-            <Image source={{ uri: profileData.avatar }} style={styles.avatarImage} />
+          {currentUser && currentUser.avatar ? (
+            <Image source={{ uri: currentUser.avatar }} style={styles.avatarImage} />
           ) : (
             <Ionicons name="person" size={40} color="#D4AF37" />
           )}
@@ -1086,8 +1216,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
           </View>
         </TouchableOpacity>
         <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{profileData.name}</Text>
-          <Text style={styles.profileEmail}>{profileData.email}</Text>
+          <Text style={styles.profileName}>
+            🔴 TESTING IF CHANGES WORK 🔴
+          </Text>
+          <Text style={styles.profileEmail}>
+            IF YOU SEE THIS, CHANGES ARE WORKING
+          </Text>
+          {currentUser && (currentUser.phone || currentUser.phoneNumber) && (
+            <Text style={styles.profilePhone}>
+              {currentUser.phone || currentUser.phoneNumber}
+            </Text>
+          )}
           <View style={styles.verificationBadge}>
             <Ionicons name="checkmark-circle" size={16} color="#10B981" />
             <Text style={styles.verificationText}>Verified</Text>
@@ -1118,8 +1257,64 @@ export default function ProfileScreen({ navigation, onLogout }) {
         </View>
       </View>
 
-      {/* Menu Items */}
+      {/* Debug Button - Remove in production */}
       <View style={styles.menuContainer}>
+        <TouchableOpacity 
+          style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#FEE2E2' }]} 
+          onPress={debugSecureStore}
+        >
+          <View style={styles.menuIcon}>
+            <Ionicons name="bug" size={20} color="#EF4444" />
+          </View>
+          <View style={styles.menuContent}>
+            <Text style={[styles.menuTitle, { color: '#EF4444' }]}>Debug SecureStore</Text>
+            <Text style={styles.menuSubtitle}>Check what's stored in SecureStore (DEV)</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#DC2626' }]} 
+          onPress={async () => {
+            try {
+              await SecureStore.deleteItemAsync('currentUser');
+              await SecureStore.deleteItemAsync('userRegistry');
+              await SecureStore.deleteItemAsync('auth_token');
+              await SecureStore.deleteItemAsync('user_data');
+              console.log('CLEARED ALL SECURESTORE DATA');
+              setCurrentUser(null);
+              showSuccess('Cleared', 'All data cleared. Please register again.');
+            } catch (error) {
+              console.error('Error clearing data:', error);
+            }
+          }}
+        >
+          <View style={styles.menuIcon}>
+            <Ionicons name="trash" size={20} color="#FFFFFF" />
+          </View>
+          <View style={styles.menuContent}>
+            <Text style={[styles.menuTitle, { color: '#FFFFFF' }]}>🗑️ CLEAR ALL DATA</Text>
+            <Text style={[styles.menuSubtitle, { color: '#FFFFFF' }]}>Delete everything and start fresh (DEV)</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* RAW DATA DISPLAY */}
+        {currentUser && (
+          <View style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#FEF3C7' }]}>
+            <View style={styles.menuIcon}>
+              <Ionicons name="information-circle" size={20} color="#D97706" />
+            </View>
+            <View style={styles.menuContent}>
+              <Text style={[styles.menuTitle, { color: '#D97706' }]}>RAW USER DATA</Text>
+              <Text style={[styles.menuSubtitle, { fontSize: 10, fontFamily: 'monospace' }]}>
+                Email: {currentUser.email || 'NO EMAIL'}{'\n'}
+                Name: {currentUser.first_name || 'NO FIRST'} {currentUser.last_name || 'NO LAST'}{'\n'}
+                Phone: {currentUser.phone || currentUser.phoneNumber || 'NO PHONE'}{'\n'}
+                ID: {currentUser.id || 'NO ID'}
+              </Text>
+            </View>
+          </View>
+        )}
+
         {menuItems.map((item, index) => (
           <TouchableOpacity 
             key={index}
@@ -3798,6 +3993,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#8B4513',
     marginBottom: 5,
+  },
+  profilePhone: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 5,
+    fontStyle: 'italic',
   },
   verificationBadge: {
     flexDirection: 'row',
