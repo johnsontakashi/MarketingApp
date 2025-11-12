@@ -9,6 +9,8 @@ import {
   Switch,
   StyleSheet 
 } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import sharedDataService from '../../services/sharedDataService';
 // import LockTask from 'react-native-lock-task'; // Disabled for emulator compatibility
 
 const LockManager = ({ children, navigation }) => {
@@ -16,6 +18,50 @@ const LockManager = ({ children, navigation }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [homeButtonDisabled, setHomeButtonDisabled] = useState(false);
   const [toggleValue, setToggleValue] = useState(false);
+  const [adminLockStatus, setAdminLockStatus] = useState(false);
+
+  // Check for admin-imposed locks
+  const checkAdminLockStatus = async () => {
+    try {
+      const currentUserData = await SecureStore.getItemAsync('currentUser');
+      if (!currentUserData) return;
+      
+      const currentUser = JSON.parse(currentUserData);
+      const devices = await sharedDataService.getDevices();
+      
+      // Find the device for the current user
+      const currentUserDevice = devices.find(device => 
+        device.user_email === currentUser.email || 
+        device.user_id === currentUser.id
+      );
+      
+      if (currentUserDevice && currentUserDevice.is_locked) {
+        console.log('🔒 Admin has locked this device:', currentUserDevice.device_name);
+        setAdminLockStatus(true);
+        setIsLocked(true);
+        setToggleValue(true);
+      } else {
+        setAdminLockStatus(false);
+        // Only unlock if it was admin-locked (don't override manual user lock)
+        if (adminLockStatus && isLocked) {
+          setIsLocked(false);
+          setToggleValue(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking admin lock status:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Check admin lock status when component mounts and periodically
+    checkAdminLockStatus();
+    
+    // Check every 30 seconds for admin lock changes
+    const lockCheckInterval = setInterval(checkAdminLockStatus, 30000);
+    
+    return () => clearInterval(lockCheckInterval);
+  }, []);
 
   useEffect(() => {
     // Check if app is already in lock task mode on startup
@@ -53,6 +99,17 @@ const LockManager = ({ children, navigation }) => {
   };
 
   const handleToggleChange = (value) => {
+    // Prevent unlocking if admin has locked the device
+    if (!value && adminLockStatus) {
+      Alert.alert(
+        '🔒 Admin Locked',
+        'This device has been locked by an administrator. You cannot unlock it until the admin removes the lock.',
+        [{ text: 'OK' }]
+      );
+      setToggleValue(true); // Keep it locked
+      return;
+    }
+    
     setToggleValue(value);
     if (value) {
       // Toggle switched to ON - activate kiosk mode
@@ -61,8 +118,10 @@ const LockManager = ({ children, navigation }) => {
       
       // Simulate kiosk mode for emulator testing
       Alert.alert(
-        'Kiosk Mode Activated',
-        'All your function would be disabled.',
+        adminLockStatus ? '🔒 Admin Locked Device' : 'Kiosk Mode Activated',
+        adminLockStatus 
+          ? 'This device has been locked by an administrator. All functions are disabled.'
+          : 'All your function would be disabled.',
         [{text: 'OK', onPress: () => {
           setIsLocked(true);
           navigation.navigate('LockScreen');
