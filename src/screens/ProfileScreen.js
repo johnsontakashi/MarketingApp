@@ -149,31 +149,10 @@ export default function ProfileScreen({ navigation, onLogout }) {
     }
   }, [currentUser]);
 
-  // Debug function to show all SecureStore contents
-  const debugSecureStore = async () => {
-    try {
-      console.log('=== SECURE STORE DEBUG ===');
-      const currentUser = await SecureStore.getItemAsync('currentUser');
-      const userRegistry = await SecureStore.getItemAsync('userRegistry');
-      const authToken = await SecureStore.getItemAsync('auth_token');
-      const userData = await SecureStore.getItemAsync('user_data');
-      
-      console.log('currentUser:', currentUser);
-      console.log('userRegistry:', userRegistry);
-      console.log('auth_token:', authToken);
-      console.log('user_data:', userData);
-      console.log('=== END SECURE STORE DEBUG ===');
-    } catch (error) {
-      console.error('Error debugging SecureStore:', error);
-    }
-  };
 
   const checkUserRole = async () => {
     try {
       console.log('checkUserRole() started');
-      
-      // First debug what's in SecureStore
-      await debugSecureStore();
       
       const userData = await SecureStore.getItemAsync('currentUser');
       console.log('Retrieved userData from SecureStore:', userData);
@@ -1257,64 +1236,8 @@ export default function ProfileScreen({ navigation, onLogout }) {
         </View>
       </View>
 
-      {/* Debug Button - Remove in production */}
+      {/* Menu Items */}
       <View style={styles.menuContainer}>
-        <TouchableOpacity 
-          style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#FEE2E2' }]} 
-          onPress={debugSecureStore}
-        >
-          <View style={styles.menuIcon}>
-            <Ionicons name="bug" size={20} color="#EF4444" />
-          </View>
-          <View style={styles.menuContent}>
-            <Text style={[styles.menuTitle, { color: '#EF4444' }]}>Debug SecureStore</Text>
-            <Text style={styles.menuSubtitle}>Check what's stored in SecureStore (DEV)</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#DC2626' }]} 
-          onPress={async () => {
-            try {
-              await SecureStore.deleteItemAsync('currentUser');
-              await SecureStore.deleteItemAsync('userRegistry');
-              await SecureStore.deleteItemAsync('auth_token');
-              await SecureStore.deleteItemAsync('user_data');
-              console.log('CLEARED ALL SECURESTORE DATA');
-              setCurrentUser(null);
-              showSuccess('Cleared', 'All data cleared. Please register again.');
-            } catch (error) {
-              console.error('Error clearing data:', error);
-            }
-          }}
-        >
-          <View style={styles.menuIcon}>
-            <Ionicons name="trash" size={20} color="#FFFFFF" />
-          </View>
-          <View style={styles.menuContent}>
-            <Text style={[styles.menuTitle, { color: '#FFFFFF' }]}>🗑️ CLEAR ALL DATA</Text>
-            <Text style={[styles.menuSubtitle, { color: '#FFFFFF' }]}>Delete everything and start fresh (DEV)</Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* RAW DATA DISPLAY */}
-        {currentUser && (
-          <View style={[styles.menuItem, { marginBottom: 10, backgroundColor: '#FEF3C7' }]}>
-            <View style={styles.menuIcon}>
-              <Ionicons name="information-circle" size={20} color="#D97706" />
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={[styles.menuTitle, { color: '#D97706' }]}>RAW USER DATA</Text>
-              <Text style={[styles.menuSubtitle, { fontSize: 10, fontFamily: 'monospace' }]}>
-                Email: {currentUser.email || 'NO EMAIL'}{'\n'}
-                Name: {currentUser.first_name || 'NO FIRST'} {currentUser.last_name || 'NO LAST'}{'\n'}
-                Phone: {currentUser.phone || currentUser.phoneNumber || 'NO PHONE'}{'\n'}
-                ID: {currentUser.id || 'NO ID'}
-              </Text>
-            </View>
-          </View>
-        )}
-
         {menuItems.map((item, index) => (
           <TouchableOpacity 
             key={index}
