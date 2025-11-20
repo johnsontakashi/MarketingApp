@@ -5,6 +5,7 @@ import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import * as SecureStore from 'expo-secure-store';
 import apiClient from '../services/api';
+import authService from '../services/authService';
 
 export default function ProfileScreen({ navigation, onLogout }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
@@ -1105,22 +1106,22 @@ export default function ProfileScreen({ navigation, onLogout }) {
   const handleMenuPress = (action) => {
     switch (action) {
       case 'editProfile':
-        handleEditProfile();
+        authService.requireProfileAuth('edit your profile', handleEditProfile);
         break;
       case 'orders':
-        handleMyOrders();
+        authService.requireProfileAuth('view your orders', handleMyOrders);
         break;
       case 'payments':
-        handlePaymentMethods();
+        authService.requireProfileAuth('manage payment methods', handlePaymentMethods);
         break;
       case 'settings':
-        handleSettings();
+        authService.requireProfileAuth('access settings', handleSettings);
         break;
       case 'support':
         handleHelpSupport();
         break;
       case 'notifications':
-        handleNotifications();
+        authService.requireProfileAuth('view notifications', handleNotifications);
         break;
       case 'deviceStatus':
         navigation.navigate('DeviceStatus');

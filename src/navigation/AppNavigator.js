@@ -11,6 +11,7 @@ import BlockingManager from '../components/mdm/BlockingManager';
 import networkManager from '../components/mdm/NetworkManager';
 import appRestrictionManager from '../components/mdm/AppRestrictionManager';
 import AdminStackNavigator from './AdminNavigator';
+import authService from '../services/authService';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -31,7 +32,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // Main tab navigator
-function MainTabNavigator({ onLogout }) {
+function MainTabNavigator({ onLogout, isAuthenticated, userRole }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -99,7 +100,7 @@ function MainTabNavigator({ onLogout }) {
 }
 
 // Main app with navigation and lock management
-function AppWithLockManager({ onLogout }) {
+function AppWithLockManager({ onLogout, isAuthenticated, userRole }) {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -109,7 +110,14 @@ function AppWithLockManager({ onLogout }) {
       <Stack.Screen 
         name="MainTabs"
       >
-        {(props) => <MainTabNavigator {...props} onLogout={onLogout} />}
+        {(props) => (
+          <MainTabNavigator 
+            {...props} 
+            onLogout={onLogout}
+            isAuthenticated={isAuthenticated}
+            userRole={userRole}
+          />
+        )}
       </Stack.Screen>
       <Stack.Screen 
         name="DeviceStatus" 
@@ -168,10 +176,34 @@ function AppNavigator() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [userRole, setUserRole] = useState(null);
+  const navigationRef = React.useRef(null);
 
   // Check authentication status on app start
   useEffect(() => {
     checkAuthStatus();
+  }, []);
+
+  // Update auth service when authentication state changes
+  React.useEffect(() => {
+    authService.setAuthStatus(isAuthenticated, userRole);
+  }, [isAuthenticated, userRole]);
+
+  // Initialize auth service with navigation when ready
+  React.useEffect(() => {
+    const initializeNavigation = () => {
+      if (navigationRef.current) {
+        authService.init(navigationRef.current);
+        console.log('AuthService initialized with navigation reference');
+      }
+    };
+
+    // Try to initialize immediately
+    initializeNavigation();
+
+    // Also try after a small delay in case navigationRef isn't ready yet
+    const timer = setTimeout(initializeNavigation, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const checkAuthStatus = async () => {
@@ -269,37 +301,77 @@ function AppNavigator() {
   };
 
   console.log('AppNavigator rendering, isAuthenticated:', isAuthenticated, 'userRole:', userRole);
+
+  const handleAuthSuccessInternal = async () => {
+    await handleAuthSuccess();
+    // Execute any pending auth callbacks
+    authService.executeAuthCallbacks();
+  };
   
   return (
-    <NavigationContainer>
-      {!isAuthenticated ? (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen 
-            name="Auth"
-            initialParams={{ onAuthSuccess: handleAuthSuccess }}
-          >
-            {(props) => <AuthScreen {...props} onAuthSuccess={handleAuthSuccess} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      ) : userRole === 'admin' ? (
-        <BlockingManager 
-          paymentStatus={paymentStatus}
-          onPaymentRequired={handlePaymentRequired}
+    <NavigationContainer 
+      ref={navigationRef}
+      onReady={() => {
+        console.log('NavigationContainer is ready');
+        if (navigationRef.current) {
+          authService.init(navigationRef.current);
+          console.log('AuthService initialized with navigation reference from onReady');
+        }
+      }}
+    >
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }}
+        initialRouteName="MainApp"
+      >
+        {/* Auth Screen as modal overlay */}
+        <Stack.Screen 
+          name="Auth"
+          initialParams={{ onAuthSuccess: handleAuthSuccessInternal }}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
         >
-          <SystemKioskManager>
-            <AdminStackNavigator onLogout={handleLogout} />
-          </SystemKioskManager>
-        </BlockingManager>
-      ) : (
-        <BlockingManager 
-          paymentStatus={paymentStatus}
-          onPaymentRequired={handlePaymentRequired}
+          {(props) => <AuthScreen {...props} onAuthSuccess={handleAuthSuccessInternal} />}
+        </Stack.Screen>
+        
+        {/* Main App Stack */}
+        <Stack.Screen 
+          name="MainApp"
+          options={{ headerShown: false }}
+          initialParams={{ isInitialRoute: true }}
         >
-          <SystemKioskManager>
-            <AppWithLockManager onLogout={handleLogout} />
-          </SystemKioskManager>
-        </BlockingManager>
-      )}
+          {() => {
+            if (isAuthenticated && userRole === 'admin') {
+              return (
+                <BlockingManager 
+                  paymentStatus={paymentStatus}
+                  onPaymentRequired={handlePaymentRequired}
+                >
+                  <SystemKioskManager>
+                    <AdminStackNavigator onLogout={handleLogout} />
+                  </SystemKioskManager>
+                </BlockingManager>
+              );
+            } else {
+              return (
+                <BlockingManager 
+                  paymentStatus={paymentStatus}
+                  onPaymentRequired={handlePaymentRequired}
+                >
+                  <SystemKioskManager>
+                    <AppWithLockManager 
+                      onLogout={handleLogout} 
+                      isAuthenticated={isAuthenticated}
+                      userRole={userRole}
+                    />
+                  </SystemKioskManager>
+                </BlockingManager>
+              );
+            }
+          }}
+        </Stack.Screen>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

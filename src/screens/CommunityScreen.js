@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
 import apiClient from '../services/api';
+import authService from '../services/authService';
 
 const { width } = Dimensions.get('window');
 
@@ -182,60 +183,64 @@ export default function CommunityScreen() {
   };
 
   const handleClaimBonus = async (bonus) => {
-    showAlert({
-      title: 'Claim Bonus',
-      message: `Claim ${bonus.icon} ${bonus.title} worth 💎 ${bonus.amount} TLB?`,
-      type: 'warning',
-      icon: 'gift',
-      buttons: [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Claim',
-          onPress: async () => {
-            try {
-              setBonusLoading(true);
-              await apiClient.claimBonus(bonus.id);
-              showSuccess('Success!', 'Bonus claimed successfully!');
-              // Reload bonuses to reflect changes
-              await loadCommunityData();
-            } catch (error) {
-              console.error('Claim bonus failed:', error);
-              if (error.isNetworkError?.()) {
-                showError('Network Error', 'Please check your internet connection and try again.');
-              } else {
-                showError('Claim Failed', error.message || 'Failed to claim bonus. Please try again.');
+    authService.requireCommunityAuth('claim bonuses', () => {
+      showAlert({
+        title: 'Claim Bonus',
+        message: `Claim ${bonus.icon} ${bonus.title} worth 💎 ${bonus.amount} TLB?`,
+        type: 'warning',
+        icon: 'gift',
+        buttons: [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Claim',
+            onPress: async () => {
+              try {
+                setBonusLoading(true);
+                await apiClient.claimBonus(bonus.id);
+                showSuccess('Success!', 'Bonus claimed successfully!');
+                // Reload bonuses to reflect changes
+                await loadCommunityData();
+              } catch (error) {
+                console.error('Claim bonus failed:', error);
+                if (error.isNetworkError?.()) {
+                  showError('Network Error', 'Please check your internet connection and try again.');
+                } else {
+                  showError('Claim Failed', error.message || 'Failed to claim bonus. Please try again.');
+                }
+              } finally {
+                setBonusLoading(false);
               }
-            } finally {
-              setBonusLoading(false);
             }
           }
-        }
-      ]
+        ]
+      });
     });
   };
 
   const handleShareReferral = () => {
-    const referralCode = userProfile.referral_code || 'LOADING...';
-    showAlert({
-      title: '🎯 Share Referral Code',
-      message: `Your referral code: ${referralCode}\n\nShare this code with friends and earn rewards!`,
-      type: 'info',
-      icon: 'share',
-      buttons: [
-        { 
-          text: 'Copy Code', 
-          onPress: () => {
-            showSuccess('✅ Copied!', 'Referral code copied to clipboard');
-          }
-        },
-        { 
-          text: 'Share', 
-          onPress: () => {
-            showSuccess('📤 Shared!', 'Referral code shared successfully');
-          }
-        },
-        { text: 'Close', style: 'cancel' }
-      ]
+    authService.requireCommunityAuth('access your referral code', () => {
+      const referralCode = userProfile.referral_code || 'LOADING...';
+      showAlert({
+        title: '🎯 Share Referral Code',
+        message: `Your referral code: ${referralCode}\n\nShare this code with friends and earn rewards!`,
+        type: 'info',
+        icon: 'share',
+        buttons: [
+          { 
+            text: 'Copy Code', 
+            onPress: () => {
+              showSuccess('✅ Copied!', 'Referral code copied to clipboard');
+            }
+          },
+          { 
+            text: 'Share', 
+            onPress: () => {
+              showSuccess('📤 Shared!', 'Referral code shared successfully');
+            }
+          },
+          { text: 'Close', style: 'cancel' }
+        ]
+      });
     });
   };
 
@@ -475,13 +480,15 @@ export default function CommunityScreen() {
   ];
 
   const handleViewFullTree = () => {
-    setShowTreeModal(true);
-    // Initialize all generations as expanded
-    const initialExpanded = {};
-    fullTreeData.forEach(gen => {
-      initialExpanded[gen.generation] = true;
+    authService.requireCommunityAuth('view your referral tree', () => {
+      setShowTreeModal(true);
+      // Initialize all generations as expanded
+      const initialExpanded = {};
+      fullTreeData.forEach(gen => {
+        initialExpanded[gen.generation] = true;
+      });
+      setExpandedGenerations(initialExpanded);
     });
-    setExpandedGenerations(initialExpanded);
   };
 
   const toggleGeneration = (generation) => {

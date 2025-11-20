@@ -35,10 +35,20 @@ The Metro bundler runs on port 8081 by default. To use a different port: `npx ex
 
 ### Key Dependencies
 - **React Navigation v7** - Navigation framework with bottom tabs and stack navigators
+  - `@react-navigation/bottom-tabs`: ^7.7.2 - Bottom tab navigation
+  - `@react-navigation/native`: ^7.1.19 - Core navigation
+  - `@react-navigation/stack`: ^7.6.1 - Stack navigation
 - **Expo SDK 54** - Framework with new architecture enabled
-- **React Native 0.81.5** - Core framework
-- **Expo SecureStore** - Secure authentication token storage
-- **Ionicons** - Icon system via @expo/vector-icons
+- **React Native 0.81.5** - Core framework with React 19.1.0
+- **Expo SecureStore** - Secure authentication token storage (~15.0.7)
+- **Ionicons** - Icon system via @expo/vector-icons (^15.0.3)
+- **Additional Expo modules**:
+  - `expo-crypto` - Cryptographic functions
+  - `expo-device` - Device information
+  - `expo-image-picker` - Image selection
+  - `expo-keep-awake` - Prevent device sleep
+  - `expo-navigation-bar` - Navigation bar control
+- **react-native-safe-area-context** (^5.6.2) - Safe area handling
 
 ### Platform-Specific Development
 The app supports iOS, Android, and Web platforms. Platform-specific code can be added using `.ios.js`, `.android.js`, or `.web.js` file extensions.
@@ -65,14 +75,19 @@ The app supports iOS, Android, and Web platforms. Platform-specific code can be 
 
 ### Project Structure
 - `/assets` - Static assets (icons, splash screens, images)
-  - `icon.png` - App icon
-  - `adaptive-icon.png` - Android adaptive icon
+  - `Mainicon.jpeg` - App icon (referenced in app.json)
   - `splash-icon.png` - Splash screen image
   - `favicon.png` - Web favicon
-- `/src` - Main source code directory
-  - `/navigation` - Navigation configuration
-  - `/screens` - All screen components (Home, Marketplace, Wallet, Community, Profile, DeviceStatus, LockScreen)
-  - `/components` - Reusable components including MDM functionality
+- `/src` - Main source code directory (41 JavaScript files)
+  - `/navigation` - Navigation configuration (AppNavigator.js, AdminNavigator.js)
+  - `/screens` - Screen components (13 screens including Home, Marketplace, Wallet, Community, Profile, Auth, Admin screens)
+  - `/components` - Reusable components including MDM functionality and UI components
+    - `/mdm` - Mobile Device Management components (7 managers)
+    - `/modals` - Modal components and global modal provider
+    - `/ui` - UI components (CustomAlert)
+    - `/admin` - Admin-specific components
+  - `/services` - Business logic services (api.js, ModalRegistry.js, sharedDataService.js)
+  - `/hooks` - Custom React hooks (useCustomAlert.js, useAdminAlert.js)
 
 ### React Native New Architecture
 This project has the React Native new architecture enabled. When working with native modules or third-party libraries, ensure they are compatible with the new architecture (Fabric, TurboModules).
@@ -87,17 +102,26 @@ The app uses React Navigation with authentication-gated hybrid navigation:
 - **MDM Wrapper System** - Multi-layered approach with BlockingManager → SystemKioskManager → LockManager
 
 ### Screen Components
-- **AuthScreen** - Login/registration interface with secure authentication (src/screens/AuthScreen.js:227)
+**Main App Screens:**
+- **AuthScreen** - Login/registration interface with secure authentication
 - **HomeScreen** - Dashboard with quick actions, balance display, and status cards
 - **MarketplaceScreen** - Shopping interface for TLB Diamond marketplace
 - **WalletScreen** - Digital wallet for TLB Diamond tokens and payment management
 - **CommunityScreen** - Social features, referrals, and bonus system
 - **ProfileScreen** - User settings and account management
+
+**MDM & System Screens:**
 - **DeviceStatusScreen** - MDM device status and diagnostics
 - **LockScreen** - Kiosk mode interface with payment and unlock functionality
-- **ChatScreen** - Communication interface (modal presentation)
-- **AdminUserManagementScreen** - Administrative user management interface
 - **BlockingDemoScreen** - Demonstration of MDM blocking capabilities
+
+**Admin Screens:**
+- **AdminHomeScreen** - Administrative dashboard
+- **AdminUserManagementScreen** - User management interface
+
+**Modal/Utility Screens:**
+- **ChatScreen** - Communication interface (modal presentation)
+- **AuthScreenAPI** - Additional authentication API interface
 
 ### State Management
 The app uses React hooks and context for state management:
@@ -109,14 +133,15 @@ The app uses React hooks and context for state management:
 
 ### MDM Integration
 The MDM system is architected with multiple specialized managers:
-- **LockManager** - Core kiosk mode toggle and hardware button blocking (src/components/mdm/LockManager.js:14)
+- **LockManager** - Core kiosk mode toggle and hardware button blocking
 - **KioskManager** - Device lock task management and native kiosk controls
 - **SystemKioskManager** - System-level kiosk enforcement and security
-- **BlockingManager** - Graduated access restriction based on payment status (src/navigation/AppNavigator.js:241-248)
+- **BlockingManager** - Graduated access restriction based on payment status (wraps main app in AppNavigator.js:294-301)
 - **NetworkManager** - Network access control and restrictions
 - **AppRestrictionManager** - Application access control and whitelisting
 - **SimCardManager** - SIM card monitoring and security enforcement
-- **Development Mode** - Alert-based simulation for emulator compatibility
+
+**Multi-layer Architecture:** The app uses a nested wrapper pattern where BlockingManager → SystemKioskManager → AppWithLockManager creates multiple layers of control and security.
 
 ### Design System
 - **Golden Theme** - Consistent gold/bronze color palette (`#D4AF37`, `#B8860B`, `#8B4513`)
@@ -131,14 +156,24 @@ The MDM system is architected with multiple specialized managers:
 - Global modal system implemented via GlobalModalProvider for consistent UI overlays
 - Custom alert system using useCustomAlert hook for native-like dialogs
 
+### Protected Actions
+The following actions require authentication and will prompt users to sign up/log in:
+- **Marketplace**: Purchase products, add to cart, buy now
+- **Wallet**: Send TLB, request TLB, view transaction history, top up wallet
+- **Community**: Claim bonuses, share referral code, view referral tree
+- **Profile**: Edit profile, view orders, manage payments, access settings, view notifications
+- **General Browsing**: Users can browse products, read descriptions, and explore the app without authentication
+
 ## Key Development Patterns
 
 ### Authentication Flow
-The app implements a secure authentication gate pattern:
-- **Entry Point Gate** - AppNavigator checks authentication status before showing main app (src/navigation/AppNavigator.js:168-184)
+The app implements a progressive authentication pattern that allows browsing before requiring login:
+- **Browse-First Pattern** - Users can explore the app without authentication (AppNavigator.js shows MainApp by default)
+- **Action-Based Authentication** - Authentication prompts appear when users try to perform protected actions
+- **Authentication Service** - Centralized auth service (src/services/authService.js) handles all protected action flows
+- **Modal Authentication** - AuthScreen appears as modal overlay when authentication is required
 - **SecureStore Integration** - User sessions persisted using Expo SecureStore for security
-- **State-Driven Navigation** - Authentication state determines which navigator tree is rendered
-- **Auth Callback Pattern** - AuthScreen uses callback props to notify parent of successful authentication
+- **Auth Callback System** - Actions are executed after successful authentication via callback queue
 
 ### Global Modal System
 The app uses a centralized modal system for consistent UI:
@@ -180,16 +215,21 @@ The app includes a complete admin interface with separate navigation:
 - **Dual Interface System** - Regular users see the main app, admins see the admin dashboard
 
 ### Services and Utilities
-- **sharedDataService.js** - Shared data management across components (currently modified in git status)
+**Core Services:**
 - **api.js** - API service layer for backend communication
 - **ModalRegistry.js** - Cross-component modal management service
-- **Custom Hooks**:
-  - `useCustomAlert` - Native-like alert dialogs (src/hooks/useCustomAlert.js)
-  - `useAdminAlert` - Admin-specific alert system (src/hooks/useAdminAlert.js)
-- **UI Components**:
-  - `CustomAlert` - Reusable alert component (src/components/ui/CustomAlert.js)
-  - `AdminAlert` - Admin-specific alert component (src/components/admin/AdminAlert.js)
-  - `WelcomeModal` - Welcome/onboarding modal (src/components/WelcomeModal.js)
+- **sharedDataService.js** - Shared data management across components
+
+**Custom Hooks:**
+- **useCustomAlert** - Native-like alert dialogs (src/hooks/useCustomAlert.js)
+- **useAdminAlert** - Admin-specific alert system (src/hooks/useAdminAlert.js)
+
+**UI & Modal Components:**
+- **GlobalModalProvider** - Context provider for app-wide modal management (src/components/modals/GlobalModalProvider.js)
+- **CustomAlert** - Reusable alert component (src/components/ui/CustomAlert.js)
+- **AdminAlert** - Admin-specific alert component (src/components/admin/AdminAlert.js)
+- **WelcomeModal** - Welcome/onboarding modal (src/components/WelcomeModal.js)
+- **PaymentRequiredModal** - Payment requirement modal (src/components/modals/PaymentRequiredModal.js)
 
 ### Code Quality Guidelines
 - No linting or testing scripts are configured in package.json
@@ -210,9 +250,28 @@ The app uses various ports for development:
 - **KIOSK_SETUP.md** - Complete setup instructions for Android device owner and kiosk mode functionality
 - **README.md** - Currently contains generic Vendure documentation (should be updated for this project)
 
+## Key Code References
+
+### Authentication Flow
+- **AppNavigator.js:284-287** - Authentication service initialization and state management
+- **AppNavigator.js:296-300** - Authentication success handler with callback execution
+- **AppNavigator.js:306** - Initial route set to MainApp (browse-first pattern)
+- **src/services/authService.js** - Centralized authentication service for protected actions
+
+### MDM System Architecture 
+- **AppNavigator.js:294-301** - Multi-layer MDM wrapper implementation
+- **Components in src/components/mdm/** - Individual MDM manager components
+- **LockManager, KioskManager, SystemKioskManager, BlockingManager** - Core MDM controllers
+
+### Navigation Structure
+- **AppNavigator.js:34-98** - Main tab navigator with 5 tabs
+- **AppNavigator.js:102-158** - Stack navigator for modal screens
+- **AdminNavigator.js** - Separate admin interface navigation
+
 ## Important Reminders
 - MDM functionality requires physical Android device with device owner privileges for full testing
 - The app supports dual interface system: regular users see main app, admins see admin dashboard
-- Authentication gate prevents access to main features until login is completed
+- Authentication gate prevents access to main features until login is completed (AppNavigator.js:275)
 - All screens implement safe area context for proper display on various devices
-- Golden theme palette should be maintained across all new components
+- Golden theme palette should be maintained across all new components (`#D4AF37`, `#B8860B`, `#8B4513`)
+- No linting or testing commands are configured - manually verify code quality
