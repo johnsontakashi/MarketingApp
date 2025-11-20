@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import sharedDataService from '../services/sharedDataService';
+import authService from '../services/authService';
 
 const { width } = Dimensions.get('window');
 
@@ -296,21 +297,34 @@ export default function WalletScreen({ navigation }) {
   ];
 
   const handleQuickAction = (action) => {
-    switch (action) {
-      case 'Send':
-        setShowSendModal(true);
-        break;
-      case 'Request':
-        setShowRequestModal(true);
-        break;
-      case 'History':
-        setShowHistoryModal(true);
-        break;
-      case 'Top Up':
-        setShowTopUpModal(true);
-        break;
-      default:
-        showInfo('Coming Soon', `${action} functionality will be available soon!`);
+    const actionHandlers = {
+      'Send': () => {
+        authService.requireWalletAuth('send TLB diamonds', () => {
+          setShowSendModal(true);
+        });
+      },
+      'Request': () => {
+        authService.requireWalletAuth('request TLB diamonds', () => {
+          setShowRequestModal(true);
+        });
+      },
+      'History': () => {
+        authService.requireWalletAuth('view transaction history', () => {
+          setShowHistoryModal(true);
+        });
+      },
+      'Top Up': () => {
+        authService.requireWalletAuth('top up your wallet', () => {
+          setShowTopUpModal(true);
+        });
+      }
+    };
+
+    const handler = actionHandlers[action];
+    if (handler) {
+      handler();
+    } else {
+      showInfo('Coming Soon', `${action} functionality will be available soon!`);
     }
   };
 
@@ -476,7 +490,9 @@ export default function WalletScreen({ navigation }) {
   };
 
   const handleViewAllTransactions = () => {
-    setShowHistoryModal(true);
+    authService.requireWalletAuth('view all transactions', () => {
+      setShowHistoryModal(true);
+    });
   };
 
   const handleExportTransactionHistory = () => {

@@ -51,12 +51,34 @@ export const GlobalModalProvider = ({ children }) => {
     });
   };
 
+  const showAuthModal = (options = {}) => {
+    const {
+      title = '🔐 Authentication Required',
+      message = 'Please sign up or log in to continue.',
+      action = 'perform this action',
+      onSignUp = () => console.log('Sign up pressed'),
+      onLogin = () => console.log('Login pressed'),
+      onCancel = () => hideModal()
+    } = options;
+
+    showModal({
+      type: 'auth_required',
+      title,
+      message,
+      action,
+      onSignUp,
+      onLogin,
+      onCancel
+    });
+  };
+
   // Register this context with the modal registry
   useEffect(() => {
     modalRegistry.setModalContext({
       showModal,
       hideModal,
-      showSimCardModal
+      showSimCardModal,
+      showAuthModal
     });
 
     // Cleanup on unmount
@@ -66,7 +88,7 @@ export const GlobalModalProvider = ({ children }) => {
   }, []);
 
   return (
-    <GlobalModalContext.Provider value={{ showModal, hideModal, showSimCardModal }}>
+    <GlobalModalContext.Provider value={{ showModal, hideModal, showSimCardModal, showAuthModal }}>
       {children}
       
       {/* SIM Card Detection Modal */}
@@ -162,6 +184,104 @@ export const GlobalModalProvider = ({ children }) => {
                   }}
                 >
                   <Text style={styles.acknowledgeButtonText}>Acknowledge</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Authentication Required Modal */}
+      {modalData?.type === 'auth_required' && (
+        <Modal
+          visible={true}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={modalData.onCancel}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.8)" barStyle="light-content" />
+          <View style={styles.modalOverlay}>
+            <View style={styles.authModalContainer}>
+              
+              {/* Header Section */}
+              <View style={styles.authHeader}>
+                <View style={styles.authIconContainer}>
+                  <Ionicons name="lock-closed" size={36} color="#D4AF37" />
+                </View>
+                <Text style={styles.authTitle}>{modalData.title}</Text>
+                <Text style={styles.authSubtitle}>
+                  Please sign up or log in to {modalData.action}
+                </Text>
+              </View>
+
+              {/* Content Section */}
+              <View style={styles.authContent}>
+                <View style={styles.authMessageContainer}>
+                  <Text style={styles.authMessage}>
+                    Join the TLB Diamond community to access premium features, secure transactions, and exclusive marketplace content.
+                  </Text>
+                </View>
+
+                {/* Benefits List */}
+                <View style={styles.benefitsContainer}>
+                  <Text style={styles.benefitsTitle}>What you'll get:</Text>
+                  
+                  <View style={styles.benefitsList}>
+                    <View style={styles.benefitItem}>
+                      <Ionicons name="diamond" size={16} color="#D4AF37" />
+                      <Text style={styles.benefitText}>Access to TLB Diamond marketplace</Text>
+                    </View>
+                    
+                    <View style={styles.benefitItem}>
+                      <Ionicons name="wallet" size={16} color="#D4AF37" />
+                      <Text style={styles.benefitText}>Secure digital wallet</Text>
+                    </View>
+                    
+                    <View style={styles.benefitItem}>
+                      <Ionicons name="people" size={16} color="#D4AF37" />
+                      <Text style={styles.benefitText}>Community features & bonuses</Text>
+                    </View>
+                    
+                    <View style={styles.benefitItem}>
+                      <Ionicons name="shield-checkmark" size={16} color="#D4AF37" />
+                      <Text style={styles.benefitText}>Secure transactions</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* Action Buttons */}
+              <View style={styles.authActions}>
+                <TouchableOpacity 
+                  style={styles.signUpButton}
+                  onPress={() => {
+                    modalData.onSignUp();
+                    hideModal();
+                  }}
+                >
+                  <Ionicons name="person-add" size={20} color="#FFFFFF" />
+                  <Text style={styles.signUpButtonText}>Sign Up</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.loginButton}
+                  onPress={() => {
+                    modalData.onLogin();
+                    hideModal();
+                  }}
+                >
+                  <Ionicons name="log-in" size={20} color="#D4AF37" />
+                  <Text style={styles.loginButtonText}>Log In</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.cancelButton}
+                  onPress={() => {
+                    modalData.onCancel();
+                  }}
+                >
+                  <Text style={styles.cancelButtonText}>Maybe Later</Text>
                 </TouchableOpacity>
               </View>
 
@@ -342,6 +462,158 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
+  },
+  // Authentication Modal Styles
+  authModalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    width: width - 40,
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
+    elevation: 15,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  authHeader: {
+    backgroundColor: '#FFF8E7',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingVertical: 25,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: '#F5E6A3',
+  },
+  authIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#F5E6A3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderWidth: 3,
+    borderColor: '#D4AF37',
+  },
+  authTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  authSubtitle: {
+    fontSize: 16,
+    color: '#8B4513',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  authContent: {
+    padding: 25,
+  },
+  authMessageContainer: {
+    backgroundColor: '#FFF8E7',
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#D4AF37',
+  },
+  authMessage: {
+    fontSize: 15,
+    color: '#2C1810',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  benefitsContainer: {
+    marginBottom: 10,
+  },
+  benefitsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C1810',
+    marginBottom: 12,
+  },
+  benefitsList: {
+    gap: 10,
+  },
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFF8E7',
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#D4AF37',
+  },
+  benefitText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: '#8B4513',
+    fontWeight: '500',
+    flex: 1,
+  },
+  authActions: {
+    padding: 20,
+    paddingTop: 0,
+    gap: 12,
+  },
+  signUpButton: {
+    backgroundColor: '#D4AF37',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#B8860B',
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  loginButton: {
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  loginButtonText: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#8B4513',
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
 

@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import sharedDataService from '../services/sharedDataService';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
+import authService from '../services/authService';
 
 const { width } = Dimensions.get('window');
 
@@ -345,19 +346,23 @@ export default function MarketplaceScreen({ navigation }) {
   };
 
   const handleAddToCart = () => {
-    Alert.alert(
-      '🛒 Added to Cart',
-      `${selectedProduct?.title} has been added to your cart!`,
-      [{ text: 'Continue Shopping', onPress: () => setShowProductDetail(false) }]
-    );
+    authService.requirePurchaseAuth(selectedProduct?.title, () => {
+      Alert.alert(
+        '🛒 Added to Cart',
+        `${selectedProduct?.title} has been added to your cart!`,
+        [{ text: 'Continue Shopping', onPress: () => setShowProductDetail(false) }]
+      );
+    });
   };
 
   const handleBuyNow = () => {
-    Alert.alert(
-      '💎 Purchase Initiated',
-      `Redirecting to payment for ${selectedProduct?.title}...`,
-      [{ text: 'OK', onPress: () => setShowProductDetail(false) }]
-    );
+    authService.requirePurchaseAuth(selectedProduct?.title, () => {
+      Alert.alert(
+        '💎 Purchase Initiated',
+        `Redirecting to payment for ${selectedProduct?.title}...`,
+        [{ text: 'OK', onPress: () => setShowProductDetail(false) }]
+      );
+    });
   };
 
   // Load more products (pagination)

@@ -56,7 +56,8 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   // Get onAuthSuccess from props (preferred) or route params (fallback)
   const authSuccessCallback = onAuthSuccess || (route?.params?.onAuthSuccess);
   const { showAlert } = useCustomAlert();
-  const [isLogin, setIsLogin] = useState(true);
+  // Set initial mode based on route params, default to login
+  const [isLogin, setIsLogin] = useState(route?.params?.mode !== 'signup');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
