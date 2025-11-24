@@ -13,15 +13,21 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import sharedDataService from '../services/sharedDataService';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
 import authService from '../services/authService';
+import themeService from '../services/themeService';
 
 const { width } = Dimensions.get('window');
 
 export default function MarketplaceScreen({ navigation }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showInfo } = useCustomAlert();
+  
+  // Get current theme and dynamic styles
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+  const styles = getStyles(currentTheme);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -42,7 +48,23 @@ export default function MarketplaceScreen({ navigation }) {
   // Load data on mount
   useEffect(() => {
     loadMarketplaceData();
+    loadUserDataAndTheme();
   }, []);
+
+  // Load user data and set theme
+  const loadUserDataAndTheme = async () => {
+    try {
+      const userData = await SecureStore.getItemAsync('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Update theme based on user data
+        themeService.setThemeFromUserData(user);
+        setCurrentTheme(themeService.getCurrentTheme());
+      }
+    } catch (error) {
+      console.error('Error loading user data for theme:', error);
+    }
+  };
 
   // Update product count when filtering changes
   useEffect(() => {
@@ -820,10 +842,10 @@ export default function MarketplaceScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   searchHeader: {
     flexDirection: 'row',
@@ -835,12 +857,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     paddingHorizontal: 15,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   searchIcon: {
     marginRight: 10,
@@ -849,14 +871,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 45,
     fontSize: 16,
-    color: '#2C1810',
+    color: theme.colors.text,
   },
   filterButton: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.cardBackground,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   section: {
     paddingHorizontal: 20,

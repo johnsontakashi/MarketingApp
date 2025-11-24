@@ -6,9 +6,14 @@ import { useCustomAlert } from '../hooks/useCustomAlert';
 import * as SecureStore from 'expo-secure-store';
 import apiClient from '../services/api';
 import authService from '../services/authService';
+import themeService from '../services/themeService';
 
 export default function ProfileScreen({ navigation, onLogout }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
+  // Get current theme and dynamic styles
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+  const styles = getStyles(currentTheme);
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -162,6 +167,10 @@ export default function ProfileScreen({ navigation, onLogout }) {
         const user = JSON.parse(userData);
         setCurrentUser(user);
         setIsAdmin(user.role === 'admin' || user.userType === 'admin' || user.isAdmin === true);
+        
+        // Update theme based on user data
+        themeService.setThemeFromUserData(user);
+        setCurrentTheme(themeService.getCurrentTheme());
         
         console.log('=== USER DATA LOADED ===');
         console.log('Raw user data from SecureStore:', JSON.stringify(user, null, 2));
@@ -3856,10 +3865,10 @@ export default function ProfileScreen({ navigation, onLogout }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   contentContainer: {
     paddingBottom: 20,
@@ -3867,23 +3876,23 @@ const styles = StyleSheet.create({
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.cardBackground,
     borderRadius: 16,
     padding: 20,
     margin: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   avatarContainer: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
     position: 'relative',
   },
   avatarImage: {

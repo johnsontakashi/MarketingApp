@@ -17,8 +17,357 @@ import * as SecureStore from 'expo-secure-store';
 import apiClient, { ApiError } from '../services/api';
 import WelcomeModal from '../components/WelcomeModal';
 import { useCustomAlert } from '../hooks/useCustomAlert';
+import themeService from '../services/themeService';
 
 const { width } = Dimensions.get('window');
+
+// Dynamic styles function based on theme colors
+const getStyles = (colors) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 25,
+    backgroundColor: colors.background,
+    paddingBottom: 80,
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 40,
+  },
+  logo: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: colors.primary,
+    textAlign: 'center',
+    letterSpacing: 1.2,
+    marginBottom: 8,
+    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  subtitle: {
+    fontSize: 17,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 25,
+    fontWeight: '500',
+    lineHeight: 24,
+    letterSpacing: 0.4,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 6,
+    marginBottom: 35,
+    borderWidth: 2,
+    borderColor: colors.primaryLight,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderRadius: 16,
+    marginHorizontal: 3,
+  },
+  toggleButtonActive: {
+    backgroundColor: colors.primary,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  toggleButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  formContainer: {
+    marginBottom: 30,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 8,
+    letterSpacing: 0.3,
+  },
+  input: {
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderRadius: 16,
+    padding: 18,
+    fontSize: 16,
+    color: colors.text,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  genderButton: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderRadius: 12,
+    marginHorizontal: 4,
+    backgroundColor: colors.surface,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  genderButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  genderText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
+  genderTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  dateButton: {
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderRadius: 16,
+    padding: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  dateText: {
+    fontSize: 16,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  userTypeContainer: {
+    marginBottom: 25,
+  },
+  userTypeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  userTypeCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 2,
+    marginBottom: 16,
+    position: 'relative',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  userTypeLabel: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginTop: 10,
+    marginBottom: 6,
+    letterSpacing: 0.3,
+  },
+  userTypeDescription: {
+    fontSize: 13,
+    color: colors.textLight,
+    textAlign: 'center',
+    lineHeight: 18,
+    fontWeight: '500',
+    letterSpacing: 0.1,
+  },
+  selectedIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  authButton: {
+    backgroundColor: colors.buttonPrimary,
+    paddingVertical: 18,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginBottom: 25,
+    marginTop: 10,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  authButtonText: {
+    fontSize: 19,
+    fontWeight: '700',
+    color: colors.buttonText,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  infoContainer: {
+    backgroundColor: `rgba(${colors.primary === '#D4AF37' ? '212, 175, 55' : '139, 69, 19'}, 0.1)`,
+    padding: 20,
+    borderRadius: 16,
+    borderLeftWidth: 6,
+    borderLeftColor: colors.primary,
+    marginTop: 10,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  infoText: {
+    fontSize: 15,
+    color: colors.textSecondary,
+    lineHeight: 22,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  datePickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  datePickerContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+  },
+  datePickerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  datePickerRow: {
+    flexDirection: 'row',
+    height: 200,
+    marginBottom: 20,
+  },
+  datePickerColumn: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  datePickerLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  datePickerScrollView: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderRadius: 8,
+  },
+  datePickerOption: {
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+  },
+  datePickerOptionSelected: {
+    backgroundColor: colors.primary,
+  },
+  datePickerOptionText: {
+    fontSize: 16,
+    color: colors.text,
+  },
+  datePickerOptionTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  datePickerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  datePickerCancelButton: {
+    flex: 1,
+    backgroundColor: colors.border,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  datePickerCancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textLight,
+  },
+  datePickerSelectButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  datePickerSelectButtonDisabled: {
+    backgroundColor: colors.textLight,
+  },
+  datePickerSelectButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+});
 
 // Helper functions for user registry management
 const storeUserInRegistry = async (user) => {
@@ -58,6 +407,8 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   const { showAlert } = useCustomAlert();
   // Set initial mode based on route params, default to login
   const [isLogin, setIsLogin] = useState(route?.params?.mode !== 'signup');
+  // Theme state for dynamic updates
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -143,6 +494,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
         birthday: formattedDate
       }));
       setShowDatePicker(false);
+      
+      // Update theme based on age when birthday is selected
+      const age = themeService.calculateAge(formattedDate);
+      if (age !== null) {
+        themeService.setUserAge(age);
+        setCurrentTheme(themeService.getCurrentTheme());
+        console.log(`Age detected: ${age}, Theme: ${themeService.getCurrentTheme().name}`);
+      }
     }
   };
 
@@ -512,11 +871,14 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
     </View>
   );
 
+  // Generate dynamic styles based on current theme
+  const styles = getStyles(currentTheme.colors);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>TLB Diamond</Text>
+        <Text style={styles.logo}>TLB Diamond</Text>
         <Text style={styles.subtitle}>
           {isLogin ? 'Welcome Back' : 'Create Your Account'}
         </Text>
@@ -528,20 +890,20 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
           style={[styles.toggleButton, isLogin && styles.toggleButtonActive]}
           onPress={() => setIsLogin(true)}
         >
-          <Text style={[styles.toggleText, isLogin && styles.toggleTextActive]}>Login</Text>
+          <Text style={[styles.toggleButtonText, isLogin && styles.toggleButtonTextActive]}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.toggleButton, !isLogin && styles.toggleButtonActive]}
           onPress={() => setIsLogin(false)}
         >
-          <Text style={[styles.toggleText, !isLogin && styles.toggleTextActive]}>Register</Text>
+          <Text style={[styles.toggleButtonText, !isLogin && styles.toggleButtonTextActive]}>Register</Text>
         </TouchableOpacity>
       </View>
 
       {/* Form */}
       <View style={styles.formContainer}>
         {/* Email */}
-        <View style={styles.inputGroup}>
+        <View style={styles.inputContainer}>
           <Text style={styles.label}>Email Address *</Text>
           <TextInput
             style={styles.input}
@@ -554,7 +916,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
         </View>
 
         {/* Password */}
-        <View style={styles.inputGroup}>
+        <View style={styles.inputContainer}>
           <Text style={styles.label}>Password *</Text>
           <TextInput
             style={styles.input}
@@ -569,7 +931,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
         {!isLogin && (
           <>
             {/* Confirm Password */}
-            <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
               <Text style={styles.label}>Confirm Password *</Text>
               <TextInput
                 style={styles.input}
@@ -582,7 +944,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
 
             {/* Name */}
             <View style={styles.nameRow}>
-              <View style={[styles.inputGroup, { flex: 1, marginRight: 6 }]}>
+              <View style={[styles.inputContainer, { flex: 1, marginRight: 6 }]}>
                 <Text style={styles.label}>First Name *</Text>
                 <TextInput
                   style={styles.input}
@@ -591,7 +953,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
                   onChangeText={(value) => handleInputChange('firstName', value)}
                 />
               </View>
-              <View style={[styles.inputGroup, { flex: 1, marginLeft: 6 }]}>
+              <View style={[styles.inputContainer, { flex: 1, marginLeft: 6 }]}>
                 <Text style={styles.label}>Last Name *</Text>
                 <TextInput
                   style={styles.input}
@@ -603,7 +965,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             </View>
 
             {/* Phone Number */}
-            <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
               <Text style={styles.label}>Phone Number *</Text>
               <TextInput
                 style={styles.input}
@@ -615,7 +977,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             </View>
 
             {/* Sex */}
-            <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
               <Text style={styles.label}>Gender *</Text>
               <View style={styles.genderContainer}>
                 {['male', 'female', 'other'].map(gender => (
@@ -639,7 +1001,7 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
             </View>
 
             {/* Birthday */}
-            <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
               <Text style={styles.label}>Birthday *</Text>
               <TouchableOpacity
                 style={styles.dateButton}
@@ -796,341 +1158,3 @@ export default function AuthScreen({ navigation, route, onAuthSuccess }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8E7',
-  },
-  contentContainer: {
-    paddingBottom: 60,
-    paddingHorizontal: 20,
-  },
-  header: {
-    alignItems: 'center',
-    paddingTop: 50,
-    paddingBottom: 30,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: '#D4AF37',
-    marginBottom: 10,
-    textShadowColor: 'rgba(212, 175, 55, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 1,
-  },
-  subtitle: {
-    fontSize: 20,
-    color: '#8B4513',
-    textAlign: 'center',
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    opacity: 0.9,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 0,
-    marginBottom: 35,
-    backgroundColor: '#F5E6A3',
-    borderRadius: 16,
-    padding: 6,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: 12,
-    marginHorizontal: 2,
-  },
-  toggleButtonActive: {
-    backgroundColor: '#D4AF37',
-    shadowColor: '#B8860B',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  toggleText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#8B4513',
-    letterSpacing: 0.3,
-  },
-  toggleTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  formContainer: {
-    paddingHorizontal: 0,
-  },
-  inputGroup: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#2C1810',
-    marginBottom: 10,
-    letterSpacing: 0.2,
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderRadius: 16,
-    padding: 18,
-    fontSize: 16,
-    color: '#2C1810',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  genderButton: {
-    flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    marginHorizontal: 4,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  genderButtonActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
-    shadowColor: '#B8860B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  genderText: {
-    fontSize: 16,
-    color: '#8B4513',
-    fontWeight: '600',
-    letterSpacing: 0.3,
-  },
-  genderTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  dateButton: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderRadius: 16,
-    padding: 18,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  dateText: {
-    fontSize: 16,
-    color: '#2C1810',
-    fontWeight: '500',
-  },
-  userTypeContainer: {
-    marginBottom: 25,
-  },
-  userTypeGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  userTypeCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    borderWidth: 2,
-    marginBottom: 16,
-    position: 'relative',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  userTypeLabel: {
-    fontSize: 17,
-    fontWeight: '700',
-    marginTop: 10,
-    marginBottom: 6,
-    letterSpacing: 0.3,
-  },
-  userTypeDescription: {
-    fontSize: 13,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 18,
-    fontWeight: '500',
-    letterSpacing: 0.1,
-  },
-  selectedIndicator: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  authButton: {
-    backgroundColor: '#D4AF37',
-    paddingVertical: 18,
-    borderRadius: 16,
-    alignItems: 'center',
-    marginBottom: 25,
-    marginTop: 10,
-    shadowColor: '#B8860B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  authButtonText: {
-    fontSize: 19,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  infoContainer: {
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    padding: 20,
-    borderRadius: 16,
-    borderLeftWidth: 6,
-    borderLeftColor: '#D4AF37',
-    marginTop: 10,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  infoText: {
-    fontSize: 15,
-    color: '#8B4513',
-    lineHeight: 22,
-    fontWeight: '500',
-    letterSpacing: 0.2,
-  },
-  datePickerOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  datePickerContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-  },
-  datePickerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2C1810',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  datePickerRow: {
-    flexDirection: 'row',
-    height: 200,
-    marginBottom: 20,
-  },
-  datePickerColumn: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  datePickerLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2C1810',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  datePickerScrollView: {
-    flex: 1,
-    backgroundColor: '#F9F9F9',
-    borderRadius: 8,
-  },
-  datePickerOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-  },
-  datePickerOptionSelected: {
-    backgroundColor: '#D4AF37',
-  },
-  datePickerOptionText: {
-    fontSize: 16,
-    color: '#2C1810',
-  },
-  datePickerOptionTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  datePickerButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  datePickerCancelButton: {
-    flex: 1,
-    backgroundColor: '#E5E7EB',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  datePickerCancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  datePickerSelectButton: {
-    flex: 1,
-    backgroundColor: '#D4AF37',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  datePickerSelectButtonDisabled: {
-    backgroundColor: '#9CA3AF',
-  },
-  datePickerSelectButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-});

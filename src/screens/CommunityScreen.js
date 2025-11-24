@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import CustomAlert from '../components/ui/CustomAlert';
 import apiClient from '../services/api';
 import authService from '../services/authService';
+import themeService from '../services/themeService';
 
 const { width } = Dimensions.get('window');
 
 export default function CommunityScreen() {
   const { alertConfig, showAlert, hideAlert, showInfo, showSuccess, showError } = useCustomAlert();
+  
+  // Get current theme and dynamic styles
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+  const styles = getStyles(currentTheme);
   const [showTreeModal, setShowTreeModal] = useState(false);
   const [expandedGenerations, setExpandedGenerations] = useState({});
   const [selectedMember, setSelectedMember] = useState(null);
@@ -31,7 +37,23 @@ export default function CommunityScreen() {
   // Load data on mount
   useEffect(() => {
     loadCommunityData();
+    loadUserDataAndTheme();
   }, []);
+
+  // Load user data and set theme
+  const loadUserDataAndTheme = async () => {
+    try {
+      const userData = await SecureStore.getItemAsync('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Update theme based on user data
+        themeService.setThemeFromUserData(user);
+        setCurrentTheme(themeService.getCurrentTheme());
+      }
+    } catch (error) {
+      console.error('Error loading user data for theme:', error);
+    }
+  };
 
   const loadCommunityData = async () => {
     try {
@@ -981,21 +1003,21 @@ export default function CommunityScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   contentContainer: {
     paddingBottom: 20,
   },
   networkCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.cardBackground,
     borderRadius: 16,
     padding: 20,
     margin: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   networkTitle: {
     fontSize: 18,
