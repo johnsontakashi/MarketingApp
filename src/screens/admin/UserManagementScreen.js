@@ -227,7 +227,7 @@ export default function UserManagementScreen({ navigation }) {
             style={styles.actionButton}
             onPress={() => handleUserAction('view', user)}
           >
-            <Ionicons name="eye" size={18} color="#D4AF37" />
+            <Ionicons name="eye" size={18} color={currentTheme.colors.primary} />
           </TouchableOpacity>
           
           {!user.is_verified && (
@@ -286,7 +286,7 @@ export default function UserManagementScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color={currentTheme.colors.primary} />
         <Text style={styles.loadingText}>Loading users...</Text>
       </View>
     );
@@ -370,7 +370,7 @@ export default function UserManagementScreen({ navigation }) {
                 hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
                 testID="closeButton"
               >
-                <Ionicons name="close" size={28} color="#D4AF37" />
+                <Ionicons name="close" size={28} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeFilterButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   filterButtonText: {
     color: '#9CA3AF',
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   adminBadge: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#3d3d3d',
   },
   doneButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

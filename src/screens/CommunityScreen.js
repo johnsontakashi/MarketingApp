@@ -657,7 +657,7 @@ export default function CommunityScreen() {
         
         <View style={styles.treeContainer}>
           {loading ? (
-            <Text style={{textAlign: 'center', color: '#8B4513', padding: 20}}>Loading...</Text>
+            <Text style={{textAlign: "center", color: currentTheme.colors.textSecondary, padding: 20}}>Loading...</Text>
           ) : (
             referralStats.generationBreakdown.map((gen, index) => (
               <View key={index} style={styles.generationRow}>
@@ -673,7 +673,7 @@ export default function CommunityScreen() {
         
         <TouchableOpacity style={styles.viewTreeButton} onPress={handleViewFullTree}>
           <Text style={styles.viewTreeText}>View Full Tree</Text>
-          <Ionicons name="arrow-forward" size={16} color="#D4AF37" />
+          <Ionicons name="arrow-forward" size={16} color={currentTheme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -724,7 +724,7 @@ export default function CommunityScreen() {
                 style={styles.treeModalCloseButton}
                 onPress={() => setShowTreeModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -770,7 +770,7 @@ export default function CommunityScreen() {
                     <Ionicons 
                       name={expandedGenerations[generation.generation] ? "chevron-up" : "chevron-down"} 
                       size={20} 
-                      color="#8B4513" 
+                      color={currentTheme.colors.textSecondary} 
                     />
                   </TouchableOpacity>
                   
@@ -812,7 +812,7 @@ export default function CommunityScreen() {
                           </View>
                           
                           <View style={styles.referralActions}>
-                            <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
+                            <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.primary} />
                           </View>
                         </TouchableOpacity>
                       ))}
@@ -895,7 +895,7 @@ export default function CommunityScreen() {
                 style={styles.memberModalCloseButton}
                 onPress={() => setShowMemberDetail(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -934,27 +934,27 @@ export default function CommunityScreen() {
 
                 <View style={styles.memberDetails}>
                   <View style={styles.memberDetailItem}>
-                    <Ionicons name="calendar" size={16} color="#8B4513" />
+                    <Ionicons name="calendar" size={16} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.memberDetailLabel}>Member Since:</Text>
                     <Text style={styles.memberDetailValue}>{selectedMember.memberSince}</Text>
                   </View>
                   <View style={styles.memberDetailItem}>
-                    <Ionicons name="time" size={16} color="#8B4513" />
+                    <Ionicons name="time" size={16} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.memberDetailLabel}>Last Activity:</Text>
                     <Text style={styles.memberDetailValue}>{selectedMember.lastActivity}</Text>
                   </View>
                   <View style={styles.memberDetailItem}>
-                    <Ionicons name="location" size={16} color="#8B4513" />
+                    <Ionicons name="location" size={16} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.memberDetailLabel}>Location:</Text>
                     <Text style={styles.memberDetailValue}>{selectedMember.location}</Text>
                   </View>
                   <View style={styles.memberDetailItem}>
-                    <Ionicons name="person" size={16} color="#8B4513" />
+                    <Ionicons name="person" size={16} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.memberDetailLabel}>Referred By:</Text>
                     <Text style={styles.memberDetailValue}>{selectedMember.referredBy}</Text>
                   </View>
                   <View style={styles.memberDetailItem}>
-                    <Ionicons name="bag" size={16} color="#8B4513" />
+                    <Ionicons name="bag" size={16} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.memberDetailLabel}>Joined:</Text>
                     <Text style={styles.memberDetailValue}>{selectedMember.joined}</Text>
                   </View>
@@ -1022,7 +1022,7 @@ const getStyles = (theme) => StyleSheet.create({
   networkTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   networkStats: {
@@ -1036,15 +1036,15 @@ const getStyles = (theme) => StyleSheet.create({
   networkNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   networkLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 2,
   },
   shareButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     padding: 12,
     flexDirection: 'row',
@@ -1063,7 +1063,7 @@ const getStyles = (theme) => StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   bonusCard: {
@@ -1072,7 +1072,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   bonusHeader: {
     flexDirection: 'row',
@@ -1089,19 +1089,19 @@ const getStyles = (theme) => StyleSheet.create({
   bonusTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   bonusAmount: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   bonusExpiry: {
     alignItems: 'flex-end',
   },
   expiryText: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   expiryTime: {
     fontSize: 12,
@@ -1110,12 +1110,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   bonusDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 10,
     lineHeight: 18,
   },
   giverInfo: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
@@ -1123,11 +1123,11 @@ const getStyles = (theme) => StyleSheet.create({
   giverText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
   },
   messageText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontStyle: 'italic',
     marginTop: 2,
   },
@@ -1136,7 +1136,7 @@ const getStyles = (theme) => StyleSheet.create({
     justifyContent: 'space-between',
   },
   claimButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -1152,7 +1152,7 @@ const getStyles = (theme) => StyleSheet.create({
     opacity: 0.6,
   },
   forwardButton: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -1166,7 +1166,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     marginBottom: 15,
   },
   generationRow: {
@@ -1175,7 +1175,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   generationInfo: {
     flex: 1,
@@ -1183,29 +1183,29 @@ const getStyles = (theme) => StyleSheet.create({
   generationLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   generationCount: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   generationEarnings: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   viewTreeButton: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   viewTreeText: {
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: '600',
     marginRight: 5,
   },
@@ -1222,17 +1222,17 @@ const getStyles = (theme) => StyleSheet.create({
     width: '48%',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     marginTop: 2,
   },
@@ -1255,7 +1255,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '92%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   treeModalHeader: {
     flexDirection: 'row',
@@ -1263,14 +1263,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   treeModalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     letterSpacing: 0.5,
   },
   treeModalCloseButton: {
@@ -1303,12 +1303,12 @@ const getStyles = (theme) => StyleSheet.create({
   quickStatNumber: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 4,
   },
   quickStatLabel: {
     fontSize: 11,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
   },
   treeModalContent: {
@@ -1320,7 +1320,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   treeDescription: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -1331,12 +1331,12 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1.5,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: 'rgba(212, 175, 55, 0.2)',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
@@ -1349,12 +1349,12 @@ const getStyles = (theme) => StyleSheet.create({
   generationTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   generationSubtitle: {
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   generationMembers: {
@@ -1365,12 +1365,12 @@ const getStyles = (theme) => StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   avatarEmoji: {
     fontSize: 20,
@@ -1402,7 +1402,7 @@ const getStyles = (theme) => StyleSheet.create({
   referralName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -1433,11 +1433,11 @@ const getStyles = (theme) => StyleSheet.create({
   referralEarnings: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   referralJoined: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   referralActivity: {
     fontSize: 12,
@@ -1463,16 +1463,16 @@ const getStyles = (theme) => StyleSheet.create({
   },
   treeSummarySection: {
     marginTop: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   treeSummaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -1488,17 +1488,17 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: '31%',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   treeSummaryNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 4,
   },
   treeSummaryLabel: {
     fontSize: 11,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
   },
   commissionInfo: {
@@ -1506,12 +1506,12 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   commissionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1521,7 +1521,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   commissionText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   treeModalActions: {
     flexDirection: 'row',
@@ -1529,10 +1529,10 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
   },
   treeActionButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -1543,7 +1543,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 5,
   },
   exportButton: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
   },
   treeActionText: {
     color: '#FFFFFF',
@@ -1567,18 +1567,18 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: '30%',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     marginBottom: 8,
   },
   analyticsGeneration: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 4,
   },
   analyticsMembers: {
     fontSize: 11,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   analyticsEarnings: {
@@ -1589,19 +1589,19 @@ const getStyles = (theme) => StyleSheet.create({
   },
   analyticsRate: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   performanceStats: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   performanceTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1612,13 +1612,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   performanceLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     flex: 1,
   },
   performanceValue: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
 
   // Member Detail Modal Styles
@@ -1641,7 +1641,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     overflow: 'hidden',
   },
   memberModalHeader: {
@@ -1650,14 +1650,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   memberModalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
   },
   memberModalCloseButton: {
     width: 36,
@@ -1684,7 +1684,7 @@ const getStyles = (theme) => StyleSheet.create({
   memberName: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   memberStatusBadge: {
@@ -1702,24 +1702,24 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
   },
   memberStatCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   memberStatNumber: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   memberStatLabel: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
   },
   memberDetails: {
@@ -1734,14 +1734,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   memberDetailLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginLeft: 8,
     flex: 1,
   },
   memberDetailValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   memberActions: {
     flexDirection: 'row',
@@ -1749,14 +1749,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   memberActionButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 12,
     paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
     marginHorizontal: 6,
   },
   giftActionButton: {

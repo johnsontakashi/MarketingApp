@@ -116,11 +116,16 @@ function AppWithLockManager({ onLogout, isAuthenticated, userRole }) {
       <Stack.Screen 
         name="DeviceStatus" 
         component={DeviceStatusScreen}
-        options={{
-          headerShown: true,
-          title: 'Device Status',
-          headerStyle: { backgroundColor: '#FFF8E7' },
-          headerTintColor: '#2C1810',
+        options={({ navigation }) => {
+          const theme = themeService.getCurrentTheme();
+          const componentStyles = themeService.getComponentStyles();
+          return {
+            headerShown: true,
+            title: 'Device Status',
+            headerStyle: componentStyles.header.style,
+            headerTintColor: componentStyles.header.tintColor,
+            headerTitleStyle: componentStyles.header.titleStyle,
+          };
         }}
       />
       <Stack.Screen 
@@ -134,11 +139,16 @@ function AppWithLockManager({ onLogout, isAuthenticated, userRole }) {
       <Stack.Screen 
         name="BlockingDemo" 
         component={BlockingDemoScreen}
-        options={{
-          headerShown: true,
-          title: 'Blocking Demo',
-          headerStyle: { backgroundColor: '#FFF8E7' },
-          headerTintColor: '#2C1810',
+        options={({ navigation }) => {
+          const theme = themeService.getCurrentTheme();
+          const componentStyles = themeService.getComponentStyles();
+          return {
+            headerShown: true,
+            title: 'Blocking Demo',
+            headerStyle: componentStyles.header.style,
+            headerTintColor: componentStyles.header.tintColor,
+            headerTitleStyle: componentStyles.header.titleStyle,
+          };
         }}
       />
       <Stack.Screen 

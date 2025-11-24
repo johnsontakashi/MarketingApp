@@ -299,7 +299,7 @@ const BlockingManager = ({ children, paymentStatus, onPaymentRequired }) => {
               style={styles.closeButton}
               onPress={() => setShowWarningModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color="#2D766E" />
             </TouchableOpacity>
             
             <View style={styles.warningButtons}>
@@ -485,13 +485,13 @@ const styles = {
   warningTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 15,
     marginBottom: 10,
   },
   warningMessage: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     marginBottom: 15,
   },
@@ -503,7 +503,7 @@ const styles = {
   },
   warningDetails: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     marginBottom: 25,
     lineHeight: 20,
@@ -513,7 +513,7 @@ const styles = {
     gap: 10,
   },
   payButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -529,10 +529,10 @@ const styles = {
     borderRadius: 8,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   laterButtonText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -605,13 +605,13 @@ const styles = {
   networkBlockedTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     textAlign: 'center',
   },
   networkBlockedMessage: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     marginBottom: 25,
     lineHeight: 22,
@@ -727,7 +727,7 @@ const styles = {
     alignItems: 'center',
   },
   networkCloseButtonText: {
-    color: '#8B4513',
+    color: '#2D766E',
     fontSize: 14,
     fontWeight: '500',
     textDecorationLine: 'underline',

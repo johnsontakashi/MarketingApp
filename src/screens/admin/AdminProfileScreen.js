@@ -218,7 +218,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
         <Switch
           value={value}
           onValueChange={onToggle}
-          trackColor={{ false: '#3d3d3d', true: '#D4AF37' }}
+          trackColor={{ false: '#3d3d3d', true: '#98E4D6' }}
           thumbColor={value ? '#1a1a1a' : '#9CA3AF'}
         />
       ) : (
@@ -240,7 +240,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color={currentTheme.colors.primary} />
         <Text style={styles.loadingText}>Loading admin profile...</Text>
       </View>
     );
@@ -258,7 +258,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
               </Text>
             </View>
             <View style={styles.adminBadge}>
-              <Ionicons name="shield-checkmark" size={14} color="#D4AF37" />
+              <Ionicons name="shield-checkmark" size={14} color={currentTheme.colors.primary} />
               <Text style={styles.adminBadgeText}>ADMIN</Text>
             </View>
           </View>
@@ -268,7 +268,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
             <Text style={styles.profileRole}>System Administrator</Text>
           </View>
           <TouchableOpacity style={styles.editButton} onPress={() => setShowProfileEdit(true)}>
-            <Ionicons name="create" size={20} color="#D4AF37" />
+            <Ionicons name="create" size={20} color={currentTheme.colors.primary} />
           </TouchableOpacity>
         </View>
 
@@ -397,7 +397,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
               hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
               testID="profileEditCloseButton"
             >
-              <Ionicons name="close" size={28} color="#D4AF37" />
+              <Ionicons name="close" size={28} color={currentTheme.colors.primary} />
             </TouchableOpacity>
           </View>
           
@@ -504,7 +504,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
                 style={styles.deviceLimitModalClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -622,10 +622,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   adminBadgeText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 8,
     fontWeight: 'bold',
     marginLeft: 2,
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   profileRole: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -781,7 +781,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   formSectionTitle: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   saveButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   deviceLimitModalSaveButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     marginLeft: 10,
   },
   deviceLimitModalCancelText: {

@@ -5,90 +5,90 @@ class ThemeService {
     this.currentTheme = this.getAdultTheme();
   }
 
-  // Adult theme (18+ users) - Golden TLB Diamond theme
+  // Adult theme (18+ users) - Light Mint TLB Diamond theme
   getAdultTheme() {
     return {
       name: 'adult',
       colors: {
-        // Primary colors
-        primary: '#D4AF37',        // Gold
-        primaryDark: '#B8860B',    // Darker gold
-        primaryLight: '#F5E6A3',   // Light gold
+        // Primary colors - Light Mint palette
+        primary: '#98E4D6',        // Light mint
+        primaryDark: '#5CBAA6',    // Darker mint
+        primaryLight: '#B8F2E6',   // Lighter mint
         
-        // Background colors
-        background: '#FFF8E7',     // Cream background
-        surface: '#FFFFFF',        // White surface
-        card: '#FFF8E7',          // Card background
+        // Background colors - Mint-inspired neutrals
+        background: '#F0FDFA',     // Very light mint background
+        surface: '#FFFFFF',        // Pure white surface
+        card: '#F0FDFA',          // Light mint card background
         
-        // Text colors
-        text: '#2C1810',          // Dark brown text
-        textSecondary: '#8B4513',  // Medium brown text
-        textLight: '#A0522D',      // Light brown text
+        // Text colors - Mint-complementary darks
+        text: '#134E48',          // Dark mint-green text
+        textSecondary: '#2D766E',  // Medium mint-green text
+        textLight: '#4B9A90',      // Light mint-green text
         
         // Action colors
-        accent: '#D4AF37',         // Gold accent
-        success: '#10B981',        // Green
-        warning: '#F59E0B',        // Orange
-        error: '#EF4444',          // Red
+        accent: '#98E4D6',         // Light mint accent
+        success: '#06D6A0',        // Bright mint green
+        warning: '#F9C23C',        // Mint-friendly yellow
+        error: '#EF476F',          // Mint-complementary coral
         
         // Border and divider colors
-        border: '#E5E7EB',         // Light gray border
-        divider: '#F3F4F6',        // Divider
+        border: '#C7F2E9',         // Light mint border
+        divider: '#E6F9F4',        // Very light mint divider
         
         // Tab bar colors
-        tabBarActive: '#D4AF37',    // Gold active
-        tabBarInactive: '#8B4513',  // Brown inactive
-        tabBarBackground: '#FFF8E7', // Cream background
+        tabBarActive: '#98E4D6',    // Light mint active
+        tabBarInactive: '#2D766E',  // Dark mint inactive
+        tabBarBackground: '#F0FDFA', // Light mint background
         
         // Button colors
-        buttonPrimary: '#D4AF37',   // Gold button
+        buttonPrimary: '#98E4D6',   // Light mint button
         buttonSecondary: '#FFFFFF', // White button
-        buttonText: '#FFFFFF',      // White text
-        buttonTextSecondary: '#D4AF37', // Gold text
+        buttonText: '#134E48',      // Dark mint text
+        buttonTextSecondary: '#98E4D6', // Light mint text
       }
     };
   }
 
-  // Under 18 theme - Light Beige + Brown theme
+  // Under 18 theme - Soft Mint theme for youth
   getUnder18Theme() {
     return {
       name: 'under18',
       colors: {
-        // Primary colors - Brown tones
-        primary: '#8B4513',        // Saddle brown
-        primaryDark: '#654321',    // Dark brown
-        primaryLight: '#A0522D',   // Sienna brown
+        // Primary colors - Softer, more pastel mint tones
+        primary: '#87D7C6',        // Soft mint
+        primaryDark: '#4A9B8E',    // Darker soft mint
+        primaryLight: '#ADE2D5',   // Lighter soft mint
         
-        // Background colors - Light beige tones
-        background: '#F5F5DC',     // Beige
-        surface: '#FFFEF7',        // Off-white beige
-        card: '#FAF0E6',          // Linen beige
+        // Background colors - Gentle mint backgrounds
+        background: '#F7FCFB',     // Very soft mint background
+        surface: '#FFFFFF',        // Pure white surface
+        card: '#F0F9F7',          // Gentle mint card background
         
-        // Text colors
-        text: '#3E2723',          // Dark brown text
-        textSecondary: '#5D4037',  // Medium brown text
-        textLight: '#6D4C41',      // Light brown text
+        // Text colors - Gentle mint-complementary colors
+        text: '#1E5A52',          // Dark mint text (softer than adult)
+        textSecondary: '#3E7B71',  // Medium mint text
+        textLight: '#5B9C91',      // Light mint text
         
-        // Action colors
-        accent: '#8B4513',         // Brown accent
-        success: '#689F38',        // Muted green
-        warning: '#F57C00',        // Muted orange
-        error: '#D32F2F',          // Muted red
+        // Action colors - Youth-friendly variations
+        accent: '#87D7C6',         // Soft mint accent
+        success: '#52D1A0',        // Gentle mint green
+        warning: '#FFC857',        // Soft mint-friendly yellow
+        error: '#FF8A80',          // Gentle coral (softer than adult)
         
         // Border and divider colors
-        border: '#D7CCC8',         // Light brown border
-        divider: '#EFEBE9',        // Light beige divider
+        border: '#B8E6DD',         // Soft mint border
+        divider: '#E0F2F0',        // Very light mint divider
         
         // Tab bar colors
-        tabBarActive: '#8B4513',    // Brown active
-        tabBarInactive: '#A1887F',  // Light brown inactive
-        tabBarBackground: '#F5F5DC', // Beige background
+        tabBarActive: '#87D7C6',    // Soft mint active
+        tabBarInactive: '#3E7B71',  // Medium mint inactive
+        tabBarBackground: '#F7FCFB', // Soft mint background
         
         // Button colors
-        buttonPrimary: '#8B4513',   // Brown button
-        buttonSecondary: '#FFFEF7', // Off-white button
-        buttonText: '#FFFFFF',      // White text
-        buttonTextSecondary: '#8B4513', // Brown text
+        buttonPrimary: '#87D7C6',   // Soft mint button
+        buttonSecondary: '#FFFFFF', // White button
+        buttonText: '#1E5A52',      // Dark mint text
+        buttonTextSecondary: '#87D7C6', // Soft mint text
       }
     };
   }

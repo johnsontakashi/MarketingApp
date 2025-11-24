@@ -259,7 +259,9 @@ const getStyles = (colors) => StyleSheet.create({
     textTransform: 'uppercase',
   },
   infoContainer: {
-    backgroundColor: `rgba(${colors.primary === '#D4AF37' ? '212, 175, 55' : '139, 69, 19'}, 0.1)`,
+    backgroundColor: colors.primary === '#98E4D6' ? 'rgba(152, 228, 214, 0.1)' : 
+                     colors.primary === '#87D7C6' ? 'rgba(135, 215, 198, 0.1)' : 
+                     'rgba(152, 228, 214, 0.1)', // fallback to adult mint
     padding: 20,
     borderRadius: 16,
     borderLeftWidth: 6,

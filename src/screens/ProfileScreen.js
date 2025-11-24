@@ -899,7 +899,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
           orderId,
           productName,
           status: 'Unknown',
-          statusColor: '#8B4513',
+          statusColor: '#2D766E',
           statusIcon: 'help-circle',
           steps: [],
           estimatedDelivery: 'Information being updated',
@@ -937,7 +937,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
         statusDescription = 'This order has been cancelled and refunded.';
         break;
       default:
-        statusColor = '#8B4513';
+        statusColor = '#2D766E';
         statusIcon = 'information-circle';
         statusDescription = 'Order status information.';
     }
@@ -1198,7 +1198,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
           {currentUser && currentUser.avatar ? (
             <Image source={{ uri: currentUser.avatar }} style={styles.avatarImage} />
           ) : (
-            <Ionicons name="person" size={40} color="#D4AF37" />
+            <Ionicons name="person" size={40} color={currentTheme.colors.primary} />
           )}
           <View style={styles.avatarEditBadge}>
             <Ionicons name="camera" size={12} color="#FFFFFF" />
@@ -1222,7 +1222,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
           </View>
         </View>
         <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-          <Ionicons name="create" size={20} color="#D4AF37" />
+          <Ionicons name="create" size={20} color={currentTheme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -1264,7 +1264,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               <Ionicons 
                 name={item.icon} 
                 size={20} 
-                color={item.action === 'signOut' ? '#EF4444' : '#D4AF37'} 
+                color={item.action === 'signOut' ? '#EF4444' : '#98E4D6'} 
               />
             </View>
             <View style={styles.menuContent}>
@@ -1279,7 +1279,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <Ionicons 
               name="chevron-forward" 
               size={16} 
-              color="#8B4513" 
+              color={currentTheme.colors.textSecondary} 
             />
           </TouchableOpacity>
         ))}
@@ -1307,7 +1307,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowPaymentModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -1378,7 +1378,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   </View>
                   <View style={styles.paymentMethodStatus}>
                     <Text style={styles.statusActive}>✅</Text>
-                    <Ionicons name="create" size={16} color="#D4AF37" />
+                    <Ionicons name="create" size={16} color={currentTheme.colors.primary} />
                   </View>
                 </TouchableOpacity>
                 
@@ -1397,7 +1397,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   </View>
                   <View style={styles.paymentMethodStatus}>
                     <Text style={styles.statusActive}>✅</Text>
-                    <Ionicons name="create" size={16} color="#D4AF37" />
+                    <Ionicons name="create" size={16} color={currentTheme.colors.primary} />
                   </View>
                 </TouchableOpacity>
                 
@@ -1416,7 +1416,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   </View>
                   <View style={styles.paymentMethodStatus}>
                     <Text style={styles.statusConnected}>🔗</Text>
-                    <Ionicons name="create" size={16} color="#D4AF37" />
+                    <Ionicons name="create" size={16} color={currentTheme.colors.primary} />
                   </View>
                 </TouchableOpacity>
                 
@@ -1435,7 +1435,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   </View>
                   <View style={styles.paymentMethodStatus}>
                     <Text style={styles.statusActive}>✅</Text>
-                    <Ionicons name="create" size={16} color="#D4AF37" />
+                    <Ionicons name="create" size={16} color={currentTheme.colors.primary} />
                   </View>
                 </TouchableOpacity>
               </View>
@@ -1492,7 +1492,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowAddMethodOptionsModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -1508,7 +1508,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 activeOpacity={0.7}
               >
                 <View style={styles.paymentOptionIcon}>
-                  <Ionicons name="card" size={28} color="#D4AF37" />
+                  <Ionicons name="card" size={28} color={currentTheme.colors.primary} />
                 </View>
                 <View style={styles.paymentOptionContent}>
                   <Text style={styles.paymentOptionTitle}>Credit/Debit Card</Text>
@@ -1519,7 +1519,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <Text style={styles.paymentOptionBadgeText}>💳 Most Popular</Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* Bank Account Option */}
@@ -1540,7 +1540,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <Text style={styles.secureBadgeText}>🏦 Secure</Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* PayPal Option */}
@@ -1561,7 +1561,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <Text style={styles.fastBadgeText}>📱 Fast</Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* Gift Card Option */}
@@ -1582,7 +1582,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <Text style={styles.giftBadgeText}>🎁 Special</Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </ScrollView>
 
@@ -1612,10 +1612,10 @@ export default function ProfileScreen({ navigation, onLogout }) {
             {/* Header Section */}
             <View style={styles.addPaymentModalHeader}>
               <View style={styles.addPaymentIconContainer}>
-                {selectedPaymentType === 'credit' && <Ionicons name="card" size={32} color="#D4AF37" />}
-                {selectedPaymentType === 'bank' && <Ionicons name="business" size={32} color="#D4AF37" />}
-                {selectedPaymentType === 'paypal' && <Ionicons name="logo-paypal" size={32} color="#D4AF37" />}
-                {selectedPaymentType === 'gift' && <Ionicons name="gift" size={32} color="#D4AF37" />}
+                {selectedPaymentType === 'credit' && <Ionicons name="card" size={32} color={currentTheme.colors.primary} />}
+                {selectedPaymentType === 'bank' && <Ionicons name="business" size={32} color={currentTheme.colors.primary} />}
+                {selectedPaymentType === 'paypal' && <Ionicons name="logo-paypal" size={32} color={currentTheme.colors.primary} />}
+                {selectedPaymentType === 'gift' && <Ionicons name="gift" size={32} color={currentTheme.colors.primary} />}
               </View>
               
               <Text style={styles.addPaymentModalTitle}>
@@ -1633,7 +1633,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 style={styles.addPaymentCloseButton}
                 onPress={() => setShowAddPaymentModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -1643,17 +1643,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 <View style={styles.addPaymentForm}>
                   <View style={styles.addPaymentFormSection}>
                     <Text style={styles.addPaymentSectionTitle}>
-                      <Ionicons name="card" size={18} color="#D4AF37" /> Credit Card Information
+                      <Ionicons name="card" size={18} color={currentTheme.colors.primary} /> Credit Card Information
                     </Text>
                     
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Card Number</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="card-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="card-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="1234 5678 9012 3456"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.cardNumber}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, cardNumber: text})}
                           keyboardType="numeric"
@@ -1666,11 +1666,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                       <View style={styles.addPaymentInputContainerHalf}>
                         <Text style={styles.addPaymentInputLabel}>Expiry Date</Text>
                         <View style={styles.addPaymentInputWrapper}>
-                          <Ionicons name="calendar-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                          <Ionicons name="calendar-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                           <TextInput
                             style={styles.addPaymentInput}
                             placeholder="MM/YY"
-                            placeholderTextColor="#B8860B"
+                            placeholderTextColor="theme.colors.primaryDark"
                             value={paymentFormData.expiryDate}
                             onChangeText={(text) => setPaymentFormData({...paymentFormData, expiryDate: text})}
                             keyboardType="numeric"
@@ -1682,11 +1682,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                       <View style={styles.addPaymentInputContainerHalf}>
                         <Text style={styles.addPaymentInputLabel}>CVV</Text>
                         <View style={styles.addPaymentInputWrapper}>
-                          <Ionicons name="shield-checkmark-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                          <Ionicons name="shield-checkmark-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                           <TextInput
                             style={styles.addPaymentInput}
                             placeholder="123"
-                            placeholderTextColor="#B8860B"
+                            placeholderTextColor="theme.colors.primaryDark"
                             value={paymentFormData.cvv}
                             onChangeText={(text) => setPaymentFormData({...paymentFormData, cvv: text})}
                             keyboardType="numeric"
@@ -1700,11 +1700,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Cardholder Name</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="person-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="person-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="John Doe"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.cardholderName}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, cardholderName: text})}
                           autoCapitalize="words"
@@ -1728,17 +1728,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 <View style={styles.addPaymentForm}>
                   <View style={styles.addPaymentFormSection}>
                     <Text style={styles.addPaymentSectionTitle}>
-                      <Ionicons name="business" size={18} color="#D4AF37" /> Bank Account Information
+                      <Ionicons name="business" size={18} color={currentTheme.colors.primary} /> Bank Account Information
                     </Text>
                     
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Bank Name</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="business-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="business-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="Chase Bank"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.bankName}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, bankName: text})}
                           autoCapitalize="words"
@@ -1749,11 +1749,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Account Number</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="keypad-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="keypad-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="1234567890"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.accountNumber}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, accountNumber: text})}
                           keyboardType="numeric"
@@ -1765,11 +1765,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Routing Number</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="git-network-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="git-network-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="021000021"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.routingNumber}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, routingNumber: text})}
                           keyboardType="numeric"
@@ -1793,17 +1793,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 <View style={styles.addPaymentForm}>
                   <View style={styles.addPaymentFormSection}>
                     <Text style={styles.addPaymentSectionTitle}>
-                      <Ionicons name="logo-paypal" size={18} color="#D4AF37" /> PayPal Account Information
+                      <Ionicons name="logo-paypal" size={18} color={currentTheme.colors.primary} /> PayPal Account Information
                     </Text>
                     
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>PayPal Email Address</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="mail-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="mail-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="john.doe@example.com"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.paypalEmail}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, paypalEmail: text})}
                           keyboardType="email-address"
@@ -1828,17 +1828,17 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 <View style={styles.addPaymentForm}>
                   <View style={styles.addPaymentFormSection}>
                     <Text style={styles.addPaymentSectionTitle}>
-                      <Ionicons name="gift" size={18} color="#D4AF37" /> Gift Card Information
+                      <Ionicons name="gift" size={18} color={currentTheme.colors.primary} /> Gift Card Information
                     </Text>
                     
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Gift Card Number</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="card-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="card-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="1234 5678 9012 3456"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.giftCardNumber}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardNumber: text})}
                           keyboardType="numeric"
@@ -1849,11 +1849,11 @@ export default function ProfileScreen({ navigation, onLogout }) {
                     <View style={styles.addPaymentInputContainer}>
                       <Text style={styles.addPaymentInputLabel}>Security PIN</Text>
                       <View style={styles.addPaymentInputWrapper}>
-                        <Ionicons name="keypad-outline" size={20} color="#8B4513" style={styles.addPaymentInputIcon} />
+                        <Ionicons name="keypad-outline" size={20} color={currentTheme.colors.textSecondary} style={styles.addPaymentInputIcon} />
                         <TextInput
                           style={styles.addPaymentInput}
                           placeholder="1234"
-                          placeholderTextColor="#B8860B"
+                          placeholderTextColor="theme.colors.primaryDark"
                           value={paymentFormData.giftCardPin}
                           onChangeText={(text) => setPaymentFormData({...paymentFormData, giftCardPin: text})}
                           keyboardType="numeric"
@@ -1909,7 +1909,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>📦 My Orders</Text>
               <TouchableOpacity onPress={() => setShowOrdersModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -1959,7 +1959,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   
                   <View style={styles.orderItems}>
                     <View style={styles.orderItem}>
-                      <Ionicons name="headset" size={16} color="#D4AF37" />
+                      <Ionicons name="headset" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Premium Wireless Headphones</Text>
                       <Text style={styles.orderItemPrice}>💎 200.00</Text>
                     </View>
@@ -1998,7 +1998,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   
                   <View style={styles.orderItems}>
                     <View style={styles.orderItem}>
-                      <Ionicons name="watch" size={16} color="#D4AF37" />
+                      <Ionicons name="watch" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Smart Fitness Watch</Text>
                       <Text style={styles.orderItemPrice}>💎 150.00</Text>
                     </View>
@@ -2034,12 +2034,12 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   
                   <View style={styles.orderItems}>
                     <View style={styles.orderItem}>
-                      <Ionicons name="game-controller" size={16} color="#D4AF37" />
+                      <Ionicons name="game-controller" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Gaming Mouse Pro</Text>
                       <Text style={styles.orderItemPrice}>💎 75.00</Text>
                     </View>
                     <View style={styles.orderItem}>
-                      <Ionicons name="volume-high" size={16} color="#D4AF37" />
+                      <Ionicons name="volume-high" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Bluetooth Speaker</Text>
                       <Text style={styles.orderItemPrice}>💎 85.00</Text>
                     </View>
@@ -2078,7 +2078,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   
                   <View style={styles.orderItems}>
                     <View style={styles.orderItem}>
-                      <Ionicons name="battery-charging" size={16} color="#D4AF37" />
+                      <Ionicons name="battery-charging" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Wireless Charging Pad</Text>
                       <Text style={styles.orderItemPrice}>💎 45.00</Text>
                     </View>
@@ -2117,7 +2117,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   
                   <View style={styles.orderItems}>
                     <View style={styles.orderItem}>
-                      <Ionicons name="bulb" size={16} color="#D4AF37" />
+                      <Ionicons name="bulb" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.orderItemName}>Smart LED Bulb</Text>
                       <Text style={styles.orderItemPrice}>💎 25.00</Text>
                     </View>
@@ -2187,7 +2187,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>🔔 Notifications</Text>
               <TouchableOpacity onPress={() => setShowNotificationsModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -2251,7 +2251,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                         style={styles.dismissButton}
                         onPress={(e) => handleDismissNotification(notification.id, e)}
                       >
-                        <Ionicons name="close" size={16} color="#8B4513" />
+                        <Ionicons name="close" size={16} color={currentTheme.colors.textSecondary} />
                       </TouchableOpacity>
                     </View>
                   </TouchableOpacity>
@@ -2355,7 +2355,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 {selectedNotification?.emoji} {selectedNotification?.title}
               </Text>
               <TouchableOpacity onPress={() => setShowNotificationDetailModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -2473,7 +2473,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>🆘 Help & Support</Text>
               <TouchableOpacity onPress={() => setShowHelpModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -2492,46 +2492,46 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleAccountIssues}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="person-circle" size={24} color="#D4AF37" />
+                    <Ionicons name="person-circle" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Account Issues</Text>
                     <Text style={styles.helpItemDescription}>Login, profile, verification problems</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handlePaymentProblems}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="card" size={24} color="#D4AF37" />
+                    <Ionicons name="card" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Payment Problems</Text>
                     <Text style={styles.helpItemDescription}>Transaction errors, wallet issues</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleTechnicalSupport}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="bug" size={24} color="#D4AF37" />
+                    <Ionicons name="bug" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Technical Support</Text>
                     <Text style={styles.helpItemDescription}>App crashes, bugs, performance</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleSecurityConcerns}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="shield-checkmark" size={24} color="#D4AF37" />
+                    <Ionicons name="shield-checkmark" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Security Concerns</Text>
                     <Text style={styles.helpItemDescription}>Device lock, unauthorized access</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
               </View>
               
@@ -2541,46 +2541,46 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleUserGuide}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="book" size={24} color="#D4AF37" />
+                    <Ionicons name="book" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>User Guide</Text>
                     <Text style={styles.helpItemDescription}>Complete app usage instructions</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleVideoTutorials}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="play-circle" size={24} color="#D4AF37" />
+                    <Ionicons name="play-circle" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Video Tutorials</Text>
                     <Text style={styles.helpItemDescription}>Step-by-step visual guides</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleFAQ}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="help-circle" size={24} color="#D4AF37" />
+                    <Ionicons name="help-circle" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>FAQ</Text>
                     <Text style={styles.helpItemDescription}>Frequently asked questions</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleCommunityForum}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="people" size={24} color="#D4AF37" />
+                    <Ionicons name="people" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Community Forum</Text>
                     <Text style={styles.helpItemDescription}>Connect with other users</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
               </View>
               
@@ -2603,35 +2603,35 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleEmailSupport}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="mail" size={24} color="#D4AF37" />
+                    <Ionicons name="mail" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Email Support</Text>
                     <Text style={styles.helpItemDescription}>support@tlbdiamond.com</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handlePhoneSupport}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="call" size={24} color="#D4AF37" />
+                    <Ionicons name="call" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Phone Support</Text>
                     <Text style={styles.helpItemDescription}>+1 (555) DIAMOND (342-6663)</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.helpItem} onPress={handleSubmitTicket}>
                   <View style={styles.helpItemIcon}>
-                    <Ionicons name="document-text" size={24} color="#D4AF37" />
+                    <Ionicons name="document-text" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpItemContent}>
                     <Text style={styles.helpItemTitle}>Submit Ticket</Text>
                     <Text style={styles.helpItemDescription}>Detailed support request form</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+                  <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
                 </TouchableOpacity>
               </View>
               
@@ -2701,7 +2701,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>⚙️ App Settings</Text>
               <TouchableOpacity onPress={() => setShowSettingsModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -2873,7 +2873,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Edit Profile</Text>
               <TouchableOpacity onPress={handleCancelEdit}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -2949,7 +2949,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               style={styles.trackModalCloseButton}
               onPress={() => setShowTrackModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -3013,7 +3013,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                       <Text style={[
                         styles.trackProgressStepTitle,
                         { 
-                          color: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#8B4513',
+                          color: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#2D766E',
                           fontWeight: step.current ? 'bold' : '500'
                         }
                       ]}>
@@ -3089,7 +3089,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               style={styles.detailsModalCloseButton}
               onPress={() => setShowDetailsModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -3215,7 +3215,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               style={styles.reorderModalCloseButton}
               onPress={() => setShowReorderModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -3235,7 +3235,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 {reorderData.itemsList.map((item, index) => (
                   <View key={index} style={styles.reorderItemCard}>
                     <View style={styles.reorderItemIcon}>
-                      <Ionicons name="cube" size={20} color="#D4AF37" />
+                      <Ionicons name="cube" size={20} color={currentTheme.colors.primary} />
                     </View>
                     <View style={styles.reorderItemDetails}>
                       <Text style={styles.reorderItemName}>{item.name}</Text>
@@ -3274,7 +3274,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               {/* Information Section */}
               <View style={styles.reorderInfoSection}>
                 <View style={styles.reorderInfoCard}>
-                  <Ionicons name="information-circle" size={20} color="#D4AF37" />
+                  <Ionicons name="information-circle" size={20} color={currentTheme.colors.primary} />
                   <Text style={styles.reorderInfoText}>
                     Items will be added to your cart with current pricing. You can review and modify before checkout.
                   </Text>
@@ -3287,7 +3287,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   style={styles.reorderCancelButton}
                   onPress={() => setShowReorderModal(false)}
                 >
-                  <Ionicons name="close-circle" size={18} color="#8B4513" />
+                  <Ionicons name="close-circle" size={18} color={currentTheme.colors.textSecondary} />
                   <Text style={styles.reorderCancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
                 
@@ -3318,7 +3318,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               style={styles.reviewModalCloseButton}
               onPress={() => setShowReviewModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -3343,7 +3343,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                       <Ionicons 
                         name={star <= selectedRating ? "star" : "star-outline"} 
                         size={40} 
-                        color={star <= selectedRating ? "#D4AF37" : "#B8860B"} 
+                        color={star <= selectedRating ? "theme.colors.primary" : "theme.colors.primaryDark"} 
                       />
                     </TouchableOpacity>
                   ))}
@@ -3364,7 +3364,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 <TextInput
                   style={styles.reviewTextInput}
                   placeholder="Tell us about your experience with this order..."
-                  placeholderTextColor="#8B4513"
+                  placeholderTextColor="theme.colors.textSecondary"
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
@@ -3462,7 +3462,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                   <Text style={styles.addedToCartItemsTitle}>Items in your cart:</Text>
                   {addedToCartData.items.map((item, index) => (
                     <View key={index} style={styles.addedToCartItem}>
-                      <Ionicons name="cube" size={16} color="#D4AF37" />
+                      <Ionicons name="cube" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.addedToCartItemName}>{item.name}</Text>
                       <Text style={styles.addedToCartItemPrice}>💎 {item.price} TLB</Text>
                     </View>
@@ -3471,7 +3471,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
                 {/* Information */}
                 <View style={styles.addedToCartInfo}>
-                  <Ionicons name="information-circle" size={20} color="#D4AF37" />
+                  <Ionicons name="information-circle" size={20} color={currentTheme.colors.primary} />
                   <Text style={styles.addedToCartInfoText}>
                     You can review and modify your cart before checkout in the Marketplace.
                   </Text>
@@ -3526,7 +3526,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
           <View style={styles.exportModalContainer}>
             {/* Export Icon */}
             <View style={styles.exportModalIcon}>
-              <Ionicons name="download-outline" size={50} color="#D4AF37" />
+              <Ionicons name="download-outline" size={50} color={currentTheme.colors.primary} />
             </View>
 
             {/* Title */}
@@ -3544,19 +3544,19 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 {/* Statistics */}
                 <View style={styles.exportStatsContainer}>
                   <View style={styles.exportStatItem}>
-                    <Ionicons name="cube" size={20} color="#D4AF37" />
+                    <Ionicons name="cube" size={20} color={currentTheme.colors.primary} />
                     <Text style={styles.exportStatLabel}>Total Orders</Text>
                     <Text style={styles.exportStatValue}>{exportData.totalOrders}</Text>
                   </View>
                   
                   <View style={styles.exportStatItem}>
-                    <Ionicons name="diamond" size={20} color="#D4AF37" />
+                    <Ionicons name="diamond" size={20} color={currentTheme.colors.primary} />
                     <Text style={styles.exportStatLabel}>Total Value</Text>
                     <Text style={styles.exportStatValue}>💎 {exportData.totalValue.toFixed(2)} TLB</Text>
                   </View>
                   
                   <View style={styles.exportStatItem}>
-                    <Ionicons name="calendar" size={20} color="#D4AF37" />
+                    <Ionicons name="calendar" size={20} color={currentTheme.colors.primary} />
                     <Text style={styles.exportStatLabel}>Export Date</Text>
                     <Text style={styles.exportStatValue}>{exportData.exportDate}</Text>
                   </View>
@@ -3601,14 +3601,14 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 {/* Additional Options */}
                 <View style={styles.exportOptionsContainer}>
                   <View style={styles.exportOption}>
-                    <Ionicons name="filter" size={18} color="#8B4513" />
+                    <Ionicons name="filter" size={18} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.exportOptionText}>
                       Export includes: Order details, payment history, delivery tracking, and purchase analytics
                     </Text>
                   </View>
                   
                   <View style={styles.exportOption}>
-                    <Ionicons name="lock-closed" size={18} color="#8B4513" />
+                    <Ionicons name="lock-closed" size={18} color={currentTheme.colors.textSecondary} />
                     <Text style={styles.exportOptionText}>
                       All personal data is encrypted and secure during export
                     </Text>
@@ -3642,7 +3642,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>⚙️ Full Settings</Text>
               <TouchableOpacity onPress={() => setShowFullSettingsModal(false)}>
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -3907,7 +3907,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -3919,12 +3919,12 @@ const getStyles = (theme) => StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 5,
   },
   profilePhone: {
@@ -3948,7 +3948,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -3958,7 +3958,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     justifyContent: 'space-around',
   },
   statItem: {
@@ -3967,12 +3967,12 @@ const getStyles = (theme) => StyleSheet.create({
   statNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   statLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   menuContainer: {
     paddingHorizontal: 20,
@@ -3985,7 +3985,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   signOutItem: {
     borderColor: '#EF4444',
@@ -3994,7 +3994,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -4008,7 +4008,7 @@ const getStyles = (theme) => StyleSheet.create({
   menuTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   signOutText: {
@@ -4016,7 +4016,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   menuSubtitle: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   versionContainer: {
     alignItems: 'center',
@@ -4024,12 +4024,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   versionText: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '600',
   },
   buildText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 2,
   },
   modalOverlay: {
@@ -4050,7 +4050,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '85%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -4058,14 +4058,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     letterSpacing: 0.5,
   },
   modalContent: {
@@ -4101,18 +4101,18 @@ const getStyles = (theme) => StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   textInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
   },
   multilineInput: {
     height: 80,
@@ -4124,26 +4124,26 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
   },
   cancelButton: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#8B4513',
+    borderColor: '#2D766E',
     borderRadius: 8,
     paddingVertical: 12,
     marginRight: 10,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#8B4513',
+    color: '#2D766E',
     fontSize: 16,
     fontWeight: '600',
   },
   saveButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingVertical: 12,
     marginLeft: 10,
@@ -4156,7 +4156,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   settingsDescription: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 20,
     fontWeight: '600',
   },
@@ -4166,11 +4166,11 @@ const getStyles = (theme) => StyleSheet.create({
   categoryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 10,
     paddingBottom: 5,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: '#98E4D6',
   },
   settingItem: {
     flexDirection: 'row',
@@ -4181,7 +4181,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     marginBottom: 5,
     borderWidth: 1,
-    borderColor: '#F5E6A3',
+    borderColor: '#F0FDFA',
   },
   settingStatus: {
     fontSize: 16,
@@ -4194,20 +4194,20 @@ const getStyles = (theme) => StyleSheet.create({
   settingName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   settingValue: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 2,
   },
   settingsSummary: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 20,
     marginTop: 15,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -4217,7 +4217,7 @@ const getStyles = (theme) => StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -4234,17 +4234,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   summaryNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 5,
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -4262,7 +4262,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   summaryIcon: {
     fontSize: 20,
@@ -4273,12 +4273,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   summaryInfoLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   summaryInfoValue: {
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -4291,7 +4291,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginTop: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   summaryTipIcon: {
     fontSize: 16,
@@ -4301,7 +4301,7 @@ const getStyles = (theme) => StyleSheet.create({
   summaryTip: {
     flex: 1,
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     fontStyle: 'italic',
     lineHeight: 18,
     flexWrap: 'wrap',
@@ -4315,12 +4315,12 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
     gap: 10,
   },
   settingsActionButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
@@ -4339,7 +4339,7 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: '600',
   },
   closeButton: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
   },
   closeButtonText: {
     color: '#FFFFFF',
@@ -4348,7 +4348,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   helpDescription: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
@@ -4359,11 +4359,11 @@ const getStyles = (theme) => StyleSheet.create({
   helpSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: '#98E4D6',
   },
   helpItem: {
     flexDirection: 'row',
@@ -4373,7 +4373,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -4388,7 +4388,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -4399,12 +4399,12 @@ const getStyles = (theme) => StyleSheet.create({
   helpItemTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 3,
   },
   helpItemDescription: {
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 18,
   },
   priorityBadge: {
@@ -4419,17 +4419,17 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: 'bold',
   },
   helpAppInfo: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 20,
     marginTop: 10,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   appInfoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -4443,12 +4443,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   appInfoLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   appInfoValue: {
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: '600',
     marginTop: 3,
   },
@@ -4461,12 +4461,12 @@ const getStyles = (theme) => StyleSheet.create({
     marginTop: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   helpTipText: {
     flex: 1,
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     fontStyle: 'italic',
     lineHeight: 18,
     marginLeft: 10,
@@ -4481,7 +4481,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
     gap: 12,
   },
   liveChatButton: {
@@ -4506,7 +4506,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   ticketButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -4526,18 +4526,18 @@ const getStyles = (theme) => StyleSheet.create({
   },
   notificationDescription: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
   notificationSummary: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   summaryStatsGrid: {
     flexDirection: 'row',
@@ -4551,17 +4551,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     minWidth: 60,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   summaryStatNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 3,
   },
   summaryStatLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '600',
   },
   notificationSection: {
@@ -4570,11 +4570,11 @@ const getStyles = (theme) => StyleSheet.create({
   notificationSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: '#98E4D6',
   },
   notificationItem: {
     flexDirection: 'row',
@@ -4584,7 +4584,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -4600,7 +4600,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -4615,12 +4615,12 @@ const getStyles = (theme) => StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   notificationMessage: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 18,
     marginBottom: 6,
   },
@@ -4654,7 +4654,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   settingInfo: {
     flex: 1,
@@ -4662,12 +4662,12 @@ const getStyles = (theme) => StyleSheet.create({
   settingName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   settingDescription: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 16,
   },
   settingToggle: {
@@ -4691,7 +4691,7 @@ const getStyles = (theme) => StyleSheet.create({
   notificationTipText: {
     flex: 1,
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     fontStyle: 'italic',
     lineHeight: 18,
     marginLeft: 10,
@@ -4703,7 +4703,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
     gap: 12,
   },
   markReadButton: {
@@ -4728,7 +4728,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   manageButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -4748,18 +4748,18 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentDescription: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
   paymentSummary: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   paymentStatsGrid: {
     flexDirection: 'row',
@@ -4773,17 +4773,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     minWidth: 80,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   paymentStatNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 3,
   },
   paymentStatLabel: {
     fontSize: 11,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -4793,11 +4793,11 @@ const getStyles = (theme) => StyleSheet.create({
   paymentSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: '#98E4D6',
   },
   paymentMethodCard: {
     flexDirection: 'row',
@@ -4828,7 +4828,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -4853,7 +4853,7 @@ const getStyles = (theme) => StyleSheet.create({
   paymentMethodType: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginRight: 8,
   },
   defaultBadge: {
@@ -4869,7 +4869,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentMethodDetails: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 3,
   },
   paymentMethodExtra: {
@@ -4879,7 +4879,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentMethodBalance: {
     fontSize: 14,
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -4926,7 +4926,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   addMethodButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -4938,7 +4938,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 10,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
   },
   addMethodText: {
     color: '#FFFFFF',
@@ -4977,7 +4977,7 @@ const getStyles = (theme) => StyleSheet.create({
   formSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   inputGroup: {
@@ -4986,18 +4986,18 @@ const getStyles = (theme) => StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 8,
   },
   paymentInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
   },
   inputRow: {
     flexDirection: 'row',
@@ -5025,12 +5025,12 @@ const getStyles = (theme) => StyleSheet.create({
     gap: 15,
     paddingTop: 20,
     borderTopWidth: 1,
-    borderTopColor: '#F5E6A3',
+    borderTopColor: '#F0FDFA',
     marginTop: 20,
   },
   cancelPaymentButton: {
     flex: 1,
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
@@ -5042,7 +5042,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   savePaymentButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
@@ -5063,17 +5063,17 @@ const getStyles = (theme) => StyleSheet.create({
   },
   orderDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 20,
     textAlign: 'center',
   },
   orderSummary: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   orderStatsGrid: {
     flexDirection: 'row',
@@ -5088,17 +5088,17 @@ const getStyles = (theme) => StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   orderStatNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   orderStatLabel: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
   },
   orderSection: {
@@ -5107,7 +5107,7 @@ const getStyles = (theme) => StyleSheet.create({
   orderSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   orderCard: {
@@ -5116,7 +5116,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5135,11 +5135,11 @@ const getStyles = (theme) => StyleSheet.create({
   orderId: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   orderDate: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 2,
   },
   orderStatus: {
@@ -5174,20 +5174,20 @@ const getStyles = (theme) => StyleSheet.create({
   orderItemName: {
     flex: 1,
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     marginLeft: 8,
   },
   orderItemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   orderFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#F5E6A3',
+    borderTopColor: '#F0FDFA',
     paddingTop: 12,
     minHeight: 40,
   },
@@ -5198,11 +5198,11 @@ const getStyles = (theme) => StyleSheet.create({
   orderTotal: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   refundedText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontStyle: 'italic',
     marginTop: 2,
   },
@@ -5213,7 +5213,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexShrink: 0,
   },
   orderActionButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -5232,7 +5232,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F5E6A3',
+    borderTopColor: '#F0FDFA',
     marginTop: 15,
   },
   trackAllButton: {
@@ -5257,7 +5257,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   exportOrdersButton: {
     flex: 1,
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -5288,13 +5288,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
-    backgroundColor: '#F5E6A3',
+    borderBottomColor: '#98E4D6',
+    backgroundColor: '#F0FDFA',
   },
   trackModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   trackModalCloseButton: {
     padding: 8,
@@ -5317,7 +5317,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5330,12 +5330,12 @@ const getStyles = (theme) => StyleSheet.create({
   trackOrderId: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   trackProductName: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   trackStatusBadge: {
     flexDirection: 'row',
@@ -5357,7 +5357,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5367,7 +5367,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackInfoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   trackInfoRow: {
@@ -5378,13 +5378,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackInfoLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     flex: 1,
   },
   trackInfoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     flex: 1,
     textAlign: 'right',
   },
@@ -5394,7 +5394,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5404,7 +5404,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackProgressTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   trackProgressStep: {
@@ -5445,7 +5445,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackProgressStepDate: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   trackDeliveryCard: {
     backgroundColor: '#FFFFFF',
@@ -5453,7 +5453,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5463,7 +5463,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackDeliveryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   trackDeliveryRow: {
@@ -5474,13 +5474,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackDeliveryLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     flex: 1,
   },
   trackDeliveryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     flex: 1,
     textAlign: 'right',
   },
@@ -5493,7 +5493,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -5525,13 +5525,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
-    backgroundColor: '#F5E6A3',
+    borderBottomColor: '#98E4D6',
+    backgroundColor: '#F0FDFA',
   },
   detailsModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   detailsModalCloseButton: {
     padding: 8,
@@ -5554,7 +5554,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5567,12 +5567,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailsOrderId: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   detailsOrderDate: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   detailsStatusBadge: {
     flexDirection: 'row',
@@ -5594,7 +5594,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5604,12 +5604,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailsStatusTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   detailsStatusDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 20,
   },
   detailsItemsCard: {
@@ -5618,7 +5618,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5628,7 +5628,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsItemsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   detailsItemRow: {
@@ -5637,7 +5637,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   detailsItemInfo: {
     flex: 1,
@@ -5645,17 +5645,17 @@ const getStyles = (theme) => StyleSheet.create({
   detailsItemName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   detailsItemQuantity: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   detailsItemPrice: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   detailsTotalRow: {
     flexDirection: 'row',
@@ -5664,17 +5664,17 @@ const getStyles = (theme) => StyleSheet.create({
     paddingTop: 12,
     marginTop: 8,
     borderTopWidth: 2,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
   },
   detailsTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   detailsTotalAmount: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   detailsPaymentCard: {
     backgroundColor: '#FFFFFF',
@@ -5682,7 +5682,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5692,7 +5692,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsPaymentTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   detailsPaymentRow: {
@@ -5703,13 +5703,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailsPaymentLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     flex: 1,
   },
   detailsPaymentValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     flex: 1,
     textAlign: 'right',
   },
@@ -5719,7 +5719,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5729,7 +5729,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsShippingTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   detailsShippingRow: {
@@ -5740,40 +5740,40 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailsShippingLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     flex: 1,
   },
   detailsShippingValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     flex: 2,
     textAlign: 'right',
   },
   detailsServiceCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   detailsServiceTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   detailsServiceDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 20,
     marginBottom: 8,
   },
   detailsServiceContact: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   detailsActionButtons: {
     flexDirection: 'row',
@@ -5784,7 +5784,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -5795,7 +5795,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   detailsSupportButton: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
   },
   detailsActionButtonText: {
     color: '#FFFFFF',
@@ -5816,13 +5816,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
-    backgroundColor: '#F5E6A3',
+    borderBottomColor: '#98E4D6',
+    backgroundColor: '#F0FDFA',
   },
   reorderModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   reorderModalCloseButton: {
     padding: 8,
@@ -5842,7 +5842,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5855,17 +5855,17 @@ const getStyles = (theme) => StyleSheet.create({
   reorderOrderNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   reorderOrderLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   reorderSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   reorderItemsSection: {
@@ -5879,7 +5879,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -5890,7 +5890,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -5901,13 +5901,13 @@ const getStyles = (theme) => StyleSheet.create({
   reorderItemName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   reorderItemPrice: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   reorderItemCheck: {
     marginLeft: 12,
@@ -5920,7 +5920,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5935,28 +5935,28 @@ const getStyles = (theme) => StyleSheet.create({
   },
   reorderPricingLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   reorderPricingValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   reorderPricingTotal: {
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
     marginTop: 8,
     paddingTop: 12,
   },
   reorderPricingTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   reorderPricingTotalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   reorderInfoSection: {
     marginBottom: 30,
@@ -5968,12 +5968,12 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   reorderInfoText: {
     flex: 1,
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 20,
     marginLeft: 12,
   },
@@ -5991,7 +5991,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#8B4513',
+    borderColor: '#2D766E',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5999,7 +5999,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   reorderCancelButtonText: {
-    color: '#8B4513',
+    color: '#2D766E',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -6009,7 +6009,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -6038,13 +6038,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4AF37',
-    backgroundColor: '#F5E6A3',
+    borderBottomColor: '#98E4D6',
+    backgroundColor: '#F0FDFA',
   },
   reviewModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   reviewModalCloseButton: {
     padding: 8,
@@ -6064,7 +6064,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -6074,19 +6074,19 @@ const getStyles = (theme) => StyleSheet.create({
   reviewOrderNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
   reviewOrderItems: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
   },
   reviewSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   reviewRatingSection: {
@@ -6104,7 +6104,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   reviewRatingText: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -6116,9 +6116,9 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -6158,7 +6158,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#8B4513',
+    borderColor: '#2D766E',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -6166,7 +6166,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   reviewCancelButtonText: {
-    color: '#8B4513',
+    color: '#2D766E',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -6175,7 +6175,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -6186,7 +6186,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 5,
   },
   reviewSubmitButtonDisabled: {
-    backgroundColor: '#B8860B',
+    backgroundColor: '#5CBAA6',
     opacity: 0.6,
   },
   reviewSubmitButtonText: {
@@ -6223,7 +6223,7 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -6249,7 +6249,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 16,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   addedToCartSummaryRow: {
     flexDirection: 'row',
@@ -6259,28 +6259,28 @@ const getStyles = (theme) => StyleSheet.create({
   },
   addedToCartSummaryLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   addedToCartSummaryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   addedToCartTotalRow: {
     borderTopWidth: 1,
-    borderTopColor: '#D4AF37',
+    borderTopColor: '#98E4D6',
     marginTop: 8,
     paddingTop: 12,
   },
   addedToCartTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   addedToCartTotalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   addedToCartItemsSection: {
     backgroundColor: '#F8F9FA',
@@ -6294,7 +6294,7 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartItemsTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   addedToCartItem: {
@@ -6306,12 +6306,12 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartItemName: {
     flex: 1,
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
   },
   addedToCartItemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   addedToCartInfo: {
     flexDirection: 'row',
@@ -6322,12 +6322,12 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   addedToCartInfoText: {
     flex: 1,
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 16,
     marginLeft: 8,
   },
@@ -6342,7 +6342,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -6363,7 +6363,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -6386,7 +6386,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: 'transparent',
   },
   addedToCartCloseText: {
-    color: '#8B4513',
+    color: '#2D766E',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -6412,7 +6412,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 15,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   exportModalIcon: {
     alignItems: 'center',
@@ -6424,8 +6424,8 @@ const getStyles = (theme) => StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
     borderWidth: 3,
-    borderColor: '#D4AF37',
-    shadowColor: '#D4AF37',
+    borderColor: '#98E4D6',
+    shadowColor: '#98E4D6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -6434,7 +6434,7 @@ const getStyles = (theme) => StyleSheet.create({
   exportModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 28,
@@ -6445,21 +6445,21 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     borderLeftWidth: 4,
-    borderLeftColor: '#D4AF37',
+    borderLeftColor: '#98E4D6',
   },
   exportModalDescription: {
     fontSize: 15,
-    color: '#2C1810',
+    color: '#134E48',
     lineHeight: 20,
     textAlign: 'center',
   },
   exportStatsContainer: {
     marginBottom: 25,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   exportStatItem: {
     flexDirection: 'row',
@@ -6471,13 +6471,13 @@ const getStyles = (theme) => StyleSheet.create({
   exportStatLabel: {
     flex: 1,
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
     marginLeft: 12,
   },
   exportStatValue: {
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: 'bold',
   },
   exportFormatsContainer: {
@@ -6486,7 +6486,7 @@ const getStyles = (theme) => StyleSheet.create({
   exportFormatsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -6497,7 +6497,7 @@ const getStyles = (theme) => StyleSheet.create({
     gap: 10,
   },
   exportFormatButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 12,
     padding: 15,
     alignItems: 'center',
@@ -6510,7 +6510,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
   },
   exportFormatText: {
     color: '#FFFFFF',
@@ -6525,7 +6525,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#F5E6A3',
+    borderColor: '#F0FDFA',
   },
   exportOption: {
     flexDirection: 'row',
@@ -6534,7 +6534,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   exportOptionText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 16,
     marginLeft: 10,
     flex: 1,
@@ -6543,7 +6543,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   exportCancelButton: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -6584,11 +6584,11 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 25,
     elevation: 25,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     overflow: 'hidden',
   },
   addPaymentModalHeader: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     paddingVertical: 28,
     paddingHorizontal: 24,
     alignItems: 'center',
@@ -6605,8 +6605,8 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#D4AF37',
-    shadowColor: '#D4AF37',
+    borderColor: '#98E4D6',
+    shadowColor: '#98E4D6',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
@@ -6615,14 +6615,14 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentModalTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     textAlign: 'center',
     marginBottom: 10,
     letterSpacing: 0.5,
   },
   addPaymentModalSubtitle: {
     fontSize: 15,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 8,
@@ -6660,7 +6660,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentSectionTitle: {
     fontSize: 19,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 20,
     paddingHorizontal: 2,
     letterSpacing: 0.3,
@@ -6679,7 +6679,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentInputLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 10,
     paddingHorizontal: 4,
     letterSpacing: 0.2,
@@ -6706,7 +6706,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentInput: {
     flex: 1,
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     paddingVertical: 16,
     fontWeight: '500',
     letterSpacing: 0.3,
@@ -6793,11 +6793,11 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 14,
     paddingVertical: 18,
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
     shadowColor: 'rgba(212, 175, 55, 0.4)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
@@ -6814,7 +6814,7 @@ const getStyles = (theme) => StyleSheet.create({
   
   // Additional utility styles for better UX
   addPaymentInputWrapperFocused: {
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     borderWidth: 2,
     backgroundColor: '#FFF8E7',
     shadowColor: 'rgba(212, 175, 55, 0.3)',
@@ -6851,7 +6851,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   categoryIcon: {
     fontSize: 20,
@@ -6860,7 +6860,7 @@ const getStyles = (theme) => StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
   },
   settingsList: {
     gap: 12,
@@ -6886,7 +6886,7 @@ const getStyles = (theme) => StyleSheet.create({
     color: '#666666',
   },
   settingButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -6900,12 +6900,12 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
   },
   settingToggleText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#8B4513',
+    color: '#2D766E',
   },
   fullSettingsNote: {
     flexDirection: 'row',
@@ -6936,7 +6936,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   fullSettingsSaveButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
@@ -7100,7 +7100,7 @@ const getStyles = (theme) => StyleSheet.create({
   emptyNotificationsText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 8,
   },
   emptyNotificationsSubtext: {
@@ -7205,7 +7205,7 @@ const getStyles = (theme) => StyleSheet.create({
   notificationActionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,

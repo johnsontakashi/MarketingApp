@@ -205,13 +205,13 @@ export default function ChatManagementScreen({ navigation }) {
           style={styles.headerBackButton} 
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+          <Ionicons name="arrow-back" size={24} color={currentTheme.colors.primary} />
           <Text style={styles.headerBackText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Chat Management</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
-            <Ionicons name="refresh" size={20} color="#D4AF37" />
+            <Ionicons name="refresh" size={20} color={currentTheme.colors.primary} />
           </TouchableOpacity>
           {unreadCount > 0 && (
             <View style={styles.unreadCountBadge}>
@@ -259,7 +259,7 @@ export default function ChatManagementScreen({ navigation }) {
               style={styles.backButton}
               onPress={closeModal}
             >
-              <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+              <Ionicons name="arrow-back" size={24} color={currentTheme.colors.primary} />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
             {selectedChat && (
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   headerBackText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 4,
-    borderLeftColor: '#D4AF37',
+    borderLeftColor: '#98E4D6',
   },
   chatHeader: {
     flexDirection: 'row',
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   backText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     marginLeft: 8,
   },
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   adminBubble: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderBottomRightRadius: 4,
   },
   messageText: {
@@ -586,6 +586,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   sendButtonActive: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
 });

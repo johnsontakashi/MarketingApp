@@ -312,10 +312,10 @@ export default function WalletScreen({ navigation }) {
   };
 
   const quickActions = [
-    { icon: 'send', label: 'Send', color: '#D4AF37' },
-    { icon: 'download', label: 'Request', color: '#B8860B' },
+    { icon: 'send', label: 'Send', color: '#98E4D6' },
+    { icon: 'download', label: 'Request', color: '#5CBAA6' },
     { icon: 'list', label: 'History', color: '#CD853F' },
-    { icon: 'card', label: 'Top Up', color: '#8B4513' }
+    { icon: 'card', label: 'Top Up', color: '#2D766E' }
   ];
 
   const handleQuickAction = (action) => {
@@ -555,7 +555,7 @@ export default function WalletScreen({ navigation }) {
             <Ionicons 
               name={balanceVisible ? 'eye' : 'eye-off'} 
               size={20} 
-              color="#8B4513" 
+              color={currentTheme.colors.textSecondary} 
             />
           </TouchableOpacity>
         </View>
@@ -700,7 +700,7 @@ export default function WalletScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowHistoryModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -842,7 +842,7 @@ export default function WalletScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowSendModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -921,7 +921,7 @@ export default function WalletScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowRequestModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -997,7 +997,7 @@ export default function WalletScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowTopUpModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -1016,7 +1016,7 @@ export default function WalletScreen({ navigation }) {
                 onPress={() => handleTopUpOption('card')}
                 activeOpacity={0.7}
               >
-                <View style={[styles.topUpOptionIcon, { backgroundColor: '#D4AF37' }]}>
+                <View style={[styles.topUpOptionIcon, { backgroundColor: currentTheme.colors.primary }]}>
                   <Ionicons name="card" size={24} color="#FFFFFF" />
                 </View>
                 <View style={styles.topUpOptionContent}>
@@ -1024,7 +1024,7 @@ export default function WalletScreen({ navigation }) {
                   <Text style={styles.topUpOptionDescription}>Instant • 2.9% + $0.30 fee</Text>
                   <Text style={styles.topUpOptionLimits}>💎 10.00 - 5,000.00 TLB</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* Bank Transfer */}
@@ -1041,7 +1041,7 @@ export default function WalletScreen({ navigation }) {
                   <Text style={styles.topUpOptionDescription}>3-5 days • $5.00 flat fee</Text>
                   <Text style={styles.topUpOptionLimits}>💎 25.00 - 10,000.00 TLB</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* Cryptocurrency */}
@@ -1058,7 +1058,7 @@ export default function WalletScreen({ navigation }) {
                   <Text style={styles.topUpOptionDescription}>1-2 hours • 1.5% fee</Text>
                   <Text style={styles.topUpOptionLimits}>💎 50.00 - 25,000.00 TLB</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               {/* Gift Card */}
@@ -1075,7 +1075,7 @@ export default function WalletScreen({ navigation }) {
                   <Text style={styles.topUpOptionDescription}>Instant • No fees</Text>
                   <Text style={styles.topUpOptionLimits}>💎 Variable amounts</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </ScrollView>
 
@@ -1107,7 +1107,7 @@ export default function WalletScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowTransactionDetailsModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -1165,7 +1165,7 @@ export default function WalletScreen({ navigation }) {
                       showSuccess('Copied!', 'Transaction ID copied to clipboard');
                     }}
                   >
-                    <Ionicons name="copy" size={20} color="#D4AF37" />
+                    <Ionicons name="copy" size={20} color={currentTheme.colors.primary} />
                     <Text style={styles.transactionDetailCopyText}>Copy ID</Text>
                   </TouchableOpacity>
                 </View>
@@ -1241,13 +1241,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   breakdownLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 4,
   },
   breakdownAmount: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   section: {
     paddingHorizontal: 20,
@@ -1262,11 +1262,11 @@ const getStyles = (theme) => StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   viewAllText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -1303,31 +1303,31 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: (width - 60) / 3,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   monthlyLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 5,
     marginBottom: 5,
   },
   monthlyAmount: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   transactionsList: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   transactionIcon: {
     width: 40,
@@ -1343,12 +1343,12 @@ const getStyles = (theme) => StyleSheet.create({
   transactionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   transactionSubtitle: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   transactionAmount: {
     alignItems: 'flex-end',
@@ -1360,7 +1360,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   transactionTime: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   lifetimeStats: {
     flexDirection: 'row',
@@ -1373,17 +1373,17 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: (width - 50) / 2,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statAmount: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 5,
   },
   statLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
 
   // History Modal Styles
@@ -1405,7 +1405,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '90%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1413,14 +1413,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 16,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     letterSpacing: 0.5,
   },
   modalCloseButton: {
@@ -1456,14 +1456,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 4,
     textAlign: 'center',
   },
   summaryValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     textAlign: 'center',
   },
   historySection: {
@@ -1472,7 +1472,7 @@ const getStyles = (theme) => StyleSheet.create({
   historySectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   historyTransactionItem: {
@@ -1504,12 +1504,12 @@ const getStyles = (theme) => StyleSheet.create({
   historyTransactionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   historyTransactionSubtitle: {
     fontSize: 13,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 2,
   },
   historyTransactionId: {
@@ -1527,7 +1527,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   historyTransactionTime: {
     fontSize: 11,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 1,
   },
   historyTransactionDate: {
@@ -1548,7 +1548,7 @@ const getStyles = (theme) => StyleSheet.create({
   monthlyBreakdownLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   monthlyBreakdownAmounts: {
@@ -1576,14 +1576,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   exportButton: {
     flex: 1.5,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
     shadowColor: 'rgba(212, 175, 55, 0.4)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
@@ -1649,7 +1649,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     overflow: 'hidden',
     flexDirection: 'column',
   },
@@ -1671,7 +1671,7 @@ const getStyles = (theme) => StyleSheet.create({
   formLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   formInput: {
@@ -1681,7 +1681,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 18,
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     minHeight: 56,
   },
   messageInput: {
@@ -1732,7 +1732,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   primaryButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -1784,7 +1784,7 @@ const getStyles = (theme) => StyleSheet.create({
   topUpOptionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   topUpOptionDescription: {
@@ -1794,7 +1794,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   topUpOptionLimits: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   // Transaction Details Modal Styles
@@ -1818,7 +1818,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     overflow: 'hidden',
   },
   transactionDetailHeader: {
@@ -1828,13 +1828,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
     backgroundColor: '#FFFDF4',
   },
   transactionDetailTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   transactionDetailContent: {
     flex: 1,
@@ -1850,7 +1850,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#F5E6A3',
+    borderColor: '#F0FDFA',
   },
   transactionDetailIcon: {
     width: 50,
@@ -1871,7 +1871,7 @@ const getStyles = (theme) => StyleSheet.create({
   transactionDetailAmount: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   transactionDetailStatus: {
@@ -1899,7 +1899,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   transactionDetailFieldValue: {
     fontSize: 15,
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: '600',
   },
   transactionDetailActions: {
@@ -1914,11 +1914,11 @@ const getStyles = (theme) => StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   transactionDetailCopyText: {
     fontSize: 14,
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontWeight: '600',
     marginLeft: 6,
   },
@@ -1926,11 +1926,11 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F5E6A3',
+    borderTopColor: '#F0FDFA',
     backgroundColor: '#FFFDF4',
   },
   transactionDetailCloseButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
