@@ -16,11 +16,16 @@ import { StatusBar } from 'expo-status-bar';
 import * as SecureStore from 'expo-secure-store';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
+import themeService from '../services/themeService';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
+  // Get current theme and dynamic styles
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+  const styles = getStyles(currentTheme);
   
   const [userName, setUserName] = useState('User');
   const [userBalance, setUserBalance] = useState(1250.00);
@@ -40,6 +45,10 @@ export default function HomeScreen({ navigation }) {
           const userData = JSON.parse(storedUser);
           const firstName = userData.first_name || userData.firstName || 'User';
           setUserName(firstName);
+          
+          // Update theme based on user data
+          themeService.setThemeFromUserData(userData);
+          setCurrentTheme(themeService.getCurrentTheme());
           
           // Also set balance if available from user data
           if (userData.balance !== undefined) {
@@ -461,10 +470,10 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   contentContainer: {
     paddingBottom: 20,
@@ -482,7 +491,7 @@ const styles = StyleSheet.create({
   greetingText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
   },
   notificationButton: {
     position: 'relative',
@@ -502,36 +511,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   balanceCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.cardBackground,
     borderRadius: 12,
     padding: 20,
     marginBottom: 15,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   balanceLabel: {
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
     fontSize: 14,
     marginBottom: 5,
   },
   balanceAmount: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
   },
   deviceStatusCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   deviceStatusText: {
     flex: 1,
     marginLeft: 10,
-    color: '#2C1810',
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -548,11 +557,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
     marginBottom: 15,
   },
   seeAllText: {
-    color: '#D4AF37',
+    color: theme.colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },

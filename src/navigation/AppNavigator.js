@@ -12,6 +12,7 @@ import networkManager from '../components/mdm/NetworkManager';
 import appRestrictionManager from '../components/mdm/AppRestrictionManager';
 import AdminStackNavigator from './AdminNavigator';
 import authService from '../services/authService';
+import themeService from '../services/themeService';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -33,6 +34,9 @@ const Stack = createStackNavigator();
 
 // Main tab navigator
 function MainTabNavigator({ onLogout, isAuthenticated, userRole }) {
+  const theme = themeService.getCurrentTheme();
+  const componentStyles = themeService.getComponentStyles();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -53,20 +57,10 @@ function MainTabNavigator({ onLogout, isAuthenticated, userRole }) {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#D4AF37',
-        tabBarInactiveTintColor: '#8B4513',
-        tabBarStyle: {
-          backgroundColor: '#FFF8E7',
-          borderTopColor: '#D4AF37',
-          borderTopWidth: 1,
-        },
-        headerStyle: {
-          backgroundColor: '#FFF8E7',
-        },
-        headerTintColor: '#2C1810',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
+        ...componentStyles.tabBar,
+        headerStyle: componentStyles.header.style,
+        headerTintColor: componentStyles.header.tintColor,
+        headerTitleStyle: componentStyles.header.titleStyle,
       })}
     >
       <Tab.Screen 
@@ -218,6 +212,9 @@ function AppNavigator() {
           const userData = JSON.parse(currentUser);
           setUserRole(userData.role || 'user');
           console.log('User role:', userData.role);
+          
+          // Update theme based on user's age
+          themeService.setThemeFromUserData(userData);
         } catch (parseError) {
           console.error('Error parsing user data:', parseError);
           setUserRole('user');

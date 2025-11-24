@@ -10,8 +10,352 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import modalRegistry from '../../services/ModalRegistry';
+import themeService from '../../services/themeService';
 
 const { width } = Dimensions.get('window');
+
+// Dynamic styles function based on theme colors
+const getStyles = (colors) => StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  
+  // SIM Card Modal Styles
+  simCardModalContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    width: width - 40,
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
+    elevation: 15,
+    borderWidth: 2,
+    borderColor: '#FF4444',
+  },
+  simCardHeader: {
+    backgroundColor: colors.card,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingVertical: 25,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primaryLight,
+  },
+  simCardIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderWidth: 3,
+    borderColor: '#FF4444',
+  },
+  simCardTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  simCardSubtitle: {
+    fontSize: 15,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 22,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  simCardContent: {
+    padding: 25,
+    paddingTop: 20,
+    paddingBottom: 15,
+  },
+  simCardMessageContainer: {
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  simCardMessage: {
+    fontSize: 16,
+    color: colors.text,
+    lineHeight: 24,
+    textAlign: 'center',
+    fontWeight: '500',
+    letterSpacing: 0.3,
+  },
+  securityFeaturesContainer: {
+    marginBottom: 20,
+  },
+  securityFeaturesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  securityFeaturesList: {
+    gap: 8,
+  },
+  securityFeatureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF4444',
+  },
+  securityFeatureText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: '500',
+  },
+  warningNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: colors.warning,
+  },
+  warningText: {
+    marginLeft: 10,
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: '600',
+    flex: 1,
+  },
+  simCardActions: {
+    padding: 20,
+    paddingTop: 0,
+    gap: 12,
+  },
+  paymentButton: {
+    backgroundColor: colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  paymentButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  emergencyButton: {
+    backgroundColor: colors.error,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  emergencyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  acknowledgeButton: {
+    backgroundColor: colors.border,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  acknowledgeButtonText: {
+    color: colors.textSecondary,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  
+  // Authentication Modal Styles
+  authModalContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 24,
+    width: width - 40,
+    maxWidth: 420,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  authHeader: {
+    backgroundColor: colors.background,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    paddingVertical: 30,
+    paddingHorizontal: 25,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primaryLight,
+  },
+  authIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: colors.primary,
+  },
+  authTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 10,
+    letterSpacing: 0.8,
+  },
+  authSubtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+  },
+  authContent: {
+    padding: 30,
+    paddingTop: 25,
+    paddingBottom: 20,
+  },
+  authMessageContainer: {
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  authMessage: {
+    fontSize: 17,
+    color: colors.text,
+    lineHeight: 26,
+    textAlign: 'center',
+    marginBottom: 35,
+    fontWeight: '500',
+    letterSpacing: 0.4,
+  },
+  benefitsContainer: {
+    marginBottom: 10,
+  },
+  benefitsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  benefitsList: {
+    gap: 10,
+  },
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+  },
+  benefitText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: '500',
+    flex: 1,
+  },
+  authActions: {
+    padding: 20,
+    paddingTop: 0,
+    gap: 12,
+  },
+  signUpButton: {
+    backgroundColor: colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginBottom: 10,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 8,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  loginButton: {
+    backgroundColor: colors.surface,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginBottom: 15,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  loginButtonText: {
+    color: colors.primary,
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 8,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: colors.textLight,
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.4,
+  },
+});
 
 const GlobalModalContext = createContext();
 
@@ -25,6 +369,23 @@ export const useGlobalModal = () => {
 
 export const GlobalModalProvider = ({ children }) => {
   const [modalData, setModalData] = useState(null);
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+
+  // Listen for theme changes
+  useEffect(() => {
+    const checkTheme = () => {
+      const newTheme = themeService.getCurrentTheme();
+      if (newTheme.name !== currentTheme.name) {
+        setCurrentTheme(newTheme);
+        console.log(`GlobalModalProvider: Theme changed to ${newTheme.name}`);
+      }
+    };
+    
+    // Check for theme changes periodically (in case user data changes)
+    const interval = setInterval(checkTheme, 1000);
+    
+    return () => clearInterval(interval);
+  }, [currentTheme]);
 
   const showModal = (data) => {
     setModalData(data);
@@ -86,6 +447,8 @@ export const GlobalModalProvider = ({ children }) => {
       modalRegistry.setModalContext(null);
     };
   }, []);
+
+  const styles = getStyles(currentTheme.colors);
 
   return (
     <GlobalModalContext.Provider value={{ showModal, hideModal, showSimCardModal, showAuthModal }}>
@@ -207,7 +570,7 @@ export const GlobalModalProvider = ({ children }) => {
               {/* Header Section */}
               <View style={styles.authHeader}>
                 <View style={styles.authIconContainer}>
-                  <Ionicons name="lock-closed" size={36} color="#D4AF37" />
+                  <Ionicons name="lock-closed" size={36} color={currentTheme.colors.primary} />
                 </View>
                 <Text style={styles.authTitle}>{modalData.title}</Text>
                 <Text style={styles.authSubtitle}>
@@ -229,22 +592,22 @@ export const GlobalModalProvider = ({ children }) => {
                   
                   <View style={styles.benefitsList}>
                     <View style={styles.benefitItem}>
-                      <Ionicons name="diamond" size={16} color="#D4AF37" />
+                      <Ionicons name="diamond" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.benefitText}>Access to TLB Diamond marketplace</Text>
                     </View>
                     
                     <View style={styles.benefitItem}>
-                      <Ionicons name="wallet" size={16} color="#D4AF37" />
+                      <Ionicons name="wallet" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.benefitText}>Secure digital wallet</Text>
                     </View>
                     
                     <View style={styles.benefitItem}>
-                      <Ionicons name="people" size={16} color="#D4AF37" />
+                      <Ionicons name="people" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.benefitText}>Community features & bonuses</Text>
                     </View>
                     
                     <View style={styles.benefitItem}>
-                      <Ionicons name="shield-checkmark" size={16} color="#D4AF37" />
+                      <Ionicons name="shield-checkmark" size={16} color={currentTheme.colors.primary} />
                       <Text style={styles.benefitText}>Secure transactions</Text>
                     </View>
                   </View>
@@ -271,7 +634,7 @@ export const GlobalModalProvider = ({ children }) => {
                     hideModal();
                   }}
                 >
-                  <Ionicons name="log-in" size={20} color="#D4AF37" />
+                  <Ionicons name="log-in" size={20} color={currentTheme.colors.primary} />
                   <Text style={styles.loginButtonText}>Log In</Text>
                 </TouchableOpacity>
                 
@@ -292,329 +655,5 @@ export const GlobalModalProvider = ({ children }) => {
     </GlobalModalContext.Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  simCardModalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    width: width - 40,
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 15,
-    elevation: 15,
-    borderWidth: 2,
-    borderColor: '#FF4444',
-  },
-  simCardHeader: {
-    backgroundColor: '#FFF5F5',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    paddingVertical: 25,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFE5E5',
-  },
-  simCardIconContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#FFE5E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-    borderWidth: 3,
-    borderColor: '#FF4444',
-  },
-  simCardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2C1810',
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  simCardContent: {
-    padding: 25,
-  },
-  simCardMessageContainer: {
-    backgroundColor: '#FFF8E7',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#D4AF37',
-  },
-  simCardMessage: {
-    fontSize: 16,
-    color: '#2C1810',
-    lineHeight: 22,
-    textAlign: 'center',
-  },
-  securityFeaturesContainer: {
-    marginBottom: 20,
-  },
-  securityFeaturesTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2C1810',
-    marginBottom: 12,
-  },
-  securityFeaturesList: {
-    gap: 8,
-  },
-  securityFeatureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#FFF5F5',
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#FF4444',
-  },
-  securityFeatureText: {
-    marginLeft: 12,
-    fontSize: 14,
-    color: '#8B4513',
-    fontWeight: '500',
-  },
-  warningNotice: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEF3CD',
-    borderRadius: 10,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#F59E0B',
-  },
-  warningText: {
-    marginLeft: 10,
-    fontSize: 14,
-    color: '#92400E',
-    fontWeight: '600',
-    flex: 1,
-  },
-  simCardActions: {
-    padding: 20,
-    paddingTop: 0,
-    gap: 12,
-  },
-  paymentButton: {
-    backgroundColor: '#D4AF37',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#B8860B',
-  },
-  paymentButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  emergencyButton: {
-    backgroundColor: '#EF4444',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#DC2626',
-  },
-  emergencyButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  acknowledgeButton: {
-    backgroundColor: '#6B7280',
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#4B5563',
-  },
-  acknowledgeButtonText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  // Authentication Modal Styles
-  authModalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    width: width - 40,
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 15,
-    elevation: 15,
-    borderWidth: 2,
-    borderColor: '#D4AF37',
-  },
-  authHeader: {
-    backgroundColor: '#FFF8E7',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    paddingVertical: 25,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#F5E6A3',
-  },
-  authIconContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#F5E6A3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-    borderWidth: 3,
-    borderColor: '#D4AF37',
-  },
-  authTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2C1810',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  authSubtitle: {
-    fontSize: 16,
-    color: '#8B4513',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  authContent: {
-    padding: 25,
-  },
-  authMessageContainer: {
-    backgroundColor: '#FFF8E7',
-    borderRadius: 12,
-    padding: 18,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#D4AF37',
-  },
-  authMessage: {
-    fontSize: 15,
-    color: '#2C1810',
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  benefitsContainer: {
-    marginBottom: 10,
-  },
-  benefitsTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2C1810',
-    marginBottom: 12,
-  },
-  benefitsList: {
-    gap: 10,
-  },
-  benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#FFF8E7',
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#D4AF37',
-  },
-  benefitText: {
-    marginLeft: 12,
-    fontSize: 14,
-    color: '#8B4513',
-    fontWeight: '500',
-    flex: 1,
-  },
-  authActions: {
-    padding: 20,
-    paddingTop: 0,
-    gap: 12,
-  },
-  signUpButton: {
-    backgroundColor: '#D4AF37',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#B8860B',
-  },
-  signUpButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  loginButton: {
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#D4AF37',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  loginButtonText: {
-    color: '#D4AF37',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  cancelButton: {
-    backgroundColor: 'transparent',
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: '#8B4513',
-    fontSize: 15,
-    fontWeight: '500',
-  },
-});
 
 export default GlobalModalProvider;

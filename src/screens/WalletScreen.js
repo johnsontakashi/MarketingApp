@@ -11,15 +11,21 @@ import {
   TextInput
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import CustomAlert from '../components/ui/CustomAlert';
 import { useCustomAlert } from '../hooks/useCustomAlert';
 import sharedDataService from '../services/sharedDataService';
 import authService from '../services/authService';
+import themeService from '../services/themeService';
 
 const { width } = Dimensions.get('window');
 
 export default function WalletScreen({ navigation }) {
   const { alertConfig, showAlert, hideAlert, showSuccess, showError, showWarning, showInfo, showConfirm } = useCustomAlert();
+  
+  // Get current theme and dynamic styles
+  const [currentTheme, setCurrentTheme] = useState(themeService.getCurrentTheme());
+  const styles = getStyles(currentTheme);
   
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -65,7 +71,23 @@ export default function WalletScreen({ navigation }) {
   useEffect(() => {
     loadWalletData();
     loadTransactions();
+    loadUserDataAndTheme();
   }, []);
+
+  // Load user data and set theme
+  const loadUserDataAndTheme = async () => {
+    try {
+      const userData = await SecureStore.getItemAsync('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Update theme based on user data
+        themeService.setThemeFromUserData(user);
+        setCurrentTheme(themeService.getCurrentTheme());
+      }
+    } catch (error) {
+      console.error('Error loading user data for theme:', error);
+    }
+  };
 
   const loadWalletData = async () => {
     try {
@@ -1177,21 +1199,21 @@ export default function WalletScreen({ navigation }) {
 }
 
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   contentContainer: {
     paddingBottom: 20,
   },
   balanceCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.cardBackground,
     borderRadius: 16,
     padding: 24,
     margin: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   balanceHeader: {
     flexDirection: 'row',
@@ -1201,13 +1223,13 @@ const styles = StyleSheet.create({
   },
   balanceLabel: {
     fontSize: 16,
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
     fontWeight: '500',
   },
   balanceAmount: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
     marginBottom: 20,
   },
   balanceBreakdown: {
