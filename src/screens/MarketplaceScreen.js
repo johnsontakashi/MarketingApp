@@ -507,23 +507,23 @@ export default function MarketplaceScreen({ navigation }) {
       {/* Search Header */}
       <View style={styles.searchHeader}>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#8B4513" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={currentTheme.colors.textSecondary} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search products..."
-            placeholderTextColor="#8B4513"
+            placeholderTextColor="theme.colors.textSecondary"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
         </View>
         <TouchableOpacity style={styles.filterButton}>
-          <Ionicons name="filter" size={20} color="#D4AF37" />
+          <Ionicons name="filter" size={20} color={currentTheme.colors.primary} />
         </TouchableOpacity>
       </View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#D4AF37" />
+          <ActivityIndicator size="large" color={currentTheme.colors.primary} />
           <Text style={styles.loadingText}>Loading marketplace...</Text>
         </View>
       ) : (
@@ -545,7 +545,7 @@ export default function MarketplaceScreen({ navigation }) {
                   <Ionicons 
                     name={category.icon} 
                     size={24} 
-                    color={selectedCategory === category.name ? '#FFFFFF' : '#D4AF37'} 
+                    color={selectedCategory === category.name ? '#FFFFFF' : currentTheme.colors.primary} 
                   />
                   <Text style={[
                     styles.categoryName,
@@ -656,7 +656,7 @@ export default function MarketplaceScreen({ navigation }) {
             <Ionicons 
               name={pagination.hasMore ? "chevron-down" : "checkmark-circle"} 
               size={16} 
-              color={pagination.hasMore ? "#D4AF37" : "#8B4513"} 
+              color={pagination.hasMore ? currentTheme.colors.primary : currentTheme.colors.textSecondary} 
             />
           </TouchableOpacity>
         </View>
@@ -679,7 +679,7 @@ export default function MarketplaceScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowProductDetail(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -893,11 +893,11 @@ const getStyles = (theme) => StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   seeAllText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -912,15 +912,15 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     minWidth: 80,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   selectedCategoryCard: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   categoryName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginTop: 5,
   },
   selectedCategoryName: {
@@ -928,7 +928,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   categoryCount: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 2,
   },
   selectedCategoryCount: {
@@ -946,7 +946,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     position: 'relative',
   },
   featuredBadge: {
@@ -966,7 +966,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   productImage: {
     height: 80,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -984,7 +984,7 @@ const getStyles = (theme) => StyleSheet.create({
   productTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 5,
     lineHeight: 18,
   },
@@ -999,11 +999,11 @@ const getStyles = (theme) => StyleSheet.create({
   },
   ratingText: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   sellerText: {
     fontSize: 10,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 8,
   },
   priceContainer: {
@@ -1012,25 +1012,25 @@ const getStyles = (theme) => StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   originalPrice: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
     textDecorationLine: 'line-through',
   },
   features: {
     gap: 3,
   },
   featureTag: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   featureText: {
     fontSize: 9,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   loadMoreContainer: {
@@ -1040,15 +1040,15 @@ const getStyles = (theme) => StyleSheet.create({
   loadMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   loadMoreText: {
-    color: '#2C1810',
+    color: '#134E48',
     fontSize: 14,
     fontWeight: '600',
     marginRight: 5,
@@ -1073,7 +1073,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '90%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1081,14 +1081,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     letterSpacing: 0.5,
   },
   modalCloseButton: {
@@ -1112,7 +1112,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailImageContainer: {
     height: 200,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 16,
     marginBottom: 20,
     overflow: 'hidden',
@@ -1143,13 +1143,13 @@ const getStyles = (theme) => StyleSheet.create({
   detailTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 6,
     lineHeight: 30,
   },
   detailSeller: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 12,
   },
   detailRatingContainer: {
@@ -1163,7 +1163,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailRatingText: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   detailPriceContainer: {
     marginBottom: 16,
@@ -1171,12 +1171,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailPrice: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     marginBottom: 4,
   },
   detailOriginalPrice: {
     fontSize: 18,
-    color: '#8B4513',
+    color: '#2D766E',
     textDecorationLine: 'line-through',
   },
   detailFeatures: {
@@ -1236,7 +1236,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailSectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   detailDescription: {
@@ -1273,7 +1273,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   specificationValue: {
     fontSize: 15,
-    color: '#2C1810',
+    color: '#134E48',
     fontWeight: '600',
   },
   shippingInfo: {
@@ -1327,14 +1327,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   buyNowButton: {
     flex: 1.5,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
     shadowColor: 'rgba(212, 175, 55, 0.4)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
@@ -1361,11 +1361,11 @@ const getStyles = (theme) => StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   loadMoreButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 12,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -1375,7 +1375,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 20,
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
   },
   loadMoreText: {
     color: '#FFFFFF',
@@ -1384,10 +1384,10 @@ const getStyles = (theme) => StyleSheet.create({
     marginLeft: 8,
   },
   loadMoreButtonDisabled: {
-    backgroundColor: '#8B4513',
+    backgroundColor: '#2D766E',
     borderColor: '#654321',
   },
   loadMoreTextDisabled: {
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
 });

@@ -131,12 +131,12 @@ export default function BlockingDemoScreen({ navigation }) {
         <Text style={styles.sectionTitle}>📋 Check Status</Text>
         
         <TouchableOpacity style={styles.statusButton} onPress={showAppStatus}>
-          <Ionicons name="apps" size={20} color="#D4AF37" />
+          <Ionicons name="apps" size={20} color={currentTheme.colors.primary} />
           <Text style={styles.statusButtonText}>App Restriction Status</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.statusButton} onPress={showNetworkStatus}>
-          <Ionicons name="wifi" size={20} color="#D4AF37" />
+          <Ionicons name="wifi" size={20} color={currentTheme.colors.primary} />
           <Text style={styles.statusButtonText}>Network Status</Text>
         </TouchableOpacity>
       </View>
@@ -178,19 +178,19 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 2,
-    borderBottomColor: '#D4AF37',
+    borderBottomColor: '#98E4D6',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginTop: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     marginTop: 5,
     textAlign: 'center',
   },
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   statusCard: {
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statusRow: {
     flexDirection: 'row',
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   statusLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   statusValue: {
     fontSize: 14,
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   demoButtonText: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginLeft: 10,
     fontWeight: '500',
   },
@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statusButtonText: {
     fontSize: 16,
-    color: '#2C1810',
+    color: '#134E48',
     marginLeft: 10,
     fontWeight: '500',
   },

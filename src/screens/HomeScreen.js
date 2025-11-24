@@ -94,12 +94,12 @@ export default function HomeScreen({ navigation }) {
 
   // Quick action buttons data
   const quickActions = [
-    { icon: 'storefront', label: 'Shop', screen: 'Marketplace', color: '#D4AF37' },
-    { icon: 'card', label: 'Pay', screen: 'Wallet', color: '#B8860B' },
-    { icon: 'gift', label: 'Bonuses', screen: 'Community', color: '#CD853F' },
-    { icon: 'cube', label: 'Orders', screen: 'Profile', color: '#8B4513' },
-    { icon: 'people', label: 'Referrals', screen: 'Community', color: '#A0522D' },
-    { icon: 'warning', label: 'Blocking Demo', screen: 'BlockingDemo', color: '#F59E0B' },
+    { icon: 'storefront', label: 'Shop', screen: 'Marketplace', color: currentTheme.colors.primary },
+    { icon: 'card', label: 'Pay', screen: 'Wallet', color: currentTheme.colors.primaryDark },
+    { icon: 'gift', label: 'Bonuses', screen: 'Community', color: currentTheme.colors.accent },
+    { icon: 'cube', label: 'Orders', screen: 'Profile', color: currentTheme.colors.textSecondary },
+    { icon: 'people', label: 'Referrals', screen: 'Community', color: currentTheme.colors.primaryLight },
+    { icon: 'warning', label: 'Blocking Demo', screen: 'BlockingDemo', color: currentTheme.colors.warning },
     // Lock button removed - only admins should control device locking
   ];
 
@@ -241,7 +241,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.greeting}>
           <Text style={styles.greetingText}>👋 Hi {userName}!</Text>
           <TouchableOpacity style={styles.notificationButton} onPress={handleNotifications}>
-            <Ionicons name="notifications" size={24} color="#D4AF37" />
+            <Ionicons name="notifications" size={24} color={currentTheme.colors.primary} />
             <View style={styles.notificationBadge}>
               <Text style={styles.notificationCount}>3</Text>
             </View>
@@ -262,7 +262,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.deviceStatusText}>
             Device: {deviceStatus === 'secure' ? 'Secure' : 'Locked'}
           </Text>
-          <Ionicons name="chevron-forward" size={16} color="#8B4513" />
+          <Ionicons name="chevron-forward" size={16} color={currentTheme.colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -311,25 +311,25 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.overviewCard}>
             <Text style={styles.overviewNumber}>{activeOrders}</Text>
             <Text style={styles.overviewLabel}>Active Orders</Text>
-            <Ionicons name="cube-outline" size={20} color="#D4AF37" />
+            <Ionicons name="cube-outline" size={20} color={currentTheme.colors.primary} />
           </View>
           
           <View style={styles.overviewCard}>
             <Text style={styles.overviewNumber}>💎 {pendingPayments}</Text>
             <Text style={styles.overviewLabel}>Pending Payments</Text>
-            <Ionicons name="time-outline" size={20} color="#F59E0B" />
+            <Ionicons name="time-outline" size={20} color={currentTheme.colors.warning} />
           </View>
           
           <View style={styles.overviewCard}>
             <Text style={styles.overviewNumber}>{availableBonuses}</Text>
             <Text style={styles.overviewLabel}>Available Bonuses</Text>
-            <Ionicons name="gift-outline" size={20} color="#10B981" />
+            <Ionicons name="gift-outline" size={20} color={currentTheme.colors.success} />
           </View>
           
           <View style={styles.overviewCard}>
             <Text style={styles.overviewNumber}>💎 {referralEarnings}</Text>
             <Text style={styles.overviewLabel}>Referral Earnings</Text>
-            <Ionicons name="people-outline" size={20} color="#8B4513" />
+            <Ionicons name="people-outline" size={20} color={currentTheme.colors.textSecondary} />
           </View>
         </View>
       </View>
@@ -398,14 +398,14 @@ export default function HomeScreen({ navigation }) {
           {/* Modal Header */}
           <View style={styles.notificationModalHeader}>
             <View style={styles.notificationModalTitleContainer}>
-              <Ionicons name="notifications" size={24} color="#D4AF37" />
+              <Ionicons name="notifications" size={24} color={currentTheme.colors.primary} />
               <Text style={styles.notificationModalTitle}>Notifications</Text>
             </View>
             <TouchableOpacity 
               style={styles.closeButton}
               onPress={() => setShowNotificationModal(false)}
             >
-              <Ionicons name="close" size={24} color="#8B4513" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -422,7 +422,7 @@ export default function HomeScreen({ navigation }) {
               <Ionicons 
                 name="checkmark-done" 
                 size={18} 
-                color={notifications.every(n => !n.unread) ? "#8B4513" : "#FFFFFF"} 
+                color={notifications.every(n => !n.unread) ? currentTheme.colors.textSecondary : "#FFFFFF"} 
               />
               <Text style={[
                 styles.markAllReadText,
@@ -439,7 +439,7 @@ export default function HomeScreen({ navigation }) {
                 navigation.navigate('Profile');
               }}
             >
-              <Ionicons name="settings-outline" size={18} color="#D4AF37" />
+              <Ionicons name="settings-outline" size={18} color={currentTheme.colors.primary} />
               <Text style={styles.settingsButtonText}>Settings</Text>
             </TouchableOpacity>
           </View>
@@ -613,23 +613,23 @@ const getStyles = (theme) => StyleSheet.create({
   },
   overviewCard: {
     width: (width - 50) / 2,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 15,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
     alignItems: 'center',
   },
   overviewNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
     marginBottom: 5,
   },
   overviewLabel: {
     fontSize: 12,
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -638,12 +638,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   productCard: {
     width: 180,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 16,
     padding: 12,
     marginRight: 15,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -658,7 +658,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     height: 100,
     borderRadius: 12,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.background,
   },
   discountBadge: {
     position: 'absolute',
@@ -680,7 +680,7 @@ const getStyles = (theme) => StyleSheet.create({
   productTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: theme.colors.text,
     marginBottom: 8,
     lineHeight: 18,
   },
@@ -690,12 +690,12 @@ const getStyles = (theme) => StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: theme.colors.primary,
     marginBottom: 2,
   },
   originalPrice: {
     fontSize: 12,
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
     textDecorationLine: 'line-through',
   },
   productFeatures: {
@@ -703,8 +703,8 @@ const getStyles = (theme) => StyleSheet.create({
   },
   featureText: {
     fontSize: 10,
-    color: '#8B4513',
-    backgroundColor: '#F5E6A3',
+    color: theme.colors.textSecondary,
+    backgroundColor: theme.colors.background,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -713,7 +713,7 @@ const getStyles = (theme) => StyleSheet.create({
   // Notification Modal Styles
   notificationModalContainer: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: theme.colors.background,
   },
   notificationModalHeader: {
     flexDirection: 'row',
@@ -721,9 +721,9 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     paddingTop: 60,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0E5B8',
+    borderBottomColor: theme.colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -738,26 +738,26 @@ const getStyles = (theme) => StyleSheet.create({
   notificationModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: theme.colors.text,
   },
   closeButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   notificationActions: {
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 15,
     gap: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0E5B8',
+    borderBottomColor: theme.colors.border,
   },
   markAllReadButton: {
     flex: 1,
@@ -780,27 +780,27 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: '600',
   },
   markAllReadButtonDisabled: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: theme.colors.primaryLight,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   markAllReadTextDisabled: {
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
   },
   settingsButton: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
     gap: 8,
   },
   settingsButtonText: {
-    color: '#D4AF37',
+    color: theme.colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -811,7 +811,7 @@ const getStyles = (theme) => StyleSheet.create({
   notificationItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
@@ -820,13 +820,13 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#F0E5B8',
+    borderColor: theme.colors.border,
   },
   unreadNotification: {
-    backgroundColor: '#FFFEF7',
-    borderColor: '#D4AF37',
+    backgroundColor: theme.colors.background,
+    borderColor: theme.colors.primary,
     borderLeftWidth: 4,
-    borderLeftColor: '#D4AF37',
+    borderLeftColor: theme.colors.primary,
   },
   notificationIcon: {
     width: 40,
@@ -848,18 +848,18 @@ const getStyles = (theme) => StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: theme.colors.text,
     flex: 1,
     marginRight: 8,
   },
   notificationTime: {
     fontSize: 12,
-    color: '#8B4513',
+    color: theme.colors.textSecondary,
     fontWeight: '500',
   },
   notificationMessage: {
     fontSize: 14,
-    color: '#5D4E37',
+    color: theme.colors.textLight,
     lineHeight: 20,
     marginTop: 2,
   },

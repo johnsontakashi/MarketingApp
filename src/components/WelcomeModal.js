@@ -109,13 +109,13 @@ const WelcomeModal = ({ visible, onClose, userName, isAdmin = false }) => {
       >
         {/* Background Sparkles */}
         <Animated.View style={[styles.sparkle, styles.sparkle1, { opacity: sparkleOpacity }]}>
-          <Ionicons name="star" size={12} color="#D4AF37" />
+          <Ionicons name="star" size={12} color="#98E4D6" />
         </Animated.View>
         <Animated.View style={[styles.sparkle, styles.sparkle2, { opacity: sparkleOpacity }]}>
           <Ionicons name="diamond" size={10} color="#FFD700" />
         </Animated.View>
         <Animated.View style={[styles.sparkle, styles.sparkle3, { opacity: sparkleOpacity }]}>
-          <Ionicons name="star" size={8} color="#B8860B" />
+          <Ionicons name="star" size={8} color="#5CBAA6" />
         </Animated.View>
         <Animated.View style={[styles.sparkle, styles.sparkle4, { opacity: sparkleOpacity }]}>
           <Ionicons name="diamond-outline" size={14} color="#DAA520" />
@@ -249,14 +249,14 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     elevation: 25,
-    shadowColor: '#D4AF37',
+    shadowColor: '#98E4D6',
     shadowOffset: { width: 0, height: 15 },
     shadowOpacity: 0.4,
     shadowRadius: 25,
   },
   goldenBorder: {
     borderWidth: 3,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     borderRadius: 21,
     backgroundColor: '#FFFFFF',
     margin: 3,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 30,
     paddingBottom: 20,
-    backgroundColor: 'linear-gradient(135deg, #FFF8E7 0%, #F5E6A3 100%)',
+    backgroundColor: '#F0FDFA',
     position: 'relative',
   },
   iconContainer: {
@@ -275,12 +275,12 @@ const styles = StyleSheet.create({
   iconBackground: {
     width: 80,
     height: 80,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
-    shadowColor: '#D4AF37',
+    shadowColor: '#98E4D6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -297,14 +297,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
     marginBottom: 5,
   },
   brandName: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
     textShadowColor: 'rgba(212, 175, 55, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   successMessage: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   continueButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     paddingVertical: 16,
     paddingHorizontal: 30,
     borderRadius: 16,
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 6,
-    shadowColor: '#D4AF37',
+    shadowColor: '#98E4D6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

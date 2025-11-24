@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginTop: 10,
   },
   modalDescription: {
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   warningText: {
     marginLeft: 10,
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   toggleContainer: {
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     flex: 1,
   },
   toggle: {

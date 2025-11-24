@@ -269,7 +269,7 @@ export default function ProductManagementScreen({ navigation }) {
           style={styles.actionButton}
           onPress={() => handleProductAction('view', product)}
         >
-          <Ionicons name="eye" size={18} color="#D4AF37" />
+          <Ionicons name="eye" size={18} color={currentTheme.colors.primary} />
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -330,7 +330,7 @@ export default function ProductManagementScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color={currentTheme.colors.primary} />
         <Text style={styles.loadingText}>Loading products...</Text>
       </View>
     );
@@ -415,7 +415,7 @@ export default function ProductManagementScreen({ navigation }) {
                 activeOpacity={0.7}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -488,7 +488,7 @@ export default function ProductManagementScreen({ navigation }) {
               activeOpacity={0.7}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="close" size={24} color="#D4AF37" />
+              <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
             </TouchableOpacity>
           </View>
           
@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeCategoryButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   categoryButtonText: {
     color: '#9CA3AF',
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   addButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   productPrice: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -900,7 +900,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   selectedCategoryButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   categorySelectText: {
     color: '#9CA3AF',
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   saveButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

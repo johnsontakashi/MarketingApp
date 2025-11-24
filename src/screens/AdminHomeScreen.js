@@ -323,7 +323,7 @@ export default function AdminHomeScreen({ navigation }) {
               onPress={handleNotificationPress}
               activeOpacity={0.7}
             >
-              <Ionicons name="notifications" size={24} color="#D4AF37" />
+              <Ionicons name="notifications" size={24} color={currentTheme.colors.primary} />
               {unreadChatCount > 0 && (
                 <View style={styles.notificationBadge}>
                   <Text style={styles.badgeText}>{unreadChatCount}</Text>
@@ -335,7 +335,7 @@ export default function AdminHomeScreen({ navigation }) {
               onPress={() => handleNavigation('Settings', 'Admin Settings')}
               activeOpacity={0.7}
             >
-              <Ionicons name="settings" size={24} color="#D4AF37" />
+              <Ionicons name="settings" size={24} color={currentTheme.colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -372,7 +372,7 @@ export default function AdminHomeScreen({ navigation }) {
               value={`$${dashboardData.totalRevenue.toLocaleString()}`}
               subtext={`$${dashboardData.monthlyRevenue.toLocaleString()} this month`}
               icon="trending-up"
-              color="#D4AF37"
+              color={currentTheme.colors.primary}
               onPress={() => handleNavigation('FinancialDashboard', 'Financial Dashboard')}
             />
             <AdminCard
@@ -507,7 +507,7 @@ export default function AdminHomeScreen({ navigation }) {
                 onPress={markAllAsRead}
                 activeOpacity={0.7}
               >
-                <Ionicons name="checkmark-done" size={20} color="#D4AF37" />
+                <Ionicons name="checkmark-done" size={20} color={currentTheme.colors.primary} />
                 <Text style={styles.markAllReadText}>Mark All Read</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -515,7 +515,7 @@ export default function AdminHomeScreen({ navigation }) {
                 onPress={() => setShowNotificationModal(false)}
                 activeOpacity={0.7}
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   headerSubtitle: {
     fontSize: 14,
@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
   notificationModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   notificationModalActions: {
     flexDirection: 'row',
@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   markAllReadText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 6,

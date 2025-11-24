@@ -358,7 +358,7 @@ export default function DeviceManagementScreen({ navigation }) {
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons name="eye" size={18} color="#D4AF37" />
+          <Ionicons name="eye" size={18} color={currentTheme.colors.primary} />
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -400,7 +400,7 @@ export default function DeviceManagementScreen({ navigation }) {
       
       {device.kiosk_mode && (
         <View style={styles.kioskBadge}>
-          <Ionicons name="tv" size={12} color="#D4AF37" />
+          <Ionicons name="tv" size={12} color={currentTheme.colors.primary} />
           <Text style={styles.kioskText}>KIOSK MODE</Text>
         </View>
       )}
@@ -421,7 +421,7 @@ export default function DeviceManagementScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color={currentTheme.colors.primary} />
         <Text style={styles.loadingText}>Loading devices...</Text>
       </View>
     );
@@ -505,7 +505,7 @@ export default function DeviceManagementScreen({ navigation }) {
                 hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
                 testID="deviceDetailsCloseButton"
               >
-                <Ionicons name="close" size={28} color="#D4AF37" />
+                <Ionicons name="close" size={28} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -572,7 +572,7 @@ export default function DeviceManagementScreen({ navigation }) {
                   <Switch
                     value={selectedDevice.kiosk_mode}
                     onValueChange={() => handleDeviceAction('toggle_kiosk', selectedDevice)}
-                    trackColor={{ false: '#3d3d3d', true: '#D4AF37' }}
+                    trackColor={{ false: '#3d3d3d', true: '#98E4D6' }}
                     thumbColor={selectedDevice.kiosk_mode ? '#1a1a1a' : '#9CA3AF'}
                   />
                 </View>
@@ -652,7 +652,7 @@ export default function DeviceManagementScreen({ navigation }) {
                 style={styles.messageModalClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -719,7 +719,7 @@ export default function DeviceManagementScreen({ navigation }) {
                 style={styles.chatModalClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color="#D4AF37" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.primary} />
               </TouchableOpacity>
             </View>
             
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeFilterButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   filterButtonText: {
     color: '#9CA3AF',
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deviceId: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 2,
@@ -953,13 +953,13 @@ const styles = StyleSheet.create({
     right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D4AF37' + '20',
+    backgroundColor: '#98E4D620',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
   },
   kioskText: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 10,
     fontWeight: 'bold',
     marginLeft: 2,
@@ -1021,7 +1021,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -1132,7 +1132,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   messageModalLabel: {
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -1172,7 +1172,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6B7280',
   },
   messageModalSendButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
   },
   messageModalCancelText: {
     color: '#FFFFFF',
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   adminMessage: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     alignSelf: 'flex-end',
   },
   userMessage: {
@@ -1283,7 +1283,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   chatSendButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     width: 40,
     height: 40,
     borderRadius: 20,

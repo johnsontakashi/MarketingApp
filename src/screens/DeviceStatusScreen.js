@@ -116,7 +116,7 @@ export default function DeviceStatusScreen({ navigation }) {
       case 'secure': return '#10B981';
       case 'locked': return '#F59E0B';
       case 'violated': return '#EF4444';
-      default: return '#8B4513';
+      default: return '#2D766E';
     }
   };
 
@@ -275,17 +275,17 @@ export default function DeviceStatusScreen({ navigation }) {
         <Text style={styles.sectionTitle}>⚡ Quick Actions</Text>
         <View style={styles.actionsContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={handleViewWallet}>
-            <Ionicons name="wallet" size={20} color="#D4AF37" />
+            <Ionicons name="wallet" size={20} color={currentTheme.colors.primary} />
             <Text style={styles.actionText}>View Wallet</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.actionButton} onPress={handleViewOrders}>
-            <Ionicons name="cube" size={20} color="#D4AF37" />
+            <Ionicons name="cube" size={20} color={currentTheme.colors.primary} />
             <Text style={styles.actionText}>My Orders</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.actionButton} onPress={handleContactSupport}>
-            <Ionicons name="help-circle" size={20} color="#D4AF37" />
+            <Ionicons name="help-circle" size={20} color={currentTheme.colors.primary} />
             <Text style={styles.actionText}>Get Help</Text>
           </TouchableOpacity>
           
@@ -340,7 +340,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowWalletModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -433,7 +433,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowOrdersModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -544,7 +544,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 style={styles.modalCloseButton}
                 onPress={() => setShowHelpModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -559,7 +559,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 
                 <TouchableOpacity style={styles.helpContactItem}>
                   <View style={styles.helpContactIcon}>
-                    <Ionicons name="mail" size={24} color="#D4AF37" />
+                    <Ionicons name="mail" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpContactInfo}>
                     <Text style={styles.helpContactTitle}>Email Support</Text>
@@ -570,7 +570,7 @@ export default function DeviceStatusScreen({ navigation }) {
 
                 <TouchableOpacity style={styles.helpContactItem}>
                   <View style={styles.helpContactIcon}>
-                    <Ionicons name="call" size={24} color="#D4AF37" />
+                    <Ionicons name="call" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpContactInfo}>
                     <Text style={styles.helpContactTitle}>Phone Support</Text>
@@ -581,7 +581,7 @@ export default function DeviceStatusScreen({ navigation }) {
 
                 <TouchableOpacity style={styles.helpContactItem}>
                   <View style={styles.helpContactIcon}>
-                    <Ionicons name="chatbubbles" size={24} color="#D4AF37" />
+                    <Ionicons name="chatbubbles" size={24} color={currentTheme.colors.primary} />
                   </View>
                   <View style={styles.helpContactInfo}>
                     <Text style={styles.helpContactTitle}>Live Chat</Text>
@@ -644,7 +644,7 @@ export default function DeviceStatusScreen({ navigation }) {
             {/* Header */}
             <View style={styles.addFundsHeader}>
               <View style={styles.addFundsIconContainer}>
-                <Ionicons name="wallet" size={32} color="#D4AF37" />
+                <Ionicons name="wallet" size={32} color={currentTheme.colors.primary} />
               </View>
               <Text style={styles.addFundsTitle}>💰 Add Funds to Wallet</Text>
               <Text style={styles.addFundsSubtitle}>
@@ -654,7 +654,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 style={styles.addFundsCloseButton}
                 onPress={() => setShowAddFundsModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -675,7 +675,7 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.paymentMethodDescription}>Instant deposit via secure payment gateway</Text>
                   <Text style={styles.paymentMethodFee}>Fee: 2.5% + $0.30</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -693,7 +693,7 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.paymentMethodDescription}>Direct bank transfer (ACH) - 1-3 business days</Text>
                   <Text style={styles.paymentMethodFee}>Fee: $1.00</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -711,7 +711,7 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.paymentMethodDescription}>Bitcoin, Ethereum & other cryptocurrencies</Text>
                   <Text style={styles.paymentMethodFee}>Fee: Network fees apply</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -756,7 +756,7 @@ export default function DeviceStatusScreen({ navigation }) {
                 style={styles.transferCloseButton}
                 onPress={() => setShowTransferModal(false)}
               >
-                <Ionicons name="close" size={24} color="#8B4513" />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -777,7 +777,7 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.transferMethodDescription}>Transfer to another TLB Diamond user by ID</Text>
                   <Text style={styles.transferMethodFee}>Fee: Free</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -795,7 +795,7 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.transferMethodDescription}>Transfer to external cryptocurrency wallet</Text>
                   <Text style={styles.transferMethodFee}>Fee: 0.5% + Gas fees</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -813,13 +813,13 @@ export default function DeviceStatusScreen({ navigation }) {
                   <Text style={styles.transferMethodDescription}>Send with personal message and gift wrapping</Text>
                   <Text style={styles.transferMethodFee}>Fee: Free</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#8B4513" />
+                <Ionicons name="chevron-forward" size={20} color={currentTheme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
             {/* Current Balance */}
             <View style={styles.balanceInfo}>
-              <Ionicons name="diamond" size={20} color="#D4AF37" />
+              <Ionicons name="diamond" size={20} color={currentTheme.colors.primary} />
               <Text style={styles.balanceText}>
                 Available Balance: 💎 2,485.75 TLB
               </Text>
@@ -926,12 +926,12 @@ const styles = StyleSheet.create({
   },
   statusHeader: {
     flexDirection: 'row',
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 16,
     padding: 20,
     margin: 20,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   statusIcon: {
     width: 60,
@@ -947,12 +947,12 @@ const styles = StyleSheet.create({
   statusTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 5,
   },
   statusSubtitle: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 8,
   },
   complianceScore: {
@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   scoreValue: {
     fontSize: 16,
@@ -974,26 +974,26 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 15,
   },
   checksContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   checkItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   checkName: {
     flex: 1,
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     marginLeft: 12,
   },
   checkStatus: {
@@ -1011,7 +1011,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   lockInfoRow: {
     flexDirection: 'row',
@@ -1020,12 +1020,12 @@ const styles = StyleSheet.create({
   },
   lockInfoLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   lockInfoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   paymentProgress: {
     marginTop: 10,
@@ -1033,23 +1033,23 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 4,
     marginBottom: 5,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -1063,7 +1063,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     minWidth: '48%',
   },
   emergencyButton: {
@@ -1071,7 +1071,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 14,
-    color: '#2C1810',
+    color: '#134E48',
     marginLeft: 8,
     fontWeight: '500',
   },
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   deviceInfoRow: {
     flexDirection: 'row',
@@ -1092,19 +1092,19 @@ const styles = StyleSheet.create({
   },
   deviceInfoLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   deviceInfoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   simMonitoringCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   simInfoRow: {
     flexDirection: 'row',
@@ -1113,11 +1113,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5E6A3',
+    borderBottomColor: '#F0FDFA',
   },
   simInfoLabel: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     fontWeight: '500',
   },
   simInfoValue: {
@@ -1130,7 +1130,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: '#F5E6A3',
+    borderTopColor: '#F0FDFA',
   },
   testButton: {
     borderColor: '#FF6B35',
@@ -1160,7 +1160,7 @@ const styles = StyleSheet.create({
     maxHeight: '85%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1168,14 +1168,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     letterSpacing: 0.5,
   },
   modalCloseButton: {
@@ -1201,28 +1201,28 @@ const styles = StyleSheet.create({
 
   // Wallet Modal Styles
   walletBalanceCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
     marginBottom: 24,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   balanceLabel: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 8,
   },
   balanceAmount: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   balanceUSD: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   walletSection: {
     marginBottom: 24,
@@ -1230,7 +1230,7 @@ const styles = StyleSheet.create({
   walletSectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   transactionItem: {
@@ -1252,7 +1252,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -1263,17 +1263,17 @@ const styles = StyleSheet.create({
   transactionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   transactionDate: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   transactionAmount: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
   },
   walletActions: {
     flexDirection: 'row',
@@ -1282,14 +1282,14 @@ const styles = StyleSheet.create({
   },
   walletActionButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
   },
   walletActionText: {
     color: '#FFFFFF',
@@ -1307,17 +1307,17 @@ const styles = StyleSheet.create({
 
   // Orders Modal Styles
   orderSummaryCard: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   orderSummaryTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   orderSummaryRow: {
@@ -1327,12 +1327,12 @@ const styles = StyleSheet.create({
   },
   orderSummaryLabel: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   orderSummaryValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   ordersSection: {
     marginBottom: 24,
@@ -1340,7 +1340,7 @@ const styles = StyleSheet.create({
   ordersSectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   orderItem: {
@@ -1365,7 +1365,7 @@ const styles = StyleSheet.create({
   orderNumber: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
   },
   orderStatus: {
     paddingHorizontal: 8,
@@ -1385,18 +1385,18 @@ const styles = StyleSheet.create({
   },
   orderProduct: {
     fontSize: 15,
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   orderDate: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 4,
   },
   orderTotal: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#D4AF37',
+    color: '#98E4D6',
   },
   orderActions: {
     flexDirection: 'row',
@@ -1406,14 +1406,14 @@ const styles = StyleSheet.create({
   },
   orderActionButton: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#98E4D6',
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#B8860B',
+    borderColor: '#5CBAA6',
   },
   orderActionText: {
     color: '#FFFFFF',
@@ -1429,7 +1429,7 @@ const styles = StyleSheet.create({
   helpSectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 16,
   },
   helpContactItem: {
@@ -1451,7 +1451,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -1462,18 +1462,18 @@ const styles = StyleSheet.create({
   helpContactTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 2,
   },
   helpContactDetail: {
     fontSize: 15,
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontWeight: '500',
     marginBottom: 2,
   },
   helpContactTime: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
   },
   faqItem: {
     backgroundColor: '#FFFFFF',
@@ -1486,12 +1486,12 @@ const styles = StyleSheet.create({
   faqQuestion: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
   },
   faqAnswer: {
     fontSize: 15,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 22,
   },
   scrollContentContainer: {
@@ -1504,12 +1504,12 @@ const styles = StyleSheet.create({
   emergencySectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   emergencyDescription: {
     fontSize: 15,
-    color: '#8B4513',
+    color: '#2D766E',
     lineHeight: 22,
     marginBottom: 20,
     paddingHorizontal: 4,
@@ -1571,23 +1571,23 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   addFundsTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
   addFundsSubtitle: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -1598,11 +1598,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   paymentMethodsContainer: {
     paddingHorizontal: 24,
@@ -1637,18 +1637,18 @@ const styles = StyleSheet.create({
   paymentMethodTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   paymentMethodDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 4,
     lineHeight: 18,
   },
   paymentMethodFee: {
     fontSize: 12,
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontWeight: '600',
   },
   securityNote: {
@@ -1673,15 +1673,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     alignItems: 'center',
   },
   addFundsCancelText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
   },
   // Transfer Modal Styles
   transferOverlay: {
@@ -1724,13 +1724,13 @@ const styles = StyleSheet.create({
   transferTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
   transferSubtitle: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -1741,11 +1741,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
   },
   transferMethodsContainer: {
     paddingHorizontal: 24,
@@ -1780,18 +1780,18 @@ const styles = StyleSheet.create({
   transferMethodTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 4,
   },
   transferMethodDescription: {
     fontSize: 14,
-    color: '#8B4513',
+    color: '#2D766E',
     marginBottom: 4,
     lineHeight: 18,
   },
   transferMethodFee: {
     fontSize: 12,
-    color: '#D4AF37',
+    color: '#98E4D6',
     fontWeight: '600',
   },
   balanceInfo: {
@@ -1802,7 +1802,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     marginBottom: 12,
   },
   balanceText: {
@@ -1834,15 +1834,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     alignItems: 'center',
   },
   transferCancelText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
   },
   // Emergency Unlock Modal Styles
   emergencyModalOverlay: {
@@ -1884,13 +1884,13 @@ const styles = StyleSheet.create({
   emergencyModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 8,
     textAlign: 'center',
   },
   emergencyModalSubtitle: {
     fontSize: 16,
-    color: '#8B4513',
+    color: '#2D766E',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -1924,7 +1924,7 @@ const styles = StyleSheet.create({
   emergencyContactTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2C1810',
+    color: '#134E48',
     marginBottom: 12,
   },
   emergencyContactItem: {
@@ -1962,16 +1962,16 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emergencyModalCancelButton: {
-    backgroundColor: '#F5E6A3',
+    backgroundColor: '#F0FDFA',
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: '#98E4D6',
     alignItems: 'center',
   },
   emergencyModalCancelText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#8B4513',
+    color: '#2D766E',
   },
 });
