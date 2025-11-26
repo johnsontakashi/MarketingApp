@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeCategoryButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   categoryButtonText: {
     color: '#9CA3AF',
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   addButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   productPrice: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -900,7 +900,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   selectedCategoryButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   categorySelectText: {
     color: '#9CA3AF',
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   saveButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

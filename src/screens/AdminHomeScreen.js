@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   headerSubtitle: {
     fontSize: 14,
@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
   notificationModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   notificationModalActions: {
     flexDirection: 'row',
@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   markAllReadText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 6,

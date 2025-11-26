@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeFilterButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   filterButtonText: {
     color: '#9CA3AF',
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   adminBadge: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#3d3d3d',
   },
   doneButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

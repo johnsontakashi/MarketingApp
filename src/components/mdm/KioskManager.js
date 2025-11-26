@@ -381,12 +381,12 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginTop: 10,
   },
   modalDescription: {
     fontSize: 16,
-    color: '#5D4E37',
+    color: '#1F6B75',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 20,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   warningText: {
     marginLeft: 10,
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   toggleContainer: {
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 1,
   },
   toggle: {

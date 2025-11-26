@@ -1022,7 +1022,7 @@ const getStyles = (theme) => StyleSheet.create({
   networkTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   networkStats: {
@@ -1036,15 +1036,15 @@ const getStyles = (theme) => StyleSheet.create({
   networkNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   networkLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 2,
   },
   shareButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     padding: 12,
     flexDirection: 'row',
@@ -1063,7 +1063,7 @@ const getStyles = (theme) => StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   bonusCard: {
@@ -1072,7 +1072,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   bonusHeader: {
     flexDirection: 'row',
@@ -1089,19 +1089,19 @@ const getStyles = (theme) => StyleSheet.create({
   bonusTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   bonusAmount: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   bonusExpiry: {
     alignItems: 'flex-end',
   },
   expiryText: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   expiryTime: {
     fontSize: 12,
@@ -1110,12 +1110,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   bonusDescription: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 10,
     lineHeight: 18,
   },
   giverInfo: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
@@ -1123,11 +1123,11 @@ const getStyles = (theme) => StyleSheet.create({
   giverText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   messageText: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontStyle: 'italic',
     marginTop: 2,
   },
@@ -1136,7 +1136,7 @@ const getStyles = (theme) => StyleSheet.create({
     justifyContent: 'space-between',
   },
   claimButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -1152,7 +1152,7 @@ const getStyles = (theme) => StyleSheet.create({
     opacity: 0.6,
   },
   forwardButton: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -1166,7 +1166,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     marginBottom: 15,
   },
   generationRow: {
@@ -1175,7 +1175,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0FDFA',
+    borderBottomColor: '#F0FCFD',
   },
   generationInfo: {
     flex: 1,
@@ -1183,29 +1183,29 @@ const getStyles = (theme) => StyleSheet.create({
   generationLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   generationCount: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   generationEarnings: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   viewTreeButton: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   viewTreeText: {
-    color: '#134E48',
+    color: '#0A4B52',
     fontWeight: '600',
     marginRight: 5,
   },
@@ -1222,17 +1222,17 @@ const getStyles = (theme) => StyleSheet.create({
     width: '48%',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   statNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
     marginTop: 2,
   },
@@ -1255,7 +1255,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '92%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   treeModalHeader: {
     flexDirection: 'row',
@@ -1263,14 +1263,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   treeModalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     letterSpacing: 0.5,
   },
   treeModalCloseButton: {
@@ -1303,12 +1303,12 @@ const getStyles = (theme) => StyleSheet.create({
   quickStatNumber: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 4,
   },
   quickStatLabel: {
     fontSize: 11,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
   },
   treeModalContent: {
@@ -1320,7 +1320,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   treeDescription: {
     fontSize: 16,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -1331,12 +1331,12 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1.5,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: 'rgba(212, 175, 55, 0.2)',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
@@ -1349,12 +1349,12 @@ const getStyles = (theme) => StyleSheet.create({
   generationTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   generationSubtitle: {
     fontSize: 13,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   generationMembers: {
@@ -1365,12 +1365,12 @@ const getStyles = (theme) => StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   avatarEmoji: {
     fontSize: 20,
@@ -1402,7 +1402,7 @@ const getStyles = (theme) => StyleSheet.create({
   referralName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -1433,11 +1433,11 @@ const getStyles = (theme) => StyleSheet.create({
   referralEarnings: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   referralJoined: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   referralActivity: {
     fontSize: 12,
@@ -1463,16 +1463,16 @@ const getStyles = (theme) => StyleSheet.create({
   },
   treeSummarySection: {
     marginTop: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   treeSummaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -1488,17 +1488,17 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: '31%',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   treeSummaryNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 4,
   },
   treeSummaryLabel: {
     fontSize: 11,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
   },
   commissionInfo: {
@@ -1506,12 +1506,12 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   commissionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1521,7 +1521,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   commissionText: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   treeModalActions: {
     flexDirection: 'row',
@@ -1529,10 +1529,10 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
   },
   treeActionButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -1543,7 +1543,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 5,
   },
   exportButton: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
   },
   treeActionText: {
     color: '#FFFFFF',
@@ -1567,18 +1567,18 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     width: '30%',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     marginBottom: 8,
   },
   analyticsGeneration: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 4,
   },
   analyticsMembers: {
     fontSize: 11,
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 2,
   },
   analyticsEarnings: {
@@ -1589,19 +1589,19 @@ const getStyles = (theme) => StyleSheet.create({
   },
   analyticsRate: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   performanceStats: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   performanceTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1612,13 +1612,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   performanceLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   performanceValue: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
 
   // Member Detail Modal Styles
@@ -1641,7 +1641,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     overflow: 'hidden',
   },
   memberModalHeader: {
@@ -1650,14 +1650,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   memberModalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   memberModalCloseButton: {
     width: 36,
@@ -1684,7 +1684,7 @@ const getStyles = (theme) => StyleSheet.create({
   memberName: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
   },
   memberStatusBadge: {
@@ -1702,24 +1702,24 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
   },
   memberStatCard: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   memberStatNumber: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   memberStatLabel: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
   },
   memberDetails: {
@@ -1734,14 +1734,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   memberDetailLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginLeft: 8,
     flex: 1,
   },
   memberDetailValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   memberActions: {
     flexDirection: 'row',
@@ -1749,14 +1749,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   memberActionButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 12,
     paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
     marginHorizontal: 6,
   },
   giftActionButton: {

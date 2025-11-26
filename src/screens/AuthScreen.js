@@ -259,9 +259,9 @@ const getStyles = (colors) => StyleSheet.create({
     textTransform: 'uppercase',
   },
   infoContainer: {
-    backgroundColor: colors.primary === '#98E4D6' ? 'rgba(152, 228, 214, 0.1)' : 
-                     colors.primary === '#87D7C6' ? 'rgba(135, 215, 198, 0.1)' : 
-                     'rgba(152, 228, 214, 0.1)', // fallback to adult mint
+    backgroundColor: colors.primary === '#05A5B5' ? 'rgba(5, 165, 181, 0.1)' : 
+                     colors.primary === '#42C4D6' ? 'rgba(66, 196, 214, 0.1)' : 
+                     'rgba(5, 165, 181, 0.1)', // fallback to adult teal
     padding: 20,
     borderRadius: 16,
     borderLeftWidth: 6,

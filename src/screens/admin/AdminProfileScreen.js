@@ -218,7 +218,7 @@ export default function AdminProfileScreen({ navigation, onLogout }) {
         <Switch
           value={value}
           onValueChange={onToggle}
-          trackColor={{ false: '#3d3d3d', true: '#98E4D6' }}
+          trackColor={{ false: '#3d3d3d', true: '#05A5B5' }}
           thumbColor={value ? '#1a1a1a' : '#9CA3AF'}
         />
       ) : (
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -622,10 +622,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   adminBadgeText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 8,
     fontWeight: 'bold',
     marginLeft: 2,
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   profileRole: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -781,7 +781,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   formSectionTitle: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   saveButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   deviceLimitModalSaveButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     marginLeft: 10,
   },
   deviceLimitModalCancelText: {

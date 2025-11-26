@@ -178,19 +178,19 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderBottomWidth: 2,
-    borderBottomColor: '#98E4D6',
+    borderBottomColor: '#05A5B5',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginTop: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 5,
     textAlign: 'center',
   },
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   statusCard: {
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   statusRow: {
     flexDirection: 'row',
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   statusLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   statusValue: {
     fontSize: 14,
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   demoButtonText: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginLeft: 10,
     fontWeight: '500',
   },
@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   statusButtonText: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginLeft: 10,
     fontWeight: '500',
   },
