@@ -899,7 +899,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
           orderId,
           productName,
           status: 'Unknown',
-          statusColor: '#2D766E',
+          statusColor: '#1F6B75',
           statusIcon: 'help-circle',
           steps: [],
           estimatedDelivery: 'Information being updated',
@@ -937,7 +937,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
         statusDescription = 'This order has been cancelled and refunded.';
         break;
       default:
-        statusColor = '#2D766E';
+        statusColor = '#1F6B75';
         statusIcon = 'information-circle';
         statusDescription = 'Order status information.';
     }
@@ -1264,7 +1264,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
               <Ionicons 
                 name={item.icon} 
                 size={20} 
-                color={item.action === 'signOut' ? '#EF4444' : '#98E4D6'} 
+                color={item.action === 'signOut' ? '#EF4444' : '#05A5B5'} 
               />
             </View>
             <View style={styles.menuContent}>
@@ -3013,7 +3013,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                       <Text style={[
                         styles.trackProgressStepTitle,
                         { 
-                          color: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#2D766E',
+                          color: step.completed ? '#10B981' : step.current ? trackingData.statusColor : '#1F6B75',
                           fontWeight: step.current ? 'bold' : '500'
                         }
                       ]}>
@@ -3907,7 +3907,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -3919,12 +3919,12 @@ const getStyles = (theme) => StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 5,
   },
   profilePhone: {
@@ -3948,7 +3948,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -3958,7 +3958,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     justifyContent: 'space-around',
   },
   statItem: {
@@ -3967,12 +3967,12 @@ const getStyles = (theme) => StyleSheet.create({
   statNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 2,
   },
   statLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   menuContainer: {
     paddingHorizontal: 20,
@@ -3985,7 +3985,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   signOutItem: {
     borderColor: '#EF4444',
@@ -3994,7 +3994,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -4008,7 +4008,7 @@ const getStyles = (theme) => StyleSheet.create({
   menuTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 2,
   },
   signOutText: {
@@ -4016,7 +4016,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   menuSubtitle: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   versionContainer: {
     alignItems: 'center',
@@ -4024,12 +4024,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   versionText: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '600',
   },
   buildText: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 2,
   },
   modalOverlay: {
@@ -4050,7 +4050,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '85%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -4058,14 +4058,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     letterSpacing: 0.5,
   },
   modalContent: {
@@ -4101,18 +4101,18 @@ const getStyles = (theme) => StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
   },
   textInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
   },
   multilineInput: {
     height: 80,
@@ -4124,26 +4124,26 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
   },
   cancelButton: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#2D766E',
+    borderColor: '#1F6B75',
     borderRadius: 8,
     paddingVertical: 12,
     marginRight: 10,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#2D766E',
+    color: '#1F6B75',
     fontSize: 16,
     fontWeight: '600',
   },
   saveButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingVertical: 12,
     marginLeft: 10,
@@ -4156,7 +4156,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   settingsDescription: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 20,
     fontWeight: '600',
   },
@@ -4166,11 +4166,11 @@ const getStyles = (theme) => StyleSheet.create({
   categoryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 10,
     paddingBottom: 5,
     borderBottomWidth: 1,
-    borderBottomColor: '#98E4D6',
+    borderBottomColor: '#05A5B5',
   },
   settingItem: {
     flexDirection: 'row',
@@ -4181,7 +4181,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     marginBottom: 5,
     borderWidth: 1,
-    borderColor: '#F0FDFA',
+    borderColor: '#F0FCFD',
   },
   settingStatus: {
     fontSize: 16,
@@ -4194,20 +4194,20 @@ const getStyles = (theme) => StyleSheet.create({
   settingName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   settingValue: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 2,
   },
   settingsSummary: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 20,
     marginTop: 15,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -4217,7 +4217,7 @@ const getStyles = (theme) => StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -4234,17 +4234,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   summaryNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 5,
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -4262,7 +4262,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   summaryIcon: {
     fontSize: 20,
@@ -4273,12 +4273,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   summaryInfoLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   summaryInfoValue: {
     fontSize: 14,
-    color: '#134E48',
+    color: '#0A4B52',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -4291,7 +4291,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginTop: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   summaryTipIcon: {
     fontSize: 16,
@@ -4301,7 +4301,7 @@ const getStyles = (theme) => StyleSheet.create({
   summaryTip: {
     flex: 1,
     fontSize: 13,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontStyle: 'italic',
     lineHeight: 18,
     flexWrap: 'wrap',
@@ -4315,12 +4315,12 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
     gap: 10,
   },
   settingsActionButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
@@ -4339,7 +4339,7 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: '600',
   },
   closeButton: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
   },
   closeButtonText: {
     color: '#FFFFFF',
@@ -4348,7 +4348,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   helpDescription: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
@@ -4359,11 +4359,11 @@ const getStyles = (theme) => StyleSheet.create({
   helpSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#98E4D6',
+    borderBottomColor: '#05A5B5',
   },
   helpItem: {
     flexDirection: 'row',
@@ -4373,7 +4373,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -4388,7 +4388,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -4399,12 +4399,12 @@ const getStyles = (theme) => StyleSheet.create({
   helpItemTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 3,
   },
   helpItemDescription: {
     fontSize: 13,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 18,
   },
   priorityBadge: {
@@ -4419,17 +4419,17 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: 'bold',
   },
   helpAppInfo: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 20,
     marginTop: 10,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   appInfoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -4443,12 +4443,12 @@ const getStyles = (theme) => StyleSheet.create({
   },
   appInfoLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   appInfoValue: {
     fontSize: 14,
-    color: '#134E48',
+    color: '#0A4B52',
     fontWeight: '600',
     marginTop: 3,
   },
@@ -4461,12 +4461,12 @@ const getStyles = (theme) => StyleSheet.create({
     marginTop: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   helpTipText: {
     flex: 1,
     fontSize: 13,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontStyle: 'italic',
     lineHeight: 18,
     marginLeft: 10,
@@ -4481,7 +4481,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
     gap: 12,
   },
   liveChatButton: {
@@ -4506,7 +4506,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   ticketButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -4526,18 +4526,18 @@ const getStyles = (theme) => StyleSheet.create({
   },
   notificationDescription: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
   notificationSummary: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   summaryStatsGrid: {
     flexDirection: 'row',
@@ -4551,17 +4551,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     minWidth: 60,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   summaryStatNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 3,
   },
   summaryStatLabel: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '600',
   },
   notificationSection: {
@@ -4570,11 +4570,11 @@ const getStyles = (theme) => StyleSheet.create({
   notificationSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#98E4D6',
+    borderBottomColor: '#05A5B5',
   },
   notificationItem: {
     flexDirection: 'row',
@@ -4584,7 +4584,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -4600,7 +4600,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -4615,12 +4615,12 @@ const getStyles = (theme) => StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   notificationMessage: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 18,
     marginBottom: 6,
   },
@@ -4654,7 +4654,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   settingInfo: {
     flex: 1,
@@ -4662,12 +4662,12 @@ const getStyles = (theme) => StyleSheet.create({
   settingName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 2,
   },
   settingDescription: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 16,
   },
   settingToggle: {
@@ -4691,7 +4691,7 @@ const getStyles = (theme) => StyleSheet.create({
   notificationTipText: {
     flex: 1,
     fontSize: 13,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontStyle: 'italic',
     lineHeight: 18,
     marginLeft: 10,
@@ -4703,7 +4703,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
     gap: 12,
   },
   markReadButton: {
@@ -4728,7 +4728,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   manageButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -4748,18 +4748,18 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentDescription: {
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
   paymentSummary: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   paymentStatsGrid: {
     flexDirection: 'row',
@@ -4773,17 +4773,17 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     minWidth: 80,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   paymentStatNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 3,
   },
   paymentStatLabel: {
     fontSize: 11,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -4793,11 +4793,11 @@ const getStyles = (theme) => StyleSheet.create({
   paymentSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#98E4D6',
+    borderBottomColor: '#05A5B5',
   },
   paymentMethodCard: {
     flexDirection: 'row',
@@ -4828,7 +4828,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -4853,7 +4853,7 @@ const getStyles = (theme) => StyleSheet.create({
   paymentMethodType: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginRight: 8,
   },
   defaultBadge: {
@@ -4869,7 +4869,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentMethodDetails: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 3,
   },
   paymentMethodExtra: {
@@ -4879,7 +4879,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   paymentMethodBalance: {
     fontSize: 14,
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -4926,7 +4926,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   addMethodButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -4938,7 +4938,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 10,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
   },
   addMethodText: {
     color: '#FFFFFF',
@@ -4977,7 +4977,7 @@ const getStyles = (theme) => StyleSheet.create({
   formSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   inputGroup: {
@@ -4986,18 +4986,18 @@ const getStyles = (theme) => StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 8,
   },
   paymentInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
   },
   inputRow: {
     flexDirection: 'row',
@@ -5025,12 +5025,12 @@ const getStyles = (theme) => StyleSheet.create({
     gap: 15,
     paddingTop: 20,
     borderTopWidth: 1,
-    borderTopColor: '#F0FDFA',
+    borderTopColor: '#F0FCFD',
     marginTop: 20,
   },
   cancelPaymentButton: {
     flex: 1,
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
@@ -5042,7 +5042,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   savePaymentButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
@@ -5063,17 +5063,17 @@ const getStyles = (theme) => StyleSheet.create({
   },
   orderDescription: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 20,
     textAlign: 'center',
   },
   orderSummary: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   orderStatsGrid: {
     flexDirection: 'row',
@@ -5088,17 +5088,17 @@ const getStyles = (theme) => StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   orderStatNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   orderStatLabel: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
   },
   orderSection: {
@@ -5107,7 +5107,7 @@ const getStyles = (theme) => StyleSheet.create({
   orderSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   orderCard: {
@@ -5116,7 +5116,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5135,11 +5135,11 @@ const getStyles = (theme) => StyleSheet.create({
   orderId: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   orderDate: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 2,
   },
   orderStatus: {
@@ -5174,20 +5174,20 @@ const getStyles = (theme) => StyleSheet.create({
   orderItemName: {
     flex: 1,
     fontSize: 14,
-    color: '#134E48',
+    color: '#0A4B52',
     marginLeft: 8,
   },
   orderItemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   orderFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#F0FDFA',
+    borderTopColor: '#F0FCFD',
     paddingTop: 12,
     minHeight: 40,
   },
@@ -5198,11 +5198,11 @@ const getStyles = (theme) => StyleSheet.create({
   orderTotal: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   refundedText: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontStyle: 'italic',
     marginTop: 2,
   },
@@ -5213,7 +5213,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexShrink: 0,
   },
   orderActionButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -5232,7 +5232,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F0FDFA',
+    borderTopColor: '#F0FCFD',
     marginTop: 15,
   },
   trackAllButton: {
@@ -5257,7 +5257,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   exportOrdersButton: {
     flex: 1,
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -5288,13 +5288,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#98E4D6',
-    backgroundColor: '#F0FDFA',
+    borderBottomColor: '#05A5B5',
+    backgroundColor: '#F0FCFD',
   },
   trackModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   trackModalCloseButton: {
     padding: 8,
@@ -5317,7 +5317,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5330,12 +5330,12 @@ const getStyles = (theme) => StyleSheet.create({
   trackOrderId: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   trackProductName: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   trackStatusBadge: {
     flexDirection: 'row',
@@ -5357,7 +5357,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5367,7 +5367,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackInfoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   trackInfoRow: {
@@ -5378,13 +5378,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackInfoLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   trackInfoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 1,
     textAlign: 'right',
   },
@@ -5394,7 +5394,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5404,7 +5404,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackProgressTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 16,
   },
   trackProgressStep: {
@@ -5445,7 +5445,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackProgressStepDate: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   trackDeliveryCard: {
     backgroundColor: '#FFFFFF',
@@ -5453,7 +5453,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5463,7 +5463,7 @@ const getStyles = (theme) => StyleSheet.create({
   trackDeliveryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   trackDeliveryRow: {
@@ -5474,13 +5474,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   trackDeliveryLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   trackDeliveryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 1,
     textAlign: 'right',
   },
@@ -5493,7 +5493,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -5525,13 +5525,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#98E4D6',
-    backgroundColor: '#F0FDFA',
+    borderBottomColor: '#05A5B5',
+    backgroundColor: '#F0FCFD',
   },
   detailsModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   detailsModalCloseButton: {
     padding: 8,
@@ -5554,7 +5554,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5567,12 +5567,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailsOrderId: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   detailsOrderDate: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   detailsStatusBadge: {
     flexDirection: 'row',
@@ -5594,7 +5594,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5604,12 +5604,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailsStatusTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
   },
   detailsStatusDescription: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 20,
   },
   detailsItemsCard: {
@@ -5618,7 +5618,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5628,7 +5628,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsItemsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   detailsItemRow: {
@@ -5637,7 +5637,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0FDFA',
+    borderBottomColor: '#F0FCFD',
   },
   detailsItemInfo: {
     flex: 1,
@@ -5645,17 +5645,17 @@ const getStyles = (theme) => StyleSheet.create({
   detailsItemName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   detailsItemQuantity: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   detailsItemPrice: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   detailsTotalRow: {
     flexDirection: 'row',
@@ -5664,17 +5664,17 @@ const getStyles = (theme) => StyleSheet.create({
     paddingTop: 12,
     marginTop: 8,
     borderTopWidth: 2,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
   },
   detailsTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   detailsTotalAmount: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   detailsPaymentCard: {
     backgroundColor: '#FFFFFF',
@@ -5682,7 +5682,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5692,7 +5692,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsPaymentTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   detailsPaymentRow: {
@@ -5703,13 +5703,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailsPaymentLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   detailsPaymentValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 1,
     textAlign: 'right',
   },
@@ -5719,7 +5719,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5729,7 +5729,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailsShippingTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   detailsShippingRow: {
@@ -5740,40 +5740,40 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailsShippingLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   detailsShippingValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 2,
     textAlign: 'right',
   },
   detailsServiceCard: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   detailsServiceTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
   },
   detailsServiceDescription: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 20,
     marginBottom: 8,
   },
   detailsServiceContact: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   detailsActionButtons: {
     flexDirection: 'row',
@@ -5784,7 +5784,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -5795,7 +5795,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   detailsSupportButton: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
   },
   detailsActionButtonText: {
     color: '#FFFFFF',
@@ -5816,13 +5816,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#98E4D6',
-    backgroundColor: '#F0FDFA',
+    borderBottomColor: '#05A5B5',
+    backgroundColor: '#F0FCFD',
   },
   reorderModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   reorderModalCloseButton: {
     padding: 8,
@@ -5842,7 +5842,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5855,17 +5855,17 @@ const getStyles = (theme) => StyleSheet.create({
   reorderOrderNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
   },
   reorderOrderLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   reorderSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   reorderItemsSection: {
@@ -5879,7 +5879,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -5890,7 +5890,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -5901,13 +5901,13 @@ const getStyles = (theme) => StyleSheet.create({
   reorderItemName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 4,
   },
   reorderItemPrice: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   reorderItemCheck: {
     marginLeft: 12,
@@ -5920,7 +5920,7 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5935,28 +5935,28 @@ const getStyles = (theme) => StyleSheet.create({
   },
   reorderPricingLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   reorderPricingValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   reorderPricingTotal: {
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
     marginTop: 8,
     paddingTop: 12,
   },
   reorderPricingTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   reorderPricingTotalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   reorderInfoSection: {
     marginBottom: 30,
@@ -5968,12 +5968,12 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   reorderInfoText: {
     flex: 1,
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 20,
     marginLeft: 12,
   },
@@ -5991,7 +5991,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#2D766E',
+    borderColor: '#1F6B75',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -5999,7 +5999,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   reorderCancelButtonText: {
-    color: '#2D766E',
+    color: '#1F6B75',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -6009,7 +6009,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -6038,13 +6038,13 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#98E4D6',
-    backgroundColor: '#F0FDFA',
+    borderBottomColor: '#05A5B5',
+    backgroundColor: '#F0FCFD',
   },
   reviewModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   reviewModalCloseButton: {
     padding: 8,
@@ -6064,7 +6064,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -6074,19 +6074,19 @@ const getStyles = (theme) => StyleSheet.create({
   reviewOrderNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 8,
     textAlign: 'center',
   },
   reviewOrderItems: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
   },
   reviewSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   reviewRatingSection: {
@@ -6104,7 +6104,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   reviewRatingText: {
     fontSize: 16,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -6116,9 +6116,9 @@ const getStyles = (theme) => StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -6158,7 +6158,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#2D766E',
+    borderColor: '#1F6B75',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -6166,7 +6166,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   reviewCancelButtonText: {
-    color: '#2D766E',
+    color: '#1F6B75',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -6175,7 +6175,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -6186,7 +6186,7 @@ const getStyles = (theme) => StyleSheet.create({
     elevation: 5,
   },
   reviewSubmitButtonDisabled: {
-    backgroundColor: '#5CBAA6',
+    backgroundColor: '#037A86',
     opacity: 0.6,
   },
   reviewSubmitButtonText: {
@@ -6223,7 +6223,7 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -6249,7 +6249,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 16,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   addedToCartSummaryRow: {
     flexDirection: 'row',
@@ -6259,28 +6259,28 @@ const getStyles = (theme) => StyleSheet.create({
   },
   addedToCartSummaryLabel: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   addedToCartSummaryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   addedToCartTotalRow: {
     borderTopWidth: 1,
-    borderTopColor: '#98E4D6',
+    borderTopColor: '#05A5B5',
     marginTop: 8,
     paddingTop: 12,
   },
   addedToCartTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
   },
   addedToCartTotalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   addedToCartItemsSection: {
     backgroundColor: '#F8F9FA',
@@ -6294,7 +6294,7 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartItemsTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   addedToCartItem: {
@@ -6306,12 +6306,12 @@ const getStyles = (theme) => StyleSheet.create({
   addedToCartItemName: {
     flex: 1,
     fontSize: 14,
-    color: '#134E48',
+    color: '#0A4B52',
   },
   addedToCartItemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   addedToCartInfo: {
     flexDirection: 'row',
@@ -6322,12 +6322,12 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   addedToCartInfoText: {
     flex: 1,
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 16,
     marginLeft: 8,
   },
@@ -6342,7 +6342,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -6363,7 +6363,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -6386,7 +6386,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: 'transparent',
   },
   addedToCartCloseText: {
-    color: '#2D766E',
+    color: '#1F6B75',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -6412,7 +6412,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 20,
     elevation: 15,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   exportModalIcon: {
     alignItems: 'center',
@@ -6424,8 +6424,8 @@ const getStyles = (theme) => StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
     borderWidth: 3,
-    borderColor: '#98E4D6',
-    shadowColor: '#98E4D6',
+    borderColor: '#05A5B5',
+    shadowColor: '#05A5B5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -6434,7 +6434,7 @@ const getStyles = (theme) => StyleSheet.create({
   exportModalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 28,
@@ -6445,21 +6445,21 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     borderLeftWidth: 4,
-    borderLeftColor: '#98E4D6',
+    borderLeftColor: '#05A5B5',
   },
   exportModalDescription: {
     fontSize: 15,
-    color: '#134E48',
+    color: '#0A4B52',
     lineHeight: 20,
     textAlign: 'center',
   },
   exportStatsContainer: {
     marginBottom: 25,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   exportStatItem: {
     flexDirection: 'row',
@@ -6471,13 +6471,13 @@ const getStyles = (theme) => StyleSheet.create({
   exportStatLabel: {
     flex: 1,
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
     marginLeft: 12,
   },
   exportStatValue: {
     fontSize: 14,
-    color: '#134E48',
+    color: '#0A4B52',
     fontWeight: 'bold',
   },
   exportFormatsContainer: {
@@ -6486,7 +6486,7 @@ const getStyles = (theme) => StyleSheet.create({
   exportFormatsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -6497,7 +6497,7 @@ const getStyles = (theme) => StyleSheet.create({
     gap: 10,
   },
   exportFormatButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 12,
     padding: 15,
     alignItems: 'center',
@@ -6510,7 +6510,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
   },
   exportFormatText: {
     color: '#FFFFFF',
@@ -6525,7 +6525,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#F0FDFA',
+    borderColor: '#F0FCFD',
   },
   exportOption: {
     flexDirection: 'row',
@@ -6534,7 +6534,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   exportOptionText: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 16,
     marginLeft: 10,
     flex: 1,
@@ -6543,7 +6543,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   exportCancelButton: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -6555,7 +6555,7 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#5D4E37',
+    borderColor: '#1F6B75',
   },
   exportCancelText: {
     color: '#FFFFFF',
@@ -6584,11 +6584,11 @@ const getStyles = (theme) => StyleSheet.create({
     shadowRadius: 25,
     elevation: 25,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     overflow: 'hidden',
   },
   addPaymentModalHeader: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     paddingVertical: 28,
     paddingHorizontal: 24,
     alignItems: 'center',
@@ -6605,8 +6605,8 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#98E4D6',
-    shadowColor: '#98E4D6',
+    borderColor: '#05A5B5',
+    shadowColor: '#05A5B5',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
@@ -6615,14 +6615,14 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentModalTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     textAlign: 'center',
     marginBottom: 10,
     letterSpacing: 0.5,
   },
   addPaymentModalSubtitle: {
     fontSize: 15,
-    color: '#2D766E',
+    color: '#1F6B75',
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 8,
@@ -6660,7 +6660,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentSectionTitle: {
     fontSize: 19,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 20,
     paddingHorizontal: 2,
     letterSpacing: 0.3,
@@ -6679,7 +6679,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentInputLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 10,
     paddingHorizontal: 4,
     letterSpacing: 0.2,
@@ -6706,7 +6706,7 @@ const getStyles = (theme) => StyleSheet.create({
   addPaymentInput: {
     flex: 1,
     fontSize: 16,
-    color: '#134E48',
+    color: '#0A4B52',
     paddingVertical: 16,
     fontWeight: '500',
     letterSpacing: 0.3,
@@ -6793,11 +6793,11 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 14,
     paddingVertical: 18,
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
     shadowColor: 'rgba(212, 175, 55, 0.4)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
@@ -6814,7 +6814,7 @@ const getStyles = (theme) => StyleSheet.create({
   
   // Additional utility styles for better UX
   addPaymentInputWrapperFocused: {
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     borderWidth: 2,
     backgroundColor: '#FFF8E7',
     shadowColor: 'rgba(212, 175, 55, 0.3)',
@@ -6851,7 +6851,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0FDFA',
+    borderBottomColor: '#F0FCFD',
   },
   categoryIcon: {
     fontSize: 20,
@@ -6860,7 +6860,7 @@ const getStyles = (theme) => StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   settingsList: {
     gap: 12,
@@ -6886,7 +6886,7 @@ const getStyles = (theme) => StyleSheet.create({
     color: '#666666',
   },
   settingButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -6900,12 +6900,12 @@ const getStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
   },
   settingToggleText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   fullSettingsNote: {
     flexDirection: 'row',
@@ -6936,7 +6936,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   fullSettingsSaveButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
@@ -7100,7 +7100,7 @@ const getStyles = (theme) => StyleSheet.create({
   emptyNotificationsText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 8,
   },
   emptyNotificationsSubtext: {
@@ -7205,7 +7205,7 @@ const getStyles = (theme) => StyleSheet.create({
   notificationActionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,

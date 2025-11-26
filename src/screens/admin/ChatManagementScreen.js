@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   headerBackText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 4,
-    borderLeftColor: '#98E4D6',
+    borderLeftColor: '#05A5B5',
   },
   chatHeader: {
     flexDirection: 'row',
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   backText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     marginLeft: 8,
   },
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   adminBubble: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderBottomRightRadius: 4,
   },
   messageText: {
@@ -586,6 +586,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   sendButtonActive: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
 });

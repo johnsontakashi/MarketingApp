@@ -572,7 +572,7 @@ export default function DeviceManagementScreen({ navigation }) {
                   <Switch
                     value={selectedDevice.kiosk_mode}
                     onValueChange={() => handleDeviceAction('toggle_kiosk', selectedDevice)}
-                    trackColor={{ false: '#3d3d3d', true: '#98E4D6' }}
+                    trackColor={{ false: '#3d3d3d', true: '#05A5B5' }}
                     thumbColor={selectedDevice.kiosk_mode ? '#1a1a1a' : '#9CA3AF'}
                   />
                 </View>
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeFilterButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   filterButtonText: {
     color: '#9CA3AF',
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deviceId: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 2,
@@ -953,13 +953,13 @@ const styles = StyleSheet.create({
     right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#98E4D620',
+    backgroundColor: '#05A5B520',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
   },
   kioskText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 10,
     fontWeight: 'bold',
     marginLeft: 2,
@@ -1021,7 +1021,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -1132,7 +1132,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   messageModalLabel: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -1172,7 +1172,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6B7280',
   },
   messageModalSendButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   messageModalCancelText: {
     color: '#FFFFFF',
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   adminMessage: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     alignSelf: 'flex-end',
   },
   userMessage: {
@@ -1283,7 +1283,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   chatSendButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     width: 40,
     height: 40,
     borderRadius: 20,

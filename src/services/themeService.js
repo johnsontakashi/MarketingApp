@@ -5,90 +5,90 @@ class ThemeService {
     this.currentTheme = this.getAdultTheme();
   }
 
-  // Adult theme (18+ users) - Light Mint TLB Diamond theme
+  // Adult theme (18+ users) - Teal TLB Diamond theme
   getAdultTheme() {
     return {
       name: 'adult',
       colors: {
-        // Primary colors - Light Mint palette
-        primary: '#98E4D6',        // Light mint
-        primaryDark: '#5CBAA6',    // Darker mint
-        primaryLight: '#B8F2E6',   // Lighter mint
+        // Primary colors - RGB(5, 165, 181) = #05A5B5 Teal palette
+        primary: '#05A5B5',        // Main teal color
+        primaryDark: '#037A86',    // Darker teal
+        primaryLight: '#4BC4D1',   // Lighter teal
         
-        // Background colors - Mint-inspired neutrals
-        background: '#F0FDFA',     // Very light mint background
+        // Background colors - Teal-inspired neutrals
+        background: '#F0FCFD',     // Very light teal background
         surface: '#FFFFFF',        // Pure white surface
-        card: '#F0FDFA',          // Light mint card background
+        card: '#F0FCFD',          // Light teal card background
         
-        // Text colors - Mint-complementary darks
-        text: '#134E48',          // Dark mint-green text
-        textSecondary: '#2D766E',  // Medium mint-green text
-        textLight: '#4B9A90',      // Light mint-green text
+        // Text colors - Teal-complementary darks
+        text: '#0A4B52',          // Dark teal-blue text
+        textSecondary: '#1F6B75',  // Medium teal-blue text
+        textLight: '#358B96',      // Light teal-blue text
         
         // Action colors
-        accent: '#98E4D6',         // Light mint accent
-        success: '#06D6A0',        // Bright mint green
-        warning: '#F9C23C',        // Mint-friendly yellow
-        error: '#EF476F',          // Mint-complementary coral
+        accent: '#05A5B5',         // Teal accent
+        success: '#00B894',        // Bright teal green
+        warning: '#FDCB6E',        // Teal-friendly yellow
+        error: '#E17055',          // Teal-complementary coral
         
         // Border and divider colors
-        border: '#C7F2E9',         // Light mint border
-        divider: '#E6F9F4',        // Very light mint divider
+        border: '#B8E6EA',         // Light teal border
+        divider: '#E1F5F7',        // Very light teal divider
         
         // Tab bar colors
-        tabBarActive: '#98E4D6',    // Light mint active
-        tabBarInactive: '#2D766E',  // Dark mint inactive
-        tabBarBackground: '#F0FDFA', // Light mint background
+        tabBarActive: '#05A5B5',    // Teal active
+        tabBarInactive: '#1F6B75',  // Dark teal inactive
+        tabBarBackground: '#F0FCFD', // Light teal background
         
         // Button colors
-        buttonPrimary: '#98E4D6',   // Light mint button
+        buttonPrimary: '#05A5B5',   // Teal button
         buttonSecondary: '#FFFFFF', // White button
-        buttonText: '#134E48',      // Dark mint text
-        buttonTextSecondary: '#98E4D6', // Light mint text
+        buttonText: '#FFFFFF',      // White text on teal
+        buttonTextSecondary: '#05A5B5', // Teal text
       }
     };
   }
 
-  // Under 18 theme - Soft Mint theme for youth
+  // Under 18 theme - Soft Teal theme for youth
   getUnder18Theme() {
     return {
       name: 'under18',
       colors: {
-        // Primary colors - Softer, more pastel mint tones
-        primary: '#87D7C6',        // Soft mint
-        primaryDark: '#4A9B8E',    // Darker soft mint
-        primaryLight: '#ADE2D5',   // Lighter soft mint
+        // Primary colors - Softer, more pastel teal tones
+        primary: '#42C4D6',        // Soft teal (lighter variation of main teal)
+        primaryDark: '#2A9FB0',    // Darker soft teal
+        primaryLight: '#7DD3E0',   // Lighter soft teal
         
-        // Background colors - Gentle mint backgrounds
-        background: '#F7FCFB',     // Very soft mint background
+        // Background colors - Gentle teal backgrounds
+        background: '#F7FDFE',     // Very soft teal background
         surface: '#FFFFFF',        // Pure white surface
-        card: '#F0F9F7',          // Gentle mint card background
+        card: '#F0FBFC',          // Gentle teal card background
         
-        // Text colors - Gentle mint-complementary colors
-        text: '#1E5A52',          // Dark mint text (softer than adult)
-        textSecondary: '#3E7B71',  // Medium mint text
-        textLight: '#5B9C91',      // Light mint text
+        // Text colors - Gentle teal-complementary colors
+        text: '#0D5157',          // Dark teal text (softer than adult)
+        textSecondary: '#257A85',  // Medium teal text
+        textLight: '#4A9FA8',      // Light teal text
         
         // Action colors - Youth-friendly variations
-        accent: '#87D7C6',         // Soft mint accent
-        success: '#52D1A0',        // Gentle mint green
-        warning: '#FFC857',        // Soft mint-friendly yellow
-        error: '#FF8A80',          // Gentle coral (softer than adult)
+        accent: '#42C4D6',         // Soft teal accent
+        success: '#26D0CE',        // Gentle teal green
+        warning: '#FFD93D',        // Soft teal-friendly yellow
+        error: '#FF7675',          // Gentle coral (softer than adult)
         
         // Border and divider colors
-        border: '#B8E6DD',         // Soft mint border
-        divider: '#E0F2F0',        // Very light mint divider
+        border: '#A8E0E5',         // Soft teal border
+        divider: '#DCF2F4',        // Very light teal divider
         
         // Tab bar colors
-        tabBarActive: '#87D7C6',    // Soft mint active
-        tabBarInactive: '#3E7B71',  // Medium mint inactive
-        tabBarBackground: '#F7FCFB', // Soft mint background
+        tabBarActive: '#42C4D6',    // Soft teal active
+        tabBarInactive: '#257A85',  // Medium teal inactive
+        tabBarBackground: '#F7FDFE', // Soft teal background
         
         // Button colors
-        buttonPrimary: '#87D7C6',   // Soft mint button
+        buttonPrimary: '#42C4D6',   // Soft teal button
         buttonSecondary: '#FFFFFF', // White button
-        buttonText: '#1E5A52',      // Dark mint text
-        buttonTextSecondary: '#87D7C6', // Soft mint text
+        buttonText: '#FFFFFF',      // White text on teal
+        buttonTextSecondary: '#42C4D6', // Soft teal text
       }
     };
   }

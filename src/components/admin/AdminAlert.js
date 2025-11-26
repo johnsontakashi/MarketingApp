@@ -29,7 +29,7 @@ export default function AdminAlert({
       case 'success': return '#10B981';
       case 'warning': return '#F59E0B';
       case 'error': return '#EF4444';
-      case 'confirm': return '#98E4D6';
+      case 'confirm': return '#05A5B5';
       default: return '#3B82F6';
     }
   };
@@ -39,8 +39,8 @@ export default function AdminAlert({
       case 'success': return '#10B981';
       case 'warning': return '#F59E0B';
       case 'error': return '#EF4444';
-      case 'confirm': return '#98E4D6';
-      default: return '#98E4D6';
+      case 'confirm': return '#05A5B5';
+      default: return '#05A5B5';
     }
   };
 
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   primaryButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   destructiveButton: {
     backgroundColor: '#EF4444',

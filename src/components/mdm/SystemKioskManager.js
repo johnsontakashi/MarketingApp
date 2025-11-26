@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginTop: 10,
   },
   modalSubtitle: {
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   },
   modalDescription: {
     fontSize: 16,
-    color: '#5D4E37',
+    color: '#1F6B75',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 25,
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   featureText: {
     marginLeft: 12,
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   toggleContainer: {
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     flex: 1,
   },
   toggle: {

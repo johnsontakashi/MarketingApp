@@ -24,7 +24,7 @@ const CustomAlert = ({
       case 'info':
         return { icon: icon || 'information-circle', color: '#3B82F6' };
       default:
-        return { icon: icon || 'help-circle', color: '#2D766E' };
+        return { icon: icon || 'help-circle', color: '#1F6B75' };
     }
   };
 
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   alertHeader: {
     alignItems: 'center',
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   alertButton: {
     flex: 1,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 14,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   singleButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     marginHorizontal: 0,
   },
   cancelButton: {

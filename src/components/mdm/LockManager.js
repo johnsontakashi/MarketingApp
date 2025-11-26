@@ -206,9 +206,9 @@ const LockManager = ({ children, navigation }) => {
               <Switch
                 value={toggleValue}
                 onValueChange={handleToggleChange}
-                trackColor={{ false: '#F0FDFA', true: adminLockStatus ? '#EF4444' : '#98E4D6' }}
-                thumbColor={toggleValue ? (adminLockStatus ? '#DC2626' : '#5CBAA6') : '#DDD6C1'}
-                ios_backgroundColor="#F0FDFA"
+                trackColor={{ false: '#F0FCFD', true: adminLockStatus ? '#EF4444' : '#05A5B5' }}
+                thumbColor={toggleValue ? (adminLockStatus ? '#DC2626' : '#037A86') : '#DDD6C1'}
+                ios_backgroundColor="#F0FCFD"
                 style={styles.toggle}
                 disabled={adminLockStatus && toggleValue} // Disable if admin locked
               />
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 25,
     alignItems: 'center',
-    shadowColor: '#5CBAA6',
+    shadowColor: '#037A86',
     shadowOffset: {
       width: 0,
       height: -3,
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     minHeight: 250,
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   toggleContainer: {
     flexDirection: 'row',
@@ -258,15 +258,15 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     marginBottom: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   toggleLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2D766E',
+    color: '#1F6B75',
     flex: 1,
   },
   toggle: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 30,
-    color: '#2D766E',
+    color: '#1F6B75',
     lineHeight: 26,
     paddingHorizontal: 10,
   },

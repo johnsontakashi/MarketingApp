@@ -893,11 +893,11 @@ const getStyles = (theme) => StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 15,
   },
   seeAllText: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -912,15 +912,15 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     minWidth: 80,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   selectedCategoryCard: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
   },
   categoryName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginTop: 5,
   },
   selectedCategoryName: {
@@ -928,7 +928,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   categoryCount: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginTop: 2,
   },
   selectedCategoryCount: {
@@ -946,7 +946,7 @@ const getStyles = (theme) => StyleSheet.create({
     padding: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
     position: 'relative',
   },
   featuredBadge: {
@@ -966,7 +966,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   productImage: {
     height: 80,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -984,7 +984,7 @@ const getStyles = (theme) => StyleSheet.create({
   productTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 5,
     lineHeight: 18,
   },
@@ -999,11 +999,11 @@ const getStyles = (theme) => StyleSheet.create({
   },
   ratingText: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   sellerText: {
     fontSize: 10,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 8,
   },
   priceContainer: {
@@ -1012,25 +1012,25 @@ const getStyles = (theme) => StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
   originalPrice: {
     fontSize: 12,
-    color: '#2D766E',
+    color: '#1F6B75',
     textDecorationLine: 'line-through',
   },
   features: {
     gap: 3,
   },
   featureTag: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   featureText: {
     fontSize: 9,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   loadMoreContainer: {
@@ -1040,15 +1040,15 @@ const getStyles = (theme) => StyleSheet.create({
   loadMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   loadMoreText: {
-    color: '#134E48',
+    color: '#0A4B52',
     fontSize: 14,
     fontWeight: '600',
     marginRight: 5,
@@ -1073,7 +1073,7 @@ const getStyles = (theme) => StyleSheet.create({
     maxHeight: '90%',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#98E4D6',
+    borderColor: '#05A5B5',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1081,14 +1081,14 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.3)',
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     letterSpacing: 0.5,
   },
   modalCloseButton: {
@@ -1112,7 +1112,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailImageContainer: {
     height: 200,
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#F0FCFD',
     borderRadius: 16,
     marginBottom: 20,
     overflow: 'hidden',
@@ -1143,13 +1143,13 @@ const getStyles = (theme) => StyleSheet.create({
   detailTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 6,
     lineHeight: 30,
   },
   detailSeller: {
     fontSize: 16,
-    color: '#2D766E',
+    color: '#1F6B75',
     marginBottom: 12,
   },
   detailRatingContainer: {
@@ -1163,7 +1163,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   detailRatingText: {
     fontSize: 14,
-    color: '#2D766E',
+    color: '#1F6B75',
   },
   detailPriceContainer: {
     marginBottom: 16,
@@ -1171,12 +1171,12 @@ const getStyles = (theme) => StyleSheet.create({
   detailPrice: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#98E4D6',
+    color: '#05A5B5',
     marginBottom: 4,
   },
   detailOriginalPrice: {
     fontSize: 18,
-    color: '#2D766E',
+    color: '#1F6B75',
     textDecorationLine: 'line-through',
   },
   detailFeatures: {
@@ -1236,7 +1236,7 @@ const getStyles = (theme) => StyleSheet.create({
   detailSectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#134E48',
+    color: '#0A4B52',
     marginBottom: 12,
   },
   detailDescription: {
@@ -1273,7 +1273,7 @@ const getStyles = (theme) => StyleSheet.create({
   },
   specificationValue: {
     fontSize: 15,
-    color: '#134E48',
+    color: '#0A4B52',
     fontWeight: '600',
   },
   shippingInfo: {
@@ -1327,14 +1327,14 @@ const getStyles = (theme) => StyleSheet.create({
   },
   buyNowButton: {
     flex: 1.5,
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
     shadowColor: 'rgba(212, 175, 55, 0.4)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
@@ -1361,11 +1361,11 @@ const getStyles = (theme) => StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#2D766E',
+    color: '#1F6B75',
     fontWeight: '500',
   },
   loadMoreButton: {
-    backgroundColor: '#98E4D6',
+    backgroundColor: '#05A5B5',
     borderRadius: 12,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -1375,7 +1375,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 20,
     borderWidth: 1,
-    borderColor: '#5CBAA6',
+    borderColor: '#037A86',
   },
   loadMoreText: {
     color: '#FFFFFF',
@@ -1384,10 +1384,10 @@ const getStyles = (theme) => StyleSheet.create({
     marginLeft: 8,
   },
   loadMoreButtonDisabled: {
-    backgroundColor: '#2D766E',
+    backgroundColor: '#1F6B75',
     borderColor: '#654321',
   },
   loadMoreTextDisabled: {
-    color: '#98E4D6',
+    color: '#05A5B5',
   },
 });

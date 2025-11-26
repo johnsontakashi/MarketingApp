@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#3d3d3d',
   },
   title: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   featureItem: {
-    color: '#98E4D6',
+    color: '#05A5B5',
     fontSize: 14,
     marginBottom: 8,
     textAlign: 'center',
