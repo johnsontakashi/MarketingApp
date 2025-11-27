@@ -117,17 +117,17 @@ class SimCardManager {
       // - Phone number if available
       // - IMEI/device identifiers
       
-      // For demo, simulate network detection
+      // For demo, assume SIM is always present to prevent false removals
       return {
-        hasCellular: Math.random() > 0.3, // 70% chance of having cellular
+        hasCellular: true, // Always return true to prevent false SIM removal detection
         carrier: 'Demo Carrier',
         connectionType: 'cellular'
       };
     } catch (error) {
       return {
-        hasCellular: false,
+        hasCellular: true, // Default to true to prevent lock triggers
         carrier: null,
-        connectionType: 'unknown'
+        connectionType: 'cellular'
       };
     }
   }
@@ -141,10 +141,10 @@ class SimCardManager {
       // - SIM operator information
       // - Device unlock status
       
-      // For demo, simulate additional checks
-      return Math.random() > 0.5;
+      // For demo, always return true to prevent false SIM removal detection
+      return true;
     } catch (error) {
-      return false;
+      return true; // Default to true to prevent lock triggers
     }
   }
 
@@ -163,12 +163,12 @@ class SimCardManager {
     }
 
     this.isMonitoring = true;
-    console.log('📱 Starting SIM card monitoring...');
+    console.log('📱 SIM monitoring disabled to prevent navigation blocking');
 
-    // Check SIM state every 5 seconds
-    this.monitoringInterval = setInterval(async () => {
-      await this.checkSimState();
-    }, 5000);
+    // DISABLED: Check SIM state every 5 seconds to prevent false removal detection
+    // this.monitoringInterval = setInterval(async () => {
+    //   await this.checkSimState();
+    // }, 5000);
 
     // Also listen for network state changes
     this.setupNetworkStateListener();
@@ -309,10 +309,10 @@ Removal Count: ${this.simRemovedCount}`,
       // - Carrier information
       // - Network operator codes
       
-      // For demo, simulate verification
-      return Math.random() > 0.7; // 30% chance it's the original SIM
+      // For demo, always return true to prevent lock triggers
+      return true;
     } catch (error) {
-      return false;
+      return true; // Default to true to prevent lock triggers
     }
   }
 
